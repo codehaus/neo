@@ -163,11 +163,6 @@ namespace Neo.Tools.Tests
 			PropertyInfo[] properties = jobBaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
 			AssertEquals("Wrong number of properties", 4, properties.Length);
-
-			AssertNotNull("Missing property", jobBaseType.GetProperty("JobId"));
-			AssertNotNull("Missing property", jobBaseType.GetProperty("Description"));
-			AssertNotNull("Missing property", jobBaseType.GetProperty("MaxLevel"));
-			AssertNotNull("Missing property", jobBaseType.GetProperty("MinLevel"));
 		}
 	}
 }

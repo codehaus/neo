@@ -14,6 +14,8 @@ namespace Neo.Model.Impl
 		private EntityImpl	localEntity;
 
 		private	String		varName;
+
+		private String		relationshipAttributes; /* custom attributes in the .NET sense */
 		
 		private String		foreignTableName;
 		private String		localKey;
@@ -42,6 +44,12 @@ namespace Neo.Model.Impl
 		{
 			set { varName = value; }
 			get { return (varName != null) ? varName : ForeignEntity.ClassName; }
+		}
+
+		public String RelationshipAttributes
+		{
+			set { relationshipAttributes = value; }
+			get { return relationshipAttributes; }
 		}
 
 		public String ForeignTableName
