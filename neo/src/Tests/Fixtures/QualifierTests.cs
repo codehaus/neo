@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Neo.Core;
+using Neo.Core.Qualifiers;
 using Neo.Core.Util;
 using NUnit.Framework;
 using Pubs4.Model;
@@ -193,7 +194,7 @@ namespace Neo.Tests
 			
 			pub = title.Publisher;
 			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
-			colQualifier = new ColumnQualifier(propQualifier, title.Context.EntityMapFactory.GetMap(typeof(Title)));
+			colQualifier = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertPropertyQualifier(propQualifier);
 
 			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
 			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
@@ -205,17 +206,22 @@ namespace Neo.Tests
 		public void PropertyColumnConversionOnClause()
 		{
 			Publisher			pub;
-			ClauseQualifier		clauseQualifier, convertedQualifer;
+			ClauseQualifier		clauseQualifier;
+			Qualifier			convertedQualifer;
+			AndQualifier		andQualifier;
 			PropertyQualifier	propQualifier;
 			ColumnQualifier		colQualifier;
 			
 			pub = title.Publisher;
 			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
 			clauseQualifier = new AndQualifier(propQualifier);
-			convertedQualifer = clauseQualifier.GetWithColumnQualifiers(title.Context.EntityMapFactory.GetMap(typeof(Title)));
+			convertedQualifer = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertPropertyQualifiers(clauseQualifier);
 			
-			Assertion.AssertEquals("Wrong number of qualifiers", 1, convertedQualifer.Qualifiers.Length);
-			colQualifier = (ColumnQualifier)convertedQualifer.Qualifiers[0];
+			Assertion.AssertNotNull("Should return a qualifier.", convertedQualifer);
+			Assertion.AssertEquals("Should have top-level AND qualifier.", typeof(AndQualifier), convertedQualifer.GetType());
+			andQualifier = convertedQualifer as AndQualifier;
+			Assertion.AssertEquals("Wrong number of qualifiers", 1, andQualifier.Qualifiers.Length);
+			colQualifier = (ColumnQualifier)andQualifier.Qualifiers[0];
 			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
 			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
 			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Predicate.Value);

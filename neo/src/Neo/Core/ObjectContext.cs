@@ -5,6 +5,7 @@ using System.Collections;
 using System.Data;
 using System.Text;
 using System.Threading;
+using Neo.Core.Qualifiers;
 using Neo.Core.Util;
 using log4net;
 
@@ -1010,11 +1011,7 @@ namespace Neo.Core
 			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
 				return resultTable;
 
-			q = fetchSpec.Qualifier;
-			if(q is ClauseQualifier)
-				q = ((ClauseQualifier)q).GetWithColumnQualifiers(fetchSpec.EntityMap);
-			else if(q is PropertyQualifier)
-				q = new ColumnQualifier((PropertyQualifier)q, fetchSpec.EntityMap);
+			q = new QualifierConverter(fetchSpec.EntityMap).ConvertPropertyQualifiers(fetchSpec.Qualifier);
 
 			foreach(IEntityObject eo in objects)
 			{

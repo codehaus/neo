@@ -3,12 +3,11 @@ using System.Reflection;
 using System.Data;
 
 
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 
 	public sealed class ColumnQualifier : Qualifier
 	{
-
 		//--------------------------------------------------------------------------------------
 		//	Fields and Constructor
 		//--------------------------------------------------------------------------------------
@@ -22,32 +21,6 @@ namespace Neo.Core.Util
 			column = aColumn;
 			predicate = aPredicate;
 			//predicate = (aValue == null) ? DBNull.Value : aValue;
-		}
-
-
-		public ColumnQualifier(PropertyQualifier propQualifier, IEntityMap emap) : base()
-		{
-			IEntityObject	eo;
-			IEntityMap		otherEmap;
-			DataRelation	rel;
-			object			compVal;
-
-			if((eo = propQualifier.Predicate.Value as IEntityObject) != null)
-			{
-				otherEmap = eo.Context.EntityMapFactory.GetMap(eo.GetType());
-				if((rel = eo.Context.DataSet.Relations[otherEmap.TableName + "." + emap.TableName]) == null)
-					throw new NeoException("Can't to convert PropertyQualifier to ColumnQualifier; did not find relation " + otherEmap.TableName + "." + emap.TableName);
-				column = rel.ChildColumns[0].ColumnName;
-				compVal = eo.Row[rel.ParentColumns[0]];
-			}
-			else
-			{
-				column = emap.GetColumnForAttribute(propQualifier.Property);
-				compVal = propQualifier.Predicate.Value;
-			}
-			if(compVal == null)
-				compVal = DBNull.Value;
-			predicate = (IPredicate)Activator.CreateInstance(propQualifier.Predicate.GetType(), new object[] { compVal });
 		}
 
 
@@ -84,6 +57,17 @@ namespace Neo.Core.Util
 		{
 			return predicate.IsTrueForValue(anObject.Row[column], DBNull.Value);
 		}
+
+		
+		//--------------------------------------------------------------------------------------
+		//	Visitor
+		//--------------------------------------------------------------------------------------
+
+		public override object  AcceptVisitor(IQualifierVisitor v)
+		{
+			return v.VisitColumnQualifier(this);
+		}
+	
 	}
 
 }

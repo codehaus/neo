@@ -4,8 +4,10 @@ using System.Collections;
 using NUnit.Framework;
 using Neo.Core;
 using Neo.Core.Util;
+using Neo.Database;
 using Neo.SqlClient;
 using Pubs4.Model;
+
 
 namespace Neo.Tests
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 
 	//--------------------------------------------------------------------------------------
@@ -23,11 +23,12 @@ namespace Neo.Core.Util
 
 		public virtual bool IsTrueForValue(object aValue, object nullVal)
 		{
-			if((aValue != nullVal) && (predValue != nullVal) && (predValue.GetType() != aValue.GetType()) && (predValue is IConvertible))
-				predValue = (IComparable)Convert.ChangeType(predValue, aValue.GetType());
-
 			if(predValue == nullVal)
 				return (aValue == nullVal);
+
+			if((aValue != nullVal) && (predValue.GetType() != aValue.GetType()) && (predValue is IConvertible))
+				predValue = (IComparable)Convert.ChangeType(predValue, aValue.GetType());
+			
 			return predValue.Equals(aValue);
 		}
 

@@ -1,6 +1,7 @@
 using System;
 using Neo.Core;
-using Neo.Core.Util;
+using Neo.Core.Parser;
+using Neo.Core.Qualifiers;
 using NUnit.Framework;
 using Pubs4.Model;
 
@@ -14,19 +15,19 @@ namespace Neo.Tests
 		[Test]
 		public void TestTokenizer1()
 		{	
-			QualifierParser.Token t;
+			Token t;
 
-			QualifierParser parser = new QualifierParser("royalties=20");
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.String, t.Type);
+			Tokenizer tokenizer = new Tokenizer("royalties=20");
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.String, t.Type);
 			Assertion.AssertEquals("royalties", t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Operator, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Operator, t.Type);
 			Assertion.AssertEquals(typeof(EqualsPredicate), t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Number, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Constant, t.Type);
 			Assertion.AssertEquals(20, t.Value);
-			t = parser.GetNextToken();
+			t = tokenizer.GetNextToken();
 			Assertion.AssertEquals(null, t);		
 		}
 		
@@ -34,30 +35,31 @@ namespace Neo.Tests
 		[Test]
 		public void TestTokenizer2()
 		{	
-			QualifierParser.Token t;
-
-			QualifierParser parser = new QualifierParser("name='foo' and royalties > {15} ");
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.String, t.Type);
+			Tokenizer tokenizer;
+			Token	  t;
+			
+			tokenizer = new Tokenizer("name='foo' and royalties > {15} ");
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.String, t.Type);
 			Assertion.AssertEquals("name", t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Operator, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Operator, t.Type);
 			Assertion.AssertEquals(typeof(EqualsPredicate), t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.QuotedString, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Constant, t.Type);
 			Assertion.AssertEquals("foo", t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Conjunctor, t.Type);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.String, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Conjunctor, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.String, t.Type);
 			Assertion.AssertEquals("royalties", t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Operator, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Operator, t.Type);
 			Assertion.AssertEquals(typeof(GreaterThanPredicate), t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.ParamRef, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.ParamRef, t.Type);
 			Assertion.AssertEquals(15, t.Value);
-			t = parser.GetNextToken();
+			t = tokenizer.GetNextToken();
 			Assertion.AssertEquals(null, t);		
 		}
 
@@ -65,21 +67,22 @@ namespace Neo.Tests
 		[Test]
 		public void TestTokenizer3()
 		{	
-			QualifierParser.Token t;
+			Tokenizer tokenizer;
+			Token	  t;
 
-			QualifierParser parser = new QualifierParser("or''{17}1");
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Conjunctor, t.Type);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.QuotedString, t.Type);
+			tokenizer = new Tokenizer("or''{17}1");
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Conjunctor, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Constant, t.Type);
 			Assertion.AssertEquals("", t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.ParamRef, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.ParamRef, t.Type);
 			Assertion.AssertEquals(17, t.Value);
-			t = parser.GetNextToken();
-			Assertion.AssertEquals(QualifierParser.TokenType.Number, t.Type);
+			t = tokenizer.GetNextToken();
+			Assertion.AssertEquals(TokenType.Constant, t.Type);
 			Assertion.AssertEquals(1, t.Value);
-			t = parser.GetNextToken();
+			t = tokenizer.GetNextToken();
 			Assertion.AssertEquals(null, t);		
 		}
 

@@ -4,7 +4,7 @@ using System.Text;
 using Neo.Core;
 
 
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 	
 	public abstract class ClauseQualifier : Qualifier
@@ -28,17 +28,17 @@ namespace Neo.Core.Util
 
 
 		//--------------------------------------------------------------------------------------
-		//	Public properties
+		//	Public accessors
 		//--------------------------------------------------------------------------------------
 
 		public Qualifier[] Qualifiers
 		{
-			get { return qualifiers; }
-		}
+			get 
+			{ 
+				return qualifiers; 
+			}
 
-		//--------------------------------------------------------------------------------------
-		//	Public properties
-		//--------------------------------------------------------------------------------------
+		}
 
 		public void AddToQualifiers(Qualifier aQualifier)
 		{
@@ -73,30 +73,6 @@ namespace Neo.Core.Util
 			get;
 		}
 
-		
-		//--------------------------------------------------------------------------------------
-		//	Creating Column Qualifiers
-		//--------------------------------------------------------------------------------------
-
-		public ClauseQualifier GetWithColumnQualifiers(IEntityMap thisEmap)
-		{
-			Qualifier[]	newQualifiers;
-			int			i;
-			
-			newQualifiers = new Qualifier[qualifiers.Length];
-			i = 0;
-			foreach(Qualifier q in qualifiers)
-			{
-				if(q is ClauseQualifier)
-					newQualifiers[i++] = ((ClauseQualifier)q).GetWithColumnQualifiers(thisEmap);
-				else if(q is PropertyQualifier)
-					newQualifiers[i++] = new ColumnQualifier((PropertyQualifier)q, thisEmap);
-				else
-					newQualifiers[i++] = q;
-			}
-			
-			return (ClauseQualifier)Activator.CreateInstance(this.GetType(), newQualifiers);
-		}
 
 	}
 }

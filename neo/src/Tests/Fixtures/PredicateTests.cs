@@ -1,6 +1,6 @@
 using System;
 using Neo.Core;
-using Neo.Core.Util;
+using Neo.Core.Qualifiers;
 using NUnit.Framework;
 
 

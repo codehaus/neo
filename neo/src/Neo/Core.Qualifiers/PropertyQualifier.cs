@@ -1,8 +1,8 @@
 using System;
 using System.Reflection;
+using Neo.Core.Util;
 
-
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 
 	public sealed class PropertyQualifier : Qualifier, IObjectQualifier
@@ -62,6 +62,16 @@ namespace Neo.Core.Util
 		{
 			object objValue = ObjectHelper.GetProperty(anObject, prop, ref lastType, ref propInfo);
 			return predicate.IsTrueForValue(objValue, null);
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Visitor
+		//--------------------------------------------------------------------------------------
+
+		public override object AcceptVisitor(IQualifierVisitor v)
+		{
+			return v.VisitPropertyQualifier(this);
 		}
 
 	}

@@ -1,9 +1,9 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using Neo.Core.Util;
 
-
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 	public sealed class PathQualifier : Qualifier, IObjectQualifier
 	{
@@ -127,6 +127,16 @@ namespace Neo.Core.Util
 				anObject = ObjectHelper.GetProperty(anObject, prop);
 
 			return objQualifier.EvaluateWithObject(anObject);
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Visitor
+		//--------------------------------------------------------------------------------------
+
+		public override object AcceptVisitor(IQualifierVisitor v)
+		{
+			return v.VisitPathQualifier(this);
 		}
 
 	}

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 
 
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 
 	public sealed class OrQualifier : ClauseQualifier, IObjectQualifier
@@ -56,6 +56,16 @@ namespace Neo.Core.Util
 					return true;
 			}
 			return false;
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Visitor
+		//--------------------------------------------------------------------------------------
+
+		public override object AcceptVisitor(IQualifierVisitor v)
+		{
+			return v.VisitOrQualifier(this);
 		}
 
 

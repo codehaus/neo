@@ -169,17 +169,82 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\AndQualifier.cs"
+                    RelPath = "Core.Parser\QualifierParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\ClauseQualifier.cs"
+                    RelPath = "Core.Parser\QualifierParserException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\ColumnQualifier.cs"
+                    RelPath = "Core.Parser\Token.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Parser\Tokenizer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Parser\TokenStack.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\AndQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\ClauseQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\ColumnQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\IPredicate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\IQualifierVisitor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\OrQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\PathQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\Predicates.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\PropertyQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\RelationalPredicates.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Qualifiers\StringPredicates.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -189,7 +254,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\IPredicate.cs"
+                    RelPath = "Core.Util\InvalidPropertyException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -209,37 +274,32 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\OrQualifier.cs"
+                    RelPath = "Core.Util\QualifierConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\PathQualifier.cs"
+                    RelPath = "Database\GenericSqlModWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\Predicates.cs"
+                    RelPath = "Database\GenericSqlSelectWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\PropertyQualifier.cs"
+                    RelPath = "Database\GenericSqlWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\QualifierParser.cs"
+                    RelPath = "Database\IParameterFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\RelationalPredicates.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Core.Util\StringPredicates.cs"
+                    RelPath = "Database\OrderTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -279,12 +339,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlClient\OrderTable.cs"
+                    RelPath = "SqlClient\SqlDataStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlClient\SqlDataStore.cs"
+                    RelPath = "SqlClient\SqlParameterFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

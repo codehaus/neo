@@ -1,6 +1,6 @@
 using System;
 
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 	public interface IPredicate
 	{

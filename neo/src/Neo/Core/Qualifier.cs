@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
-using Neo.Core.Util;
+using Neo.Core.Parser;
+using Neo.Core.Qualifiers;
+
 
 namespace Neo.Core
 {
@@ -106,6 +108,12 @@ namespace Neo.Core
 		public abstract bool EvaluateWithObject(IEntityObject anObject);
 	
 
+
+		//--------------------------------------------------------------------------------------
+		//	Visitor
+		//--------------------------------------------------------------------------------------
+
+		public abstract object AcceptVisitor(IQualifierVisitor v);
 
 	}
 }

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 
-namespace Neo.Core.Util
+namespace Neo.Core.Qualifiers
 {
 
 	//--------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ namespace Neo.Core.Util
 
 		public override string ToString()
 		{
-			return (predValue != null) ? ("like " + predValue) : "null";
+			return ("like " + predValue);
 		}
 	}
 

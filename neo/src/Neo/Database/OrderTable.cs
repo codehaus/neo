@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
 using System.Data;
 
 
-namespace Neo.SqlClient
+namespace Neo.Database
 {
 	
 	public class OrderTable 

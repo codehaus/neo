@@ -9,7 +9,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
 using Neo.Core;
+using Neo.Core.Qualifiers;
 using Neo.Core.Util;
+using Neo.Database;
 using Neo.Framework;
 
 
@@ -36,6 +38,7 @@ namespace Neo.SqlClient
 
 		private SqlConnection		connection;
 		private SqlTransaction		transaction;
+		private SqlParameterFactory	parameterFactory;
 		private ArrayList			processedRows;
 
 		public SqlDataStore() : this(null)
@@ -45,6 +48,8 @@ namespace Neo.SqlClient
 		public SqlDataStore(string connectionString)
 		{
 			logger.Debug("Created new SqlDataStore.");
+
+			parameterFactory = new SqlParameterFactory();
 
 			if(connectionString == null)
 			{
@@ -139,38 +144,11 @@ namespace Neo.SqlClient
 			fetchSpec.EntityMap.UpdateSchemaInDataSet(ds, SchemaUpdate.Basic | SchemaUpdate.Relations);
 			DataTable table = ds.Tables[fetchSpec.EntityMap.TableName];
 
-			StringBuilder builder = new StringBuilder();
+			GenericSqlSelectWriter writer = new GenericSqlSelectWriter(table, parameterFactory);
+			writer.WriteSelect(fetchSpec);
 
-			builder.Append("SELECT ");
-
-			if(fetchSpec.FetchLimit != -1)
-			{
-				builder.Append("TOP ");
-				builder.Append(fetchSpec.FetchLimit);
-				builder.Append(" ");
-			}
-
-			WriteColumns(builder, table, table.Columns);
-
-			builder.Append(" FROM ");
-			builder.Append(table.TableName);
-
-			Qualifier qualifier = fetchSpec.Qualifier; 
-
-			if(qualifier != null)
-			{
-				builder.Append(" WHERE ");
-
-				ArrayList parameters = new ArrayList();
-				WriteQualifier(table, fetchSpec.EntityMap, qualifier, builder, parameters);
-
-				FillTable(table, builder.ToString(), parameters);
-			}
-			else
-			{
-				FillTable(table, builder.ToString(), null);
-			}
-
+			FillTable(table, writer.Command, writer.Parameters);
+	
 			return table;
 		}
 
@@ -204,145 +182,6 @@ namespace Neo.SqlClient
 		}
 
 		
-		//--------------------------------------------------------------------------------------
-
-		protected virtual void WriteQualifier(DataTable table, IEntityMap emap, Qualifier q, StringBuilder builder, IList parameters)
-		{
-			if(q is ColumnQualifier)
-			{
-				WriteColumnQualifier(table, emap, (ColumnQualifier)q, builder, parameters);
-			}
-			else if(q is PropertyQualifier)
-			{
-				q = new ColumnQualifier((PropertyQualifier)q, emap);
-				WriteColumnQualifier(table, emap, (ColumnQualifier)q, builder, parameters);
-			}
-			else if(q is ClauseQualifier)
-			{
-				WriteClauseQualifier(table, emap, (ClauseQualifier)q, builder, parameters);
-			}
-			else if(q is PathQualifier)
-			{
-				WritePathQualifier(table, emap, (PathQualifier)q, 0, builder, parameters);
-			}
-			else
-			{
-				throw new ArgumentException(String.Format("Invalid qualifier class {0}", q.GetType()));
-			}
-		}
-
-
-		protected virtual void WriteColumnQualifier(DataTable table, IEntityMap emap, ColumnQualifier q, StringBuilder builder, IList parameters)
-		{
-			builder.Append(q.Column);
-
-			if(q.Predicate.Value == DBNull.Value)
-			{
-				if(q.Predicate is EqualsPredicate)
-					builder.Append(" IS NULL ");
-				else if(q.Predicate is NotEqualPredicate)
-					builder.Append(" IS NOT NULL ");
-				else
-					throw new ArgumentException("Invalid predicate with null value; found " + q.Predicate.GetType().FullName);
-			}
-			else
-			{
-				if(q.Predicate is EqualsPredicate)
-					builder.Append("=");
-				else if(q.Predicate is NotEqualPredicate)
-					builder.Append("<>");
-				else if(q.Predicate is LessThanPredicate)
-					builder.Append("<");
-				else if(q.Predicate is LessOrEqualPredicate)
-					builder.Append("<=");
-				else if(q.Predicate is GreaterThanPredicate)
-					builder.Append(">");
-				else if(q.Predicate is GreaterOrEqualPredicate)
-					builder.Append(">=");
-				else if(q.Predicate is LikePredicate)
-					builder.Append(" LIKE ");
-				else
-					throw new ArgumentException("Invalid predicate in qualifier; found " + q.Predicate.GetType().FullName);
-				
-				// add the current parameter count as suffix to ensure names are unique
-				SqlParameter param = GetParameter(table.Columns[q.Column], parameters.Count.ToString(), q.Predicate.Value);
-				builder.Append(param.ParameterName);
-				parameters.Add(param);
-			}
-		}
-
-
-		protected virtual void WriteClauseQualifier(DataTable table, IEntityMap emap, ClauseQualifier q, StringBuilder builder, IList parameters)
-		{
-			string conjunctor;
-
-			if(q is AndQualifier)
-				conjunctor = " AND ";
-			else if(q is OrQualifier)
-				conjunctor = " OR ";
-			else
-				throw new ArgumentException("Invalid conjunctor qualifier; found " + q.GetType().FullName);
-
-			bool isFirstChild = true;
-			builder.Append("(");
-			foreach(Qualifier child in q.Qualifiers)
-			{
-				if(isFirstChild == false)
-					builder.Append(conjunctor);
-				isFirstChild = false;
-				WriteQualifier(table, emap, child, builder, parameters);
-			}
-			builder.Append(")");
-		}
-
-
-		protected virtual void WritePathQualifier(DataTable table, IEntityMap emap, PathQualifier q, int idx, StringBuilder builder, IList parameters)
-		{
-			PropertyInfo	propInfo;
-			FieldInfo		fieldInfo;
-			Type			destType;
-			IEntityMap		leftEmap, rightEmap, newEmap;
-			DataRelation	rel;
-
-			if((propInfo = emap.ObjectType.GetProperty(q.PathElements[idx])) != null)
-				destType = propInfo.PropertyType;
-			else if((fieldInfo = emap.ObjectType.GetField(q.PathElements[idx])) != null)
-				destType = fieldInfo.FieldType;
-			else
-				throw new InvalidPropertyException(String.Format("{0} is not a valid property/field for class {1}", q.PathElements[idx], emap.ObjectType), null);
-
-			if(typeof(ObjectCollectionBase).IsAssignableFrom(destType))
-			{
-				destType = destType.GetProperty("Item").PropertyType;
-				leftEmap = emap;
-				rightEmap = newEmap = emap.Factory.GetMap(destType);
-			}
-			else
-			{
-				leftEmap = newEmap = emap.Factory.GetMap(destType);
-				rightEmap = emap;
-			}
-
-			if((rel = table.DataSet.Relations[leftEmap.TableName + "." + rightEmap.TableName]) == null)
-				throw new NeoException("Can't to convert write PathQualifier; did not find relation " + leftEmap.TableName + "." + rightEmap.TableName);
-
-			builder.Append((emap == rightEmap) ? rel.ChildColumns[0].ColumnName : rel.ParentColumns[0].ColumnName);
-			builder.Append(" IN ( SELECT ");
-			builder.Append((emap == rightEmap) ? rel.ParentColumns[0].ColumnName : rel.ChildColumns[0].ColumnName);
-			builder.Append(" FROM ");
-			builder.Append(newEmap.TableName);
-			builder.Append(" WHERE ");
-
-			newEmap.UpdateSchemaInDataSet(table.DataSet, SchemaUpdate.Basic | SchemaUpdate.Relations);
-			if(idx < q.PathElements.Length - 1)
-				WritePathQualifier(table.DataSet.Tables[newEmap.TableName], newEmap, q, idx + 1, builder, parameters);
-			else
-				WriteQualifier(table.DataSet.Tables[newEmap.TableName], newEmap, q.Qualifier, builder, parameters);
-
-			builder.Append(" )");
-		}
-
-
 		//--------------------------------------------------------------------------------------
 		//	IDataStore impl (saving changes)
 		//--------------------------------------------------------------------------------------
@@ -508,12 +347,12 @@ namespace Neo.SqlClient
 
 		protected virtual void InsertRow(DataRow row, PkChangeTable pkChangeTable)
 		{
-			ArrayList		columnList;
-			StringBuilder	builder;
-			DataColumn		pkColumn;
-			bool			usesIdentityColumn;
-			int				rowsAffected;
-
+			ArrayList			columnList;
+			GenericSqlModWriter	writer;
+			DataColumn			pkColumn;
+			bool				usesIdentityColumn;
+			int					rowsAffected;
+	
 			pkColumn = row.Table.PrimaryKey[0];
 			usesIdentityColumn = ((row.Table.PrimaryKey.Length == 1) && (pkColumn.AutoIncrement));
 			columnList = new ArrayList();
@@ -523,21 +362,10 @@ namespace Neo.SqlClient
 					columnList.Add(column);
 			}
 
-			builder = new StringBuilder();
-			builder.Append("INSERT INTO ");
-			builder.Append(row.Table.TableName);
-			builder.Append(" (");
-			WriteColumns(builder, row.Table, columnList);
-			builder.Append(") VALUES (");
-			WriteParameters(builder, row.Table, "", columnList);
-			builder.Append(")");
-
-			ArrayList parameters = new ArrayList();
-			
-			foreach(DataColumn column in row.Table.Columns)
-				parameters.Add(GetParameter(column, "", row[column]));
-
-			rowsAffected = ExecuteNonQuery(builder.ToString(), parameters);
+			writer = new GenericSqlModWriter(row.Table, parameterFactory);
+			writer.WriteInsert(row, columnList);
+	
+			rowsAffected = ExecuteNonQuery(writer.Command, writer.Parameters);
 
 			if((usesIdentityColumn) && (rowsAffected == 1))
 			{
@@ -555,53 +383,26 @@ namespace Neo.SqlClient
 
 		protected virtual void DeleteRow(DataRow row)
 		{
-			StringBuilder	builder;
-			int				rowsAffected;
+			GenericSqlModWriter	writer;
+			int					rowsAffected;
 
-			builder = new StringBuilder();
-
-			builder.Append("DELETE FROM ");
-			builder.Append(row.Table.TableName);
-			builder.Append(" WHERE");
-
-			WriteOptimisticLockMatch(builder, row.Table, "");
-
-			ArrayList parameters = new ArrayList();
-
-			foreach(DataColumn column in row.Table.Columns)
-				parameters.Add(GetParameter(column, "", row[column, DataRowVersion.Original]));
+			writer = new GenericSqlModWriter(row.Table, parameterFactory);
+			writer.WriteDelete(row);
 			
-			rowsAffected = ExecuteNonQuery(builder.ToString(), parameters);
+			rowsAffected = ExecuteNonQuery(writer.Command, writer.Parameters);
 			PostProcessRow(row, (rowsAffected == 1), "Failed to delete row in database.");
 		}
 
 
 		protected virtual void UpdateRow(DataRow row)
 		{
-			StringBuilder	builder;
-			int				rowsAffected;
+			GenericSqlModWriter	writer;
+			int					rowsAffected;
 
-			builder = new StringBuilder();
+			writer = new GenericSqlModWriter(row.Table, parameterFactory);
+			writer.WriteUpdate(row);
 
-			builder.Append("UPDATE ");
-			builder.Append(row.Table.TableName);
-			builder.Append(" SET");
-
-			WriteAllColumnsAndParameters(builder, row.Table, "", ", ");
-
-			builder.Append(" WHERE");
-
-			WriteOptimisticLockMatch(builder, row.Table, "_ORIG");
-
-			ArrayList parameters = new ArrayList();
-
-			foreach(DataColumn column in row.Table.Columns)
-			{
-				parameters.Add(GetParameter(column, "", row[column]));
-				parameters.Add(GetParameter(column, "_ORIG", row[column, DataRowVersion.Original]));
-			}
-
-			rowsAffected = ExecuteNonQuery(builder.ToString(), parameters);
+			rowsAffected = ExecuteNonQuery(writer.Command, writer.Parameters);
 			PostProcessRow(row, (rowsAffected == 1), "Failed to update row in database.");
 		}
 
@@ -687,7 +488,7 @@ namespace Neo.SqlClient
 			if(parameters != null)
 			{
 				foreach(DictionaryEntry entry in parameters)
-					SetParameter(cmd, (DataColumn)entry.Key, "", entry.Value);
+					cmd.Parameters.Add(parameterFactory.CreateParameter((DataColumn)entry.Key, "", entry.Value));
 			}
 
 			if(logger.IsDebugEnabled) 
@@ -726,146 +527,6 @@ namespace Neo.SqlClient
 				row.RowError = errorMessage;
 		}
 
-		
-		//--------------------------------------------------------------------------------------
-
-		protected void WriteColumns(StringBuilder builder, DataTable table, ICollection columns)
-		{
-			bool first = true;
-
-			foreach(DataColumn c in columns)
-			{
-				if(first == false)
-					builder.Append(", ");
-				builder.Append(c.ColumnName);
-				first = false;
-			}
-		}
-
-
-		protected void WriteParameters(StringBuilder builder, DataTable table, string suffix, ICollection columns)
-		{
-			bool first = true;
-
-			foreach(DataColumn c in columns)
-			{
-				if(first == false)
-					builder.Append(", ");
-				builder.Append(ConvertToParameterName(c.ColumnName, suffix));
-				first = false;
-			}
-		}
-
-		
-		protected void WriteAllColumnsAndParameters(StringBuilder builder, DataTable table, string suffix, string separator)
-		{
-			bool firstColumn = true;
-
-			for(int i = 0; i < table.Columns.Count; i++)
-			{
-				// Workaround for update with autoincrement bug
-				if(table.Columns[i].AutoIncrement)
-					continue;
-
-				if(firstColumn == false)
-					builder.Append(separator);
-				firstColumn = false;
-
-				builder.Append(" ");
-				builder.Append(table.Columns[i].ColumnName);
-				builder.Append(" = ");
-				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName, suffix));
-			}
-		}
-
-		
-		protected void WriteOptimisticLockMatch(StringBuilder builder, DataTable table, string suffix)
-		{
-			// This is not really correct, we should exclude BLOBs. Then again, we don't do BLOBs yet.
-			for(int i = 0; i < table.Columns.Count; i++)
-			{
-				if(i > 0)
-					builder.Append(" AND");
-				builder.Append(" ((");
-				builder.Append(table.Columns[i].ColumnName);
-				builder.Append(" = ");
-				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName, suffix));
-				builder.Append(" ) OR ((");
-				builder.Append(table.Columns[i].ColumnName);
-				builder.Append(" IS NULL) AND (");
-				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName, suffix));
-				builder.Append(" IS NULL)))");
-			}
-		}
-
-
-		//--------------------------------------------------------------------------------------
-
-		protected virtual SqlParameter SetParameter(SqlCommand command, DataColumn pcolumn, string suffix, object pvalue)
-		{
-			SqlDbType	 dbtype;
-			SqlParameter param;
-
-			if((dbtype = ConvertToDbType(pcolumn.DataType)) == SqlDbType.Variant)
-				throw new ArgumentException(String.Format("Cannot handle data type {0} of column {1} in table {2}.", pcolumn.DataType.ToString(), pcolumn.ColumnName, pcolumn.Table.TableName));
-			param = command.Parameters.Add(ConvertToParameterName(pcolumn.ColumnName, suffix), dbtype, Math.Max(0, pcolumn.MaxLength), pcolumn.ColumnName);
-			param.IsNullable = pcolumn.AllowDBNull;
-			param.Value = pvalue;
-			return param;
-		}
-
-		protected virtual SqlParameter GetParameter(DataColumn pcolumn, string suffix, object pvalue)
-		{
-			SqlDbType	 dbtype;
-			SqlParameter param;
-
-			if((dbtype = ConvertToDbType(pcolumn.DataType)) == SqlDbType.Variant)
-				throw new ArgumentException(String.Format("Cannot handle data type {0} of column {1} in table {2}.", pcolumn.DataType.ToString(), pcolumn.ColumnName, pcolumn.Table.TableName));
-			param = new SqlParameter(ConvertToParameterName(pcolumn.ColumnName, suffix), dbtype, Math.Max(0, pcolumn.MaxLength), pcolumn.ColumnName);
-			param.IsNullable = pcolumn.AllowDBNull;
-			param.Value = pvalue;
-			return param;
-		}
-
-
-		//--------------------------------------------------------------------------------------
-	
-		protected virtual string ConvertToParameterName(string column, string suffix)
-		{
-			string paramName = column+suffix;
-			paramName = paramName.Replace(@"\", "_");
-			paramName = paramName.Replace(@"/", "_");
-			paramName = paramName.Replace(@"'", "_");
-			paramName = paramName.Replace(@"=", "_");
-			paramName = paramName.Replace("\"", "_");
-			paramName = paramName.Replace(@"-", "_");
-			paramName = paramName.Replace(@" ", "_");
-			return "@" + paramName;
-		}
-
-
-		private static Hashtable dbTypeTable;
-
-		protected virtual SqlDbType ConvertToDbType(Type t)
-		{
-			if(dbTypeTable == null)
-			{
-				dbTypeTable = new Hashtable();
-				dbTypeTable.Add(typeof(System.Boolean),  SqlDbType.Bit);
-				dbTypeTable.Add(typeof(System.Int16),	 SqlDbType.SmallInt);
-				dbTypeTable.Add(typeof(System.Int32),	 SqlDbType.Int);
-				dbTypeTable.Add(typeof(System.Int64),	 SqlDbType.BigInt);
-				dbTypeTable.Add(typeof(System.Double),	 SqlDbType.Float);
-				dbTypeTable.Add(typeof(System.Decimal),	 SqlDbType.Decimal);
-				dbTypeTable.Add(typeof(System.String),	 SqlDbType.VarChar);
-				dbTypeTable.Add(typeof(System.DateTime), SqlDbType.DateTime);
-				dbTypeTable.Add(typeof(System.Byte[]),	 SqlDbType.VarBinary);
-				dbTypeTable.Add(typeof(System.Guid),	 SqlDbType.UniqueIdentifier);
-			}
-
-			object entry = dbTypeTable[t];
-			return (entry != null) ? (SqlDbType)entry : SqlDbType.Variant;	
-		}
 
 	}
 

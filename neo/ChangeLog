@@ -1,3 +1,12 @@
+2004-06-02 erik
+
+	* Clean up and refactorings. Moved qualifiers and parser into
+	separate namespaces, moved some inline classes into their own
+	source files, refactored parser and sqlstore classes into more
+	managable classes, added database namespace that holds 
+	code not specific to SQL Server.
+	
+
 2004-06-01 erik
 
 	* Added support for bracketing expressions in qualifier formats

@@ -1,4 +1,4 @@
-using System;
+using System.Data;
 
 
 namespace Neo.Core
@@ -26,7 +26,7 @@ namespace Neo.Core
 		/// advisable, to modify the row directly; it is guaranteed to be in sync with
 		/// the object's properties.
 		/// </remarks>
-		System.Data.DataRow Row { get; }
+		DataRow Row { get; }
 	}
 
 
