@@ -1,5 +1,3 @@
-using System;
-
 namespace Neo.Core.Qualifiers
 {
 	public interface IPredicate

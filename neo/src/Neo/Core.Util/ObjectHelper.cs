@@ -1,6 +1,6 @@
 using System;
-using System.Reflection;
 using System.Globalization;
+using System.Reflection;
 using log4net;
 
 
@@ -13,7 +13,7 @@ namespace Neo.Core.Util
 		static ObjectHelper()
 		{
 			if(logger == null)
-				logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.ToString());
+				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
 		}
 
 

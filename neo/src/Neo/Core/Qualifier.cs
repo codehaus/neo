@@ -81,7 +81,7 @@ namespace Neo.Core
 
 		protected static PropertyQualifier ForKeyValuePair(string aKey, object aValue)
 		{
-			String valueAsString = aValue as string;
+		    String valueAsString = aValue as string;
 			if((valueAsString != null) && (valueAsString.IndexOf("%") >= 0))
 				return new PropertyQualifier(aKey, new LikePredicate(valueAsString));
 			return new PropertyQualifier(aKey, new EqualsPredicate(aValue));

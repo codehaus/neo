@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Neo.Core;
 
 
 namespace Neo.Core.Util

@@ -9,10 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
 using Neo.Core;
-using Neo.Core.Qualifiers;
-using Neo.Core.Util;
 using Neo.Database;
-using Neo.Framework;
 
 
 namespace Neo.SqlClient
@@ -28,7 +25,7 @@ namespace Neo.SqlClient
 		static SqlDataStore()
 		{
 			if(logger == null)
-				logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.ToString());
+				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
 		}
 	
 
@@ -53,7 +50,7 @@ namespace Neo.SqlClient
 
 			if(connectionString == null)
 			{
-				NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.sqlclient");
+			    NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.sqlclient");
 				if(config != null)
 					connectionString = config["connectionstring"];
 			}
@@ -85,7 +82,7 @@ namespace Neo.SqlClient
 
 		protected string GetConnectionStringForLogging()
 		{
-			Regex rpwd = new Regex("(?<key>.*[Pp]ass.*?)=.*");
+		    Regex rpwd = new Regex("(?<key>.*[Pp]ass.*?)=.*");
 			ArrayList partList = new ArrayList();
 			foreach(string part in connection.ConnectionString.Split(';'))
 			{
@@ -144,7 +141,7 @@ namespace Neo.SqlClient
 			fetchSpec.EntityMap.UpdateSchemaInDataSet(ds, SchemaUpdate.Basic | SchemaUpdate.Relations);
 			DataTable table = ds.Tables[fetchSpec.EntityMap.TableName];
 
-			GenericSqlSelectWriter writer = new GenericSqlSelectWriter(table, parameterFactory);
+		    GenericSqlSelectWriter writer = new GenericSqlSelectWriter(table, parameterFactory);
 			writer.WriteSelect(fetchSpec);
 
 			FillTable(table, writer.Command, writer.Parameters);
@@ -213,7 +210,7 @@ namespace Neo.SqlClient
 				childFirstTables.Reverse();
 				ProcessDeletes(childFirstTables);
 
-				StringBuilder errorString = new StringBuilder();
+			    StringBuilder errorString = new StringBuilder();
 				foreach(DataTable t in context.DataSet.Tables)
 				{
 					if(t.HasErrors)

@@ -1,9 +1,8 @@
 using System;
 using System.Data;
-using System.Threading;
 using System.Diagnostics;
-using System.Net;
 using System.Management;
+using System.Threading;
 using Neo.Core;
 
 
@@ -159,7 +158,7 @@ namespace Neo.Framework
 		private static void writeGuidDyn(byte[] bytes)
 		{
 			// a bit lame but 2^64 will surely not be reached........
-			Interlocked.Increment(ref sequenceNumber); 
+		    Interlocked.Increment(ref sequenceNumber); 
 			bytes[ 4] = (byte) (sequenceNumber & 0x00FF);
 			bytes[ 5] = (byte)((sequenceNumber & 0xFF00) >> 8);
 

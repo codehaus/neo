@@ -1,7 +1,8 @@
 using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 using Neo.Core.Util;
+
 
 namespace Neo.Core.Qualifiers
 {
@@ -73,7 +74,7 @@ namespace Neo.Core.Qualifiers
 		private bool EvaluateWithObject(IEntityObject anObject, int index)
 		{
 			Type			objectType;
-			PropertyInfo	propInfo;
+		    PropertyInfo	propInfo;
 			FieldInfo		fieldInfo;
 			string			member;
 			object			target;

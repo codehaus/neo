@@ -3,7 +3,6 @@ using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
-using Neo.Core;
 
 
 namespace Neo.Core.Util
@@ -64,7 +63,7 @@ namespace Neo.Core.Util
 		protected DefaultEntityMapFactory()
 		{
 			if(logger == null)
-				logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.ToString());
+				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
 			assemblyFilters = new string[] { "mscorlib", "System", "nunit", "log4net" };
 		}
 
@@ -108,7 +107,7 @@ namespace Neo.Core.Util
 			mapByObjectTypeTable = new Hashtable();
 			mapByTableNameTable = new Hashtable();
 
-			Regex ignoreExpr = new Regex("^(" + String.Join("|", assemblyFilters) + ")");
+		    Regex ignoreExpr = new Regex("^(" + String.Join("|", assemblyFilters) + ")");
 			ArrayList seenAssemblies = new ArrayList();
 			Queue waitingAssemblies = new Queue();
 

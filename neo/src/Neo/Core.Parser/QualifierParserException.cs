@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace Neo.Core.Parser
 {
-	[Serializable]
+	[System.Serializable]
 	public class QualifierParserException : NeoException
 	{
 		public QualifierParserException(string message, int position) :

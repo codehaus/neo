@@ -78,7 +78,7 @@ namespace Neo.Core.Qualifiers
 			if(aValue == nullVal)
 				return false;  // null starts with nothing, not even null...?
 
-			CompareInfo compInfo = CultureInfo.CurrentCulture.CompareInfo;
+		    CompareInfo compInfo = CultureInfo.CurrentCulture.CompareInfo;
 			return compInfo.IsPrefix((string)aValue, predValue, CompareOptions.IgnoreCase);
 		}
 

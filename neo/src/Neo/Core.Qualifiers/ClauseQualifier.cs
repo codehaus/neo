@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Text;
-using Neo.Core;
 
 
 namespace Neo.Core.Qualifiers
@@ -55,7 +53,7 @@ namespace Neo.Core.Qualifiers
 
 		public override string ToString()
 		{
-			StringBuilder builder = new StringBuilder();
+		    StringBuilder builder = new StringBuilder();
 			builder.Append("(");
 			for(int i = 0; i < qualifiers.Length; i++)
 			{

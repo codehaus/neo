@@ -1,10 +1,10 @@
 using System;
-using System.Runtime.Serialization; 
+using System.Runtime.Serialization;
 
 
 namespace Neo.Core.Util
 {
-	[Serializable]
+	[System.Serializable]
 	public class InvalidPropertyException : ApplicationException
 	{
 		public InvalidPropertyException(string message, Exception nestedEx) : base(message ,nestedEx)

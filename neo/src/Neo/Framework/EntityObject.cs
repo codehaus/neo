@@ -1,11 +1,9 @@
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Data;
 using log4net;
 using Neo.Core;
 using Neo.Core.Util;
-
 
 
 namespace Neo.Framework
@@ -27,7 +25,7 @@ namespace Neo.Framework
 		{
 		}
 
-		protected EntityObject(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext)
+		protected EntityObject(DataRow aRow, ObjectContext aContext)
 		{
 			row = aRow;
 			context = aContext;
@@ -85,7 +83,7 @@ namespace Neo.Framework
 			ArrayList values = new ArrayList();
 			foreach(object v in Row.ItemArray)
 			{
-				if(v.GetType() == typeof(System.Guid))
+				if(v.GetType() == typeof(Guid))
 					continue;
 				values.Add(v.ToString());
 			}
@@ -135,7 +133,7 @@ namespace Neo.Framework
         
 		public void SetProperty(string propName, object propValue)
 		{
-			ObjectHelper.SetProperty(this, propName, propValue);
+		    ObjectHelper.SetProperty(this, propName, propValue);
 		}
 
 		public object GetProperty(string propName)

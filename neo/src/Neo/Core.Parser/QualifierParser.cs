@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using Neo.Core;
 using Neo.Core.Qualifiers;
 
 
@@ -76,7 +75,7 @@ namespace Neo.Core.Parser
 			else if(stack.Match(TokenType.Qualifier, TokenType.Conjunctor, TokenType.Qualifier))
 			{
 				Qualifier right = (Qualifier)stack.PopValue();
-				Type qt  = (Type)stack.PopValue(); 
+			    Type qt  = (Type)stack.PopValue(); 
 				Qualifier left = (Qualifier)stack.PopValue();
 				ClauseQualifier q;
 
@@ -140,7 +139,7 @@ namespace Neo.Core.Parser
 			else if(stack.Match(TokenType.Path, TokenType.Qualifier))
 			{
 				Qualifier lq = (Qualifier)stack.PopValue();
-				ArrayList path = (ArrayList)stack.PopValue();
+			    ArrayList path = (ArrayList)stack.PopValue();
 
 				PathQualifier q = new PathQualifier((string[])path.ToArray(typeof(string)), lq);
 				token = new Token(TokenType.Qualifier, q);

@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Reflection;
 using Neo.Core;
-using Neo.Core.Util;
 
 
 namespace Neo.Framework
@@ -66,7 +64,7 @@ namespace Neo.Framework
             get { return InnerList.SyncRoot; }
         }
         
-        public void CopyTo(System.Array arr, int index)
+        public void CopyTo(Array arr, int index)
 		{
             InnerList.CopyTo(arr, index);
         }

@@ -1,19 +1,16 @@
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("Neo")]
-[assembly: AssemblyDescription("The .NET Entity Objects Framework")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("See http://neo.codehaus.org for details.")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: System.Reflection.AssemblyTitle("Neo")]
+[assembly: System.Reflection.AssemblyDescription("The .NET Entity Objects Framework")]
+[assembly: System.Reflection.AssemblyConfiguration("")]
+[assembly: System.Reflection.AssemblyCompany("")]
+[assembly: System.Reflection.AssemblyProduct("")]
+[assembly: System.Reflection.AssemblyCopyright("See http://neo.codehaus.org for details.")]
+[assembly: System.Reflection.AssemblyTrademark("")]
+[assembly: System.Reflection.AssemblyCulture("")]		
 
 //
 // Version information for an assembly consists of the following four values:
@@ -26,7 +23,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.2.1.*")]
+[assembly: System.Reflection.AssemblyVersion("1.2.1.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
@@ -53,9 +50,9 @@ using System.Runtime.CompilerServices;
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
-[assembly: AssemblyKeyName("")]
+[assembly: System.Reflection.AssemblyDelaySign(false)]
+[assembly: System.Reflection.AssemblyKeyFile("")]
+[assembly: System.Reflection.AssemblyKeyName("")]
 
 //
 // Log4Net configuration. This tells log4net that messages originating from Neo are

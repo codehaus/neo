@@ -21,7 +21,7 @@ namespace Neo.SqlClient
 		public IDataParameter CreateParameter(DataColumn pcolumn, string suffix, object pvalue)
 		{
 			SqlDbType	 dbtype;
-			SqlParameter param;
+		    SqlParameter param;
 
 			if((dbtype = ConvertToDbType(pcolumn.DataType)) == SqlDbType.Variant)
 				throw new ArgumentException(String.Format("Cannot handle data type {0} of column {1} in table {2}.", pcolumn.DataType.ToString(), pcolumn.ColumnName, pcolumn.Table.TableName));
@@ -55,16 +55,16 @@ namespace Neo.SqlClient
 			if(dbTypeTable == null)
 			{
 				dbTypeTable = new Hashtable();
-				dbTypeTable.Add(typeof(System.Boolean),  SqlDbType.Bit);
-				dbTypeTable.Add(typeof(System.Int16),	 SqlDbType.SmallInt);
-				dbTypeTable.Add(typeof(System.Int32),	 SqlDbType.Int);
-				dbTypeTable.Add(typeof(System.Int64),	 SqlDbType.BigInt);
-				dbTypeTable.Add(typeof(System.Double),	 SqlDbType.Float);
-				dbTypeTable.Add(typeof(System.Decimal),	 SqlDbType.Decimal);
-				dbTypeTable.Add(typeof(System.String),	 SqlDbType.VarChar);
-				dbTypeTable.Add(typeof(System.DateTime), SqlDbType.DateTime);
-				dbTypeTable.Add(typeof(System.Byte[]),	 SqlDbType.VarBinary);
-				dbTypeTable.Add(typeof(System.Guid),	 SqlDbType.UniqueIdentifier);
+				dbTypeTable.Add(typeof(Boolean),  SqlDbType.Bit);
+				dbTypeTable.Add(typeof(Int16),	 SqlDbType.SmallInt);
+				dbTypeTable.Add(typeof(Int32),	 SqlDbType.Int);
+				dbTypeTable.Add(typeof(Int64),	 SqlDbType.BigInt);
+				dbTypeTable.Add(typeof(Double),	 SqlDbType.Float);
+				dbTypeTable.Add(typeof(Decimal),	 SqlDbType.Decimal);
+				dbTypeTable.Add(typeof(String),	 SqlDbType.VarChar);
+				dbTypeTable.Add(typeof(DateTime), SqlDbType.DateTime);
+				dbTypeTable.Add(typeof(Byte[]),	 SqlDbType.VarBinary);
+				dbTypeTable.Add(typeof(Guid),	 SqlDbType.UniqueIdentifier);
 			}
 
 			object entry = dbTypeTable[t];

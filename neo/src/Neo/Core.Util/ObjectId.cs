@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Data;
 
 
 namespace Neo.Core.Util
@@ -84,7 +83,7 @@ namespace Neo.Core.Util
 
 		public override string ToString()
 		{	
-			StringBuilder	sb;
+		    StringBuilder	sb;
 			bool			isFirstValue;
 
 			sb = new StringBuilder("{");

@@ -1,5 +1,3 @@
-using System;
-
 namespace Neo.Core.Parser
 {
 	public class TokenStack

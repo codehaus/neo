@@ -1,5 +1,5 @@
 using System;
-using System.Runtime.Serialization ;
+using System.Runtime.Serialization;
 
 
 namespace Neo.Core
@@ -11,7 +11,7 @@ namespace Neo.Core
 	/// All exception that are thrown as a part of the normal operation of Neo are subclasses
 	/// of this type. In case of internal errors, other exceptions might be thrown.
 	/// </remarks>
-	[Serializable]
+	[System.Serializable]
 	public class NeoException : ApplicationException
 	{
 		internal NeoException(string reason) : base("[NEO] " + reason)

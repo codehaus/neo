@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Neo.Core.Util;
 
+
 namespace Neo.Core.Qualifiers
 {
 

@@ -1,13 +1,11 @@
 using System;
-using System.Reflection;
-using System.Globalization;
 using System.Collections;
 using System.Data;
-using System.Text;
-using System.Threading;
+using System.Globalization;
+using System.Reflection;
+using log4net;
 using Neo.Core.Qualifiers;
 using Neo.Core.Util;
-using log4net;
 
 
 namespace Neo.Core
@@ -57,7 +55,7 @@ namespace Neo.Core
 		public ObjectContext()
 		{
 			if(logger == null)
-				logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.ToString());
+				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
 
 			emapFactory = DefaultEntityMapFactory.SharedInstance;
 			
