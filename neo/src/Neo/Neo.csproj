@@ -254,6 +254,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Core.Util\ColumnChangeBroker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Core.Util\DefaultEntityMapFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -280,6 +285,11 @@
                 />
                 <File
                     RelPath = "Core.Util\QualifierConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Util\RowChangeBroker.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

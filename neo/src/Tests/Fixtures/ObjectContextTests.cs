@@ -27,10 +27,10 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void ObjectRegistration()
 		{
-		    Title	title;
+			Title	title;
 			bool	foundSampleTitle;
 
-		    Assertion.Assert("No objects registered.", context.GetAllRegisteredObjects().Count > 0);
+			Assertion.Assert("No objects registered.", context.GetAllRegisteredObjects().Count > 0);
 
 			foundSampleTitle = false;
 			foreach(object o in context.GetAllRegisteredObjects())
@@ -141,12 +141,12 @@ namespace Neo.Tests.Fixtures
 		}
 
 	
-        [Test]
+		[Test]
 		public void ContextTransfersForObjectLists()
 		{
 			ObjectContext childContext;
 			TitleList	  titlesInParent, titlesInChild;
-		    IList		  returnedList;
+			IList		  returnedList;
 			
 			childContext = new ObjectContext(context);
 			titlesInParent = new TitleFactory(context).FindAllObjects();
@@ -227,6 +227,33 @@ namespace Neo.Tests.Fixtures
 			childContext.SaveChanges();
 		}
 
+		[Test]
+		public void NestedContextUpdateRelations()
+		{
+			Title titleInParent = new TitleFactory(context).CreateObject("A new Title!");
+			Publisher publisher1 = new PublisherFactory(context).FindAllObjects()[0];
+			titleInParent.Publisher = publisher1;
+
+			Assert.AreEqual(6, publisher1.Titles.Count);
+			
+			ObjectContext childContext = new ObjectContext(context);
+
+			Publisher publisher2InChild = new PublisherFactory(childContext).CreateObject("publisher2");
+			
+			Title titleInChild = (Title)childContext.GetLocalObject(titleInParent);
+			titleInChild.Publisher = publisher2InChild;
+
+			Publisher publisher1InChildContext = (Publisher)childContext.GetLocalObject(publisher1);
+			Assert.AreEqual(5, publisher1InChildContext.Titles.Count);
+			Assert.AreEqual(1, publisher2InChild.Titles.Count);
+			
+			childContext.SaveChanges();
+
+			Publisher publisher2InParent = (Publisher)context.GetLocalObject(publisher2InChild);
+
+			Assert.AreEqual(5, publisher1.Titles.Count);
+			Assert.AreEqual(1, publisher2InParent.Titles.Count);
+		}
 
 		[Test]
 		public void MergeUpdatesRelationsForNewObjects()
@@ -329,7 +356,7 @@ namespace Neo.Tests.Fixtures
 
 			public ICollection SaveChangesInObjectContext(ObjectContext context)
 			{
-					return null;
+				return null;
 			}
 
 			public DataTable FetchRows(IFetchSpecification fetchSpec)
@@ -477,6 +504,7 @@ namespace Neo.Tests.Fixtures
 
 
 		#endregion
+
 
 
 	}

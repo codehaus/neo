@@ -1,3 +1,11 @@
+2004-07-20 erik (proxy)
+
+	* Added Jim's code to broker change events. This improves
+	performance, makes it easier to add custom listerners and somehow
+	solves a long standing bug with propagating updates of relations
+	from child contexts.
+
+
 2004-06-17 erik
 
 	* Made ObjectContext and DbDataStore serialisable. This means

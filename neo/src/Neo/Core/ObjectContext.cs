@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -12,6 +11,9 @@ using Neo.Core.Util;
 
 namespace Neo.Core
 {
+	public delegate void ColumnChangeHandler(object sender, DataColumnChangeEventArgs e);
+	public delegate void RowChangeHandler(object sender, DataRowChangeEventArgs e);
+	
 	/// <summary>
 	/// ObjectContext provides a wrapper around core ADO.Net functionality.
 	/// </summary>
@@ -50,7 +52,8 @@ namespace Neo.Core
 		private PropertyCollection	extendedProperties;
 		private DataRow				rowPending;
 		private Hashtable			eventHandlers;
-
+		private ColumnChangeBroker  columnChangeBroker;
+		private RowChangeBroker		rowChangeBroker;
 
 		/// <summary>
 		/// Default constructor. Sets up logger and default map factory
@@ -67,6 +70,8 @@ namespace Neo.Core
 			mainDataSet = new DataSet();
 			mainDataSet.EnforceConstraints = false;
 			eventHandlers = new Hashtable();
+			rowChangeBroker = new RowChangeBroker();
+			columnChangeBroker = new ColumnChangeBroker();
 			
 			logger.Debug("Initialised new object context.");
 		}
@@ -179,7 +184,7 @@ namespace Neo.Core
 		//	Protected and internal properties
 		//--------------------------------------------------------------------------------------
 
-	    protected internal ObjectTable ObjectTable
+		protected internal ObjectTable ObjectTable
 		{
 			get { return objectTable; }
 		}
@@ -310,25 +315,11 @@ namespace Neo.Core
 				return;
 
 			eventHandlers[table.TableName] = true;
-			table.RowDeleting += new DataRowChangeEventHandler(this.RowEvent);
-			table.RowChanging += new DataRowChangeEventHandler(this.RowEvent);
+			table.RowDeleting += new DataRowChangeEventHandler(this.OnRowDeleting);
+			table.RowChanging += new DataRowChangeEventHandler(this.OnRowChanging);
+			table.RowChanged += new DataRowChangeEventHandler(this.OnRowChanged);
+			table.ColumnChanging += new DataColumnChangeEventHandler(OnColumnChanging);
 		}
-
-		
-		/// <summary>
-		/// Raises an OnColumnChanging event for the supplied DataTable object
-		/// </summary>
-		/// <param name="table">DataTable object for which this event should be raised</param>
-		/// <param name="eventArg">Event args for this event</param>
-		protected internal virtual void SendColumnChangingEvents(DataTable table, DataColumnChangeEventArgs eventArg)
-		{
-			object[] args;
-			
-			args = new object[] { eventArg };
-			BindingFlags bflags = BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance;
-			typeof(DataTable).InvokeMember("OnColumnChanging", bflags, null, table, args, CultureInfo.CurrentCulture);
-		}
-
 
 		/// <summary>
 		/// Raises events for primary key column changes
@@ -339,10 +330,9 @@ namespace Neo.Core
 			foreach(DataColumn c in row.Table.PrimaryKey)
 			{
 				DataColumnChangeEventArgs eventArg = new DataColumnChangeEventArgs(row, c, row[c]);
-				SendColumnChangingEvents(row.Table, eventArg);
+				OnColumnChanging(row.Table, eventArg);
 			}
 		}
-
 
 		/// <summary>
 		/// Gets all values for primary key columns of the supplied row
@@ -409,6 +399,72 @@ namespace Neo.Core
 			return eo;
 		}
 
+
+		//--------------------------------------------------------------------------------------
+		//	Handling and distributing change events
+		//--------------------------------------------------------------------------------------
+
+		/// <summary>
+		/// handler for row events
+		/// </summary>
+		/// <param name="sender">object raising event</param>
+		/// <param name="e">Arguments available to handle this event</param>
+		protected virtual void OnRowChanging(object sender, DataRowChangeEventArgs e)
+		{
+			if(e.Row == rowPending)
+				return;
+
+			if(e.Action == DataRowAction.Rollback && e.Row.RowState == DataRowState.Added)
+			{
+				IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
+				object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
+				objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
+			}
+		}
+
+		protected void OnRowDeleting(object sender, DataRowChangeEventArgs e)
+		{
+			if(e.Row == rowPending)
+				return;
+
+			IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
+			object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
+			objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
+
+			rowChangeBroker.OnRowDeleting(sender, e);
+		}
+	
+		protected void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
+		{
+			columnChangeBroker.OnColumnChanging(sender, e);
+		}
+
+		protected void OnRowChanged(object sender, DataRowChangeEventArgs e)
+		{
+			if(e.Action == DataRowAction.Delete)
+				rowChangeBroker.OnRowDeleting(sender, e);
+		}
+
+		public void RegisterForColumnChanges(ColumnChangeHandler handler, string tableName, string columnName) 
+		{
+			columnChangeBroker.RegisterForColumnChanging(handler, tableName, columnName);
+		}
+
+		public void UnRegisterForColumnChanges(ColumnChangeHandler handler, string tableName, string columnName)
+		{
+			columnChangeBroker.UnRegisterForColumnChanging(handler, tableName, columnName);
+		}
+
+		public void RegisterForRowChanges(RowChangeHandler handler, string tableName)
+		{
+			rowChangeBroker.RegisterForRowChanged(handler, tableName);
+		}
+
+		public void UnRegisterForRowChanges(RowChangeHandler handler, string tableName)
+		{
+			rowChangeBroker.UnRegisterForRowChanged(handler, tableName);
+		}
+	
 
 		//--------------------------------------------------------------------------------------
 		//	Adding data from ADO.NET to this context
@@ -482,7 +538,7 @@ namespace Neo.Core
 		{
 			ArrayList	objectList;
 			DataTable	table;
-			IEntityObject	eo;
+			IEntityObject	eo = null;
 
 			if(aDataSet == null)
 				throw new ArgumentException("MergeData called with null DataSet");
@@ -532,7 +588,7 @@ namespace Neo.Core
 						fkColumn = relation.ChildColumns[0];
 						prevValue = row[fkColumn];
 						eventArg = new DataColumnChangeEventArgs(row, row.Table.Columns[fkColumn.ColumnName], prevValue);
-						SendColumnChangingEvents(mainDataSet.Tables[row.Table.TableName], eventArg);
+						OnColumnChanging(mainDataSet.Tables[row.Table.TableName], eventArg);
 					}
 				}
 				logger.Debug("Finished sending post merge events.");
@@ -711,34 +767,6 @@ namespace Neo.Core
 			eo.Row.Delete();
 		}
 
-
-		/// <summary>
-		/// handler for row events??
-		/// </summary>
-		/// <param name="sender">object raising event</param>
-		/// <param name="e">Arguments available to handle this event</param>
-		protected virtual void RowEvent(object sender, DataRowChangeEventArgs e)
-		{
-			if(e.Row == rowPending)
-				return;
-
-			if(IsObjectDeleteEvent(e) == false)
-				return;
-
-			// Normally, to read the PK we have to access the original version but
-			// if the child row which is being deleted was new (i.e. just added), we
-			// must not access the original version (which it doesn't have because it 
-			// is new.) but the current version...
-			DataRowVersion lookupVersion = DataRowVersion.Original;
-			if(e.Row.RowState == DataRowState.Added)
-				lookupVersion = DataRowVersion.Current;
-
-			IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
-			object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, lookupVersion);
-			objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
-		}
-
-	
 		/// <summary>
 		/// Determines whether the change event is for a deletion, or rollback for an added row
 		/// </summary>
@@ -785,7 +813,7 @@ namespace Neo.Core
 				lookupVersion = DataRowVersion.Original;
 			object[] pkvalues = GetPrimaryKeyValuesForRow(emap, eo.Row, lookupVersion);
 			if((eo = GetObjectFromTable(emap.TableName, pkvalues)) == null)
-  				throw new ObjectNotFoundException("Object not available in this context.");
+				throw new ObjectNotFoundException("Object not available in this context.");
 			return eo;
 		}
 
@@ -1107,7 +1135,7 @@ namespace Neo.Core
 					if(row.RowState == DataRowState.Modified)
 						row.RejectChanges();
 					eventArg = new DataColumnChangeEventArgs(row, row.Table.Columns[fkColumn.ColumnName], prevValue);
-					SendColumnChangingEvents(mainDataSet.Tables[row.Table.TableName], eventArg);
+					OnColumnChanging(mainDataSet.Tables[row.Table.TableName], eventArg);
 				}
 			}
 
@@ -1144,7 +1172,7 @@ namespace Neo.Core
 			if(rowPending != null)
 				throw new InvalidOperationException("Cannot serialise a context while a row is changing.");
 
-		    StringWriter writer = new StringWriter();
+			StringWriter writer = new StringWriter();
 			mainDataSet.WriteXml(writer, XmlWriteMode.WriteSchema);
 			info.AddValue("xmlData", writer.ToString());
 	
