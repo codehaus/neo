@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+
 using Neo.Generator.CodeGen;
 using Neo.Generator.Core;
 using Neo.MetaModel.Reader;
@@ -11,65 +13,61 @@ namespace Neo.CmdLineTool
 		[STAThread]
 		static void Main(string[] args)
 		{
-			CmdLineArguments	arguments;
+            CmdLineOptions      options;
 			VelocityGenerator	generator;
-		    string				rpath, opath, template, defaultNamespace;
-			bool				force, debug, genSupport, genUser;
 
-			arguments = new CmdLineArguments(args);
-			force = (arguments["f"] == "true");
-			debug = (arguments["d"] == "true");
-			genSupport = (arguments["support"] == "true");
-			genUser = (arguments["user"] == "true");
-			template = arguments["t"];
-			rpath = arguments["r"];
-			opath = arguments["o"];
-			defaultNamespace = arguments["namespace"];
+		    options = new CmdLineOptions();
+		    options.ProcessArgs(args);
 			
-			if(debug)
+			if(options.Debug)
 				Console.ReadLine(); // give developer chance to attach debugger
 
 			try
 			{
-				if(arguments.Filenames.Count == 0)
+				if(options.RemainingArguments.Length == 0)
 					throw new ApplicationException("No input file.");
 
 				generator = null;
-				if(genSupport || genUser)
+				if(options.GenerateSupport || options.GenerateUser)
 				{
-					if(template != null)
+					if(options.Template != null)
 						throw new ApplicationException("Cannot use template and code generator at the same time.");
 
 					CodeGenerator codeGenerator = new CodeGenerator();
-					codeGenerator.ForcesUserClassGen = force;
-					codeGenerator.GeneratesSupportClasses = genSupport;
-					codeGenerator.GeneratesUserClasses = genUser;
-					codeGenerator.DefaultNamespace = defaultNamespace;
+					codeGenerator.ForcesUserClassGen = options.Force;
+					codeGenerator.GeneratesSupportClasses = options.GenerateSupport;
+					codeGenerator.GeneratesUserClasses = options.GenerateUser;
+					codeGenerator.DefaultNamespace = options.DefaultNamespace;
 					generator = codeGenerator;
 				}
-				else if(template != null)
+				else if(options.Template != null)
 				{
 					generator = new VelocityGenerator();
 					generator.ReaderType = typeof(NorqueReader);
-					generator.Template = template;
+					generator.Template = options.Template;
 				}
 			
 				if(generator != null)
 				{
 					generator.ReaderType = typeof(NorqueReader);
-					if(rpath != null)
-						generator.ResourcePath = rpath;
+					if(options.ResourcePath != null)
+						generator.ResourcePath = options.ResourcePath;
 
-					foreach(string input in arguments.Filenames)
+					foreach(string input in options.RemainingArguments)
 					{
-						generator.Generate(input, opath);
+						generator.Generate(input, options.OutputPath);
 					}
+				} 
+                else
+                {
+                    throw new ApplicationException("You should either specify -o, -g, or -t");
 				}
+
 			}
 			catch(Exception e)
 			{
 				Console.Error.WriteLine(e.Message);
-				if(debug)
+				if(options.Debug)
 					Console.WriteLine("--\n{0}", e.StackTrace);
 			}
 		}

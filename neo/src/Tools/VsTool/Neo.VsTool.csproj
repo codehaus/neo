@@ -101,7 +101,7 @@
                 />
                 <Reference
                     Name = "envdte"
-                    AssemblyName = "envdte"
+                    AssemblyName = "EnvDTE"
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\envdte.dll"
                 />
             </References>
@@ -116,6 +116,11 @@
                 <File
                     RelPath = "CodeGenAdaptor.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CommonAssemblyInfo.cs"
+                    Link = "..\..\CommonAssemblyInfo.cs"
                     BuildAction = "Compile"
                 />
             </Include>
