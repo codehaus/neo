@@ -5,10 +5,10 @@
  */
 
 
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
+
 
 namespace Neo.CmdLineTool {
 	/// <summary>
@@ -22,7 +22,7 @@ namespace Neo.CmdLineTool {
 		// Constructor
 		public CmdLineArguments(string[] Args){
 			Parameters=new StringDictionary();
-			Regex Spliter=new Regex(@"^-{1,2}|^/|=|:",RegexOptions.IgnoreCase|RegexOptions.Compiled);
+			Regex Spliter=new Regex(@"^-{1,2}|^/|=",RegexOptions.IgnoreCase|RegexOptions.Compiled);
 			Regex Remover= new Regex(@"^['""]?(.*?)['""]?$",RegexOptions.IgnoreCase|RegexOptions.Compiled);
 			string Parameter=null;
 			string[] Parts;
