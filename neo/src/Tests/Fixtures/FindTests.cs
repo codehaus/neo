@@ -100,6 +100,17 @@ namespace Neo.Tests
 				Assertion.AssertEquals("Wrong publisher on title.", publisher.Name, title.Publisher.Name);
 		}
 
+		
+		[Test]
+		public void SimplePathQualifierOverNullRelationship()
+		{
+			DiscountList	result;
+
+			result = new DiscountFactory(context).Find("Store.Name = 'Bookbeat'");
+			
+			Assertion.AssertEquals("Should have found one discount for this store.", 1, result.Count);
+		}
+
 
 		[Test]
 		public void MultiElementPathQualifier()

@@ -22,19 +22,6 @@ namespace Neo.Tests
 		}
 
 
-		// This should really be in the base class but we need to extend testdata.xml first!
-
-		[Test]
-		public void ReadRelationshipWithNulls()
-		{
-			Discount	discount;
-		
-			discount = new DiscountFactory(context).FindUnique("DiscountType = {0}", "Initial Customer");
-			Assertion.AssertNotNull("Initial customer discount not found.", discount);
-			Assertion.AssertNull("No store should be associated with this discount.", discount.Store);
-
-		}
-
 	}
 
 }

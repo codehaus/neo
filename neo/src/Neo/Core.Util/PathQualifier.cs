@@ -92,6 +92,10 @@ namespace Neo.Core.Util
 			else
 				throw new InvalidPropertyException(String.Format("{0} is not a valid property/field for class {1}", member, objectType), null);
 	
+			if(target == null)
+			{
+				return false;
+			}
 			if(target is IEntityObject)
 			{
 				return EvaluateWithObject((IEntityObject)target, index + 1);

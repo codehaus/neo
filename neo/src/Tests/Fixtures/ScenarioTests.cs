@@ -114,6 +114,17 @@ namespace Neo.Tests
 
 
 		[Test]
+		public void ReadRelationshipWithNulls()
+		{
+			Discount	discount;
+		
+			discount = new DiscountFactory(context).FindUnique("DiscountType = {0}", "Initial Customer");
+			Assertion.AssertNotNull("Initial customer discount not found.", discount);
+			Assertion.AssertNull("No store should be associated with this discount.", discount.Store);
+		}
+
+
+		[Test]
 		public void WriteRelationships()
 		{
 			Publisher	publisher, otherPublisher;

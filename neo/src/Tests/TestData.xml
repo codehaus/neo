@@ -1,824 +1,800 @@
-<?xml version="1.0" encoding="utf-8"?>
-<DataSet xmlns="http://neo.codehaus.org/pubs4">
-  <xs:schema id="PubsDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xs:element name="PubsDataSet" msdata:IsDataSet="true" msdata:Locale="en-GB">
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:Locale="en-GB" msdata:EnforceConstraints="False">
       <xs:complexType>
         <xs:choice maxOccurs="unbounded">
           <xs:element name="titles">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="title_id" type="xs:string" minOccurs="0" />
-                <xs:element name="title" type="xs:string" minOccurs="0" />
                 <xs:element name="type" type="xs:string" minOccurs="0" />
-                <xs:element name="pub_id" type="xs:string" minOccurs="0" />
-                <xs:element name="price" type="xs:decimal" minOccurs="0" />
-                <xs:element name="advance" type="xs:decimal" minOccurs="0" />
                 <xs:element name="royalty" type="xs:int" minOccurs="0" />
-                <xs:element name="ytd_sales" type="xs:int" minOccurs="0" />
+                <xs:element name="price" type="xs:decimal" minOccurs="0" />
+                <xs:element name="title_id" type="xs:string" />
                 <xs:element name="notes" type="xs:string" minOccurs="0" />
+                <xs:element name="advance" type="xs:decimal" minOccurs="0" />
                 <xs:element name="pubdate" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="pub_id" type="xs:string" minOccurs="0" />
+                <xs:element name="title" type="xs:string" minOccurs="0" />
+                <xs:element name="ytd_sales" type="xs:int" minOccurs="0" />
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="publishers">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="pub_id" type="xs:string" minOccurs="0" />
                 <xs:element name="pub_name" type="xs:string" minOccurs="0" />
-                <xs:element name="city" type="xs:string" minOccurs="0" />
                 <xs:element name="state" type="xs:string" minOccurs="0" />
+                <xs:element name="pub_id" type="xs:string" />
                 <xs:element name="country" type="xs:string" minOccurs="0" />
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="authors">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="au_id" type="xs:string" minOccurs="0" />
-                <xs:element name="au_lname" type="xs:string" minOccurs="0" />
-                <xs:element name="au_fname" type="xs:string" minOccurs="0" />
-                <xs:element name="phone" type="xs:string" minOccurs="0" />
-                <xs:element name="address" type="xs:string" minOccurs="0" />
                 <xs:element name="city" type="xs:string" minOccurs="0" />
-                <xs:element name="state" type="xs:string" minOccurs="0" />
-                <xs:element name="contract" type="xs:boolean" minOccurs="0" />
-                <xs:element name="zip" type="xs:string" minOccurs="0" />
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="titleauthor">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="au_id" type="xs:string" minOccurs="0" />
-                <xs:element name="title_id" type="xs:string" minOccurs="0" />
-                <xs:element name="au_ord" type="xs:unsignedByte" minOccurs="0" />
-                <xs:element name="royaltyper" type="xs:int" minOccurs="0" />
+                <xs:element name="au_id" type="xs:string" />
+                <xs:element name="title_id" type="xs:string" />
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="jobs">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="job_id" type="xs:short" minOccurs="0" />
                 <xs:element name="job_desc" type="xs:string" minOccurs="0" />
-                <xs:element name="max_lvl" type="xs:unsignedByte" minOccurs="0" />
-                <xs:element name="min_lvl" type="xs:unsignedByte" minOccurs="0" />
+                <xs:element name="job_id" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" type="xs:short" />
+                <xs:element name="max_lvl" type="xs:short" minOccurs="0" />
+                <xs:element name="min_lvl" type="xs:short" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="authors">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="contract" type="xs:boolean" minOccurs="0" />
+                <xs:element name="au_id" type="xs:string" />
+                <xs:element name="au_fname" type="xs:string" minOccurs="0" />
+                <xs:element name="phone" type="xs:string" minOccurs="0" />
+                <xs:element name="au_lname" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="stores">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="stor_id" type="xs:string" />
+                <xs:element name="stor_name" type="xs:string" minOccurs="0" />
+                <xs:element name="stor_address" type="xs:string" minOccurs="0" />
+                <xs:element name="state" type="xs:string" minOccurs="0" />
+                <xs:element name="zip" type="xs:string" minOccurs="0" />
+                <xs:element name="city" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="discounts">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="discounttype" type="xs:string" />
+                <xs:element name="stor_id" type="xs:string" minOccurs="0" />
+                <xs:element name="discount" type="xs:decimal" minOccurs="0" />
               </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:choice>
       </xs:complexType>
+      <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//titles" />
+        <xs:field xpath="title_id" />
+      </xs:unique>
+      <xs:unique name="publishers_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//publishers" />
+        <xs:field xpath="pub_id" />
+      </xs:unique>
+      <xs:unique name="titleauthor_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//titleauthor" />
+        <xs:field xpath="au_id" />
+        <xs:field xpath="title_id" />
+      </xs:unique>
+      <xs:unique name="jobs_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//jobs" />
+        <xs:field xpath="job_id" />
+      </xs:unique>
+      <xs:unique name="authors_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//authors" />
+        <xs:field xpath="au_id" />
+      </xs:unique>
+      <xs:unique name="stores_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//stores" />
+        <xs:field xpath="stor_id" />
+      </xs:unique>
+      <xs:unique name="discounts_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//discounts" />
+        <xs:field xpath="discounttype" />
+      </xs:unique>
+      <xs:keyref name="stores.discounts" refer="stores_Constraint1" msdata:UpdateRule="None" msdata:DeleteRule="None">
+        <xs:selector xpath=".//discounts" />
+        <xs:field xpath="stor_id" />
+      </xs:keyref>
+      <xs:keyref name="authors.titleauthor" refer="authors_Constraint1">
+        <xs:selector xpath=".//titleauthor" />
+        <xs:field xpath="au_id" />
+      </xs:keyref>
+      <xs:keyref name="titles.titleauthor" refer="Constraint1">
+        <xs:selector xpath=".//titleauthor" />
+        <xs:field xpath="title_id" />
+      </xs:keyref>
+      <xs:keyref name="publishers.titles" refer="publishers_Constraint1" msdata:DeleteRule="SetNull">
+        <xs:selector xpath=".//titles" />
+        <xs:field xpath="pub_id" />
+      </xs:keyref>
     </xs:element>
   </xs:schema>
-  <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
-    <PubsDataSet xmlns="">
-      <titles diffgr:id="titles1" msdata:rowOrder="0">
-        <title_id>BU1032</title_id>
-        <title>The Busy Executive's Database Guide</title>
-        <type>business    </type>
-        <pub_id>1389</pub_id>
-        <price>19.99</price>
-        <advance>5000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>4095</ytd_sales>
-        <notes>An overview of available database systems with emphasis on common business applications. Illustrated.</notes>
-        <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles2" msdata:rowOrder="1">
-        <title_id>BU1111</title_id>
-        <title>Cooking with Computers: Surreptitious Balance Sheets</title>
-        <type>business    </type>
-        <pub_id>1389</pub_id>
-        <price>11.95</price>
-        <advance>5000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>3876</ytd_sales>
-        <notes>Helpful hints on how to use your electronic resources to the best advantage.</notes>
-        <pubdate>1991-06-09T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles3" msdata:rowOrder="2">
-        <title_id>BU2075</title_id>
-        <title>You Can Combat Computer Stress!</title>
-        <type>business    </type>
-        <pub_id>0736</pub_id>
-        <price>2.99</price>
-        <advance>10125</advance>
-        <royalty>24</royalty>
-        <ytd_sales>18722</ytd_sales>
-        <notes>The latest medical and psychological techniques for living with the electronic office. Easy-to-understand explanations.</notes>
-        <pubdate>1991-06-30T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles4" msdata:rowOrder="3">
-        <title_id>BU7832</title_id>
-        <title>Straight Talk About Computers</title>
-        <type>business    </type>
-        <pub_id>1389</pub_id>
-        <price>19.99</price>
-        <advance>5000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>4095</ytd_sales>
-        <notes>Annotated analysis of what computers can do for you: a no-hype guide for the critical user.</notes>
-        <pubdate>1991-06-22T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles5" msdata:rowOrder="4">
-        <title_id>MC2222</title_id>
-        <title>Silicon Valley Gastronomic Treats</title>
-        <type>mod_cook    </type>
-        <pub_id>0877</pub_id>
-        <price>19.99</price>
-        <advance>0</advance>
-        <royalty>12</royalty>
-        <ytd_sales>2032</ytd_sales>
-        <notes>Favorite recipes for quick, easy, and elegant meals.</notes>
-        <pubdate>1991-06-09T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles6" msdata:rowOrder="5">
-        <title_id>MC3021</title_id>
-        <title>The Gourmet Microwave</title>
-        <type>mod_cook    </type>
-        <pub_id>0877</pub_id>
-        <price>2.99</price>
-        <advance>15000</advance>
-        <royalty>24</royalty>
-        <ytd_sales>22246</ytd_sales>
-        <notes>Traditional French gourmet recipes adapted for modern microwave cooking.</notes>
-        <pubdate>1991-06-18T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles7" msdata:rowOrder="6">
-        <title_id>MC3026</title_id>
-        <title>The Psychology of Computer Cooking</title>
-        <type>UNDECIDED   </type>
-        <pub_id>0877</pub_id>
-        <pubdate>2000-08-06T01:33:54.1230000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles8" msdata:rowOrder="7">
-        <title_id>PC1035</title_id>
-        <title>But Is It User Friendly?</title>
-        <type>popular_comp</type>
-        <pub_id>1389</pub_id>
-        <price>22.95</price>
-        <advance>7000</advance>
-        <royalty>16</royalty>
-        <ytd_sales>8780</ytd_sales>
-        <notes>A survey of software for the naive user, focusing on the 'friendliness' of each.</notes>
-        <pubdate>1991-06-30T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles9" msdata:rowOrder="8">
-        <title_id>PC8888</title_id>
-        <title>Secrets of Silicon Valley</title>
-        <type>popular_comp</type>
-        <pub_id>1389</pub_id>
-        <price>20</price>
-        <advance>8000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>4095</ytd_sales>
-        <notes>Muckraking reporting on the world's largest computer hardware and software manufacturers.</notes>
-        <pubdate>1994-06-12T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles10" msdata:rowOrder="9">
-        <title_id>PC9999</title_id>
-        <title>Net Etiquette</title>
-        <type>popular_comp</type>
-        <pub_id>1389</pub_id>
-        <notes>A must-read for computer conferencing.</notes>
-        <pubdate>2000-08-06T01:33:54.1400000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles11" msdata:rowOrder="10">
-        <title_id>PS1372</title_id>
-        <title>Computer Phobic AND Non-Phobic Individuals: Behavior Variations</title>
-        <type>psychology  </type>
-        <pub_id>0877</pub_id>
-        <price>21.59</price>
-        <advance>7000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>375</ytd_sales>
-        <notes>A must for the specialist, this book examines the difference between those who hate and fear computers and those who don't.</notes>
-        <pubdate>1991-10-21T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles12" msdata:rowOrder="11">
-        <title_id>PS2091</title_id>
-        <title>Is Anger the Enemy?</title>
-        <type>psychology  </type>
-        <pub_id>0736</pub_id>
-        <price>10.95</price>
-        <advance>2275</advance>
-        <royalty>12</royalty>
-        <ytd_sales>2045</ytd_sales>
-        <notes>Carefully researched study of the effects of strong emotions on the body. Metabolic charts included.</notes>
-        <pubdate>1991-06-15T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles13" msdata:rowOrder="12">
-        <title_id>PS2106</title_id>
-        <title>Life Without Fear</title>
-        <type>psychology  </type>
-        <pub_id>0736</pub_id>
-        <price>7</price>
-        <advance>6000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>111</ytd_sales>
-        <notes>New exercise, meditation, and nutritional techniques that can reduce the shock of daily interactions. Popular audience. Sample menus included, exercise video available separately.</notes>
-        <pubdate>1991-10-05T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles14" msdata:rowOrder="13">
-        <title_id>PS3333</title_id>
-        <title>Prolonged Data Deprivation: Four Case Studies</title>
-        <type>psychology  </type>
-        <pub_id>0736</pub_id>
-        <price>19.99</price>
-        <advance>2000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>4072</ytd_sales>
-        <notes>What happens when the data runs dry?  Searching evaluations of information-shortage effects.</notes>
-        <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles15" msdata:rowOrder="14">
-        <title_id>PS7777</title_id>
-        <title>Emotional Security: A New Algorithm</title>
-        <type>psychology  </type>
-        <pub_id>0736</pub_id>
-        <price>7.99</price>
-        <advance>4000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>3336</ytd_sales>
-        <notes>Protecting yourself and your loved ones from undue emotional stress in the modern world. Use of computer and nutritional aids emphasized.</notes>
-        <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles16" msdata:rowOrder="15">
-        <title_id>TC3218</title_id>
-        <title>Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean</title>
-        <type>trad_cook   </type>
-        <pub_id>0877</pub_id>
-        <price>20.95</price>
-        <advance>7000</advance>
-        <royalty>10</royalty>
-        <ytd_sales>375</ytd_sales>
-        <notes>Profusely illustrated in color, this makes a wonderful gift book for a cuisine-oriented friend.</notes>
-        <pubdate>1991-10-21T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles17" msdata:rowOrder="16">
-        <title_id>TC4203</title_id>
-        <title>Fifty Years in Buckingham Palace Kitchens</title>
-        <type>trad_cook   </type>
-        <pub_id>0877</pub_id>
-        <price>11.95</price>
-        <advance>4000</advance>
-        <royalty>14</royalty>
-        <ytd_sales>15096</ytd_sales>
-        <notes>More anecdotes from the Queen's favorite cook describing life among English royalty. Recipes, techniques, tender vignettes.</notes>
-        <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <titles diffgr:id="titles18" msdata:rowOrder="17">
-        <title_id>TC7777</title_id>
-        <title>Sushi, Anyone?</title>
-        <type>trad_cook   </type>
-        <pub_id>0877</pub_id>
-        <price>14.99</price>
-        <advance>8000</advance>
-        <royalty>10</royalty>
-        <notes>Detailed instructions on how to make authentic Japanese sushi in your spare time.</notes>
-        <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
-      </titles>
-      <publishers diffgr:id="publishers1" msdata:rowOrder="0">
-        <pub_id>0736</pub_id>
-        <pub_name>New Moon Books</pub_name>
-        <city>Boston</city>
-        <state>MA</state>
-        <country>USA</country>
-      </publishers>
-      <publishers diffgr:id="publishers2" msdata:rowOrder="1">
-        <pub_id>0877</pub_id>
-        <pub_name>Binnet &amp; Hardley</pub_name>
-        <city>Washington</city>
-        <state>DC</state>
-        <country>USA</country>
-      </publishers>
-      <publishers diffgr:id="publishers3" msdata:rowOrder="2">
-        <pub_id>1389</pub_id>
-        <pub_name>Algodata Infosystems</pub_name>
-        <city>Berkeley</city>
-        <state>CA</state>
-        <country>USA</country>
-      </publishers>
-      <publishers diffgr:id="publishers4" msdata:rowOrder="3">
-        <pub_id>1622</pub_id>
-        <pub_name>Five Lakes Publishing</pub_name>
-        <city>Chicago</city>
-        <state>IL</state>
-        <country>USA</country>
-      </publishers>
-      <publishers diffgr:id="publishers5" msdata:rowOrder="4">
-        <pub_id>1756</pub_id>
-        <pub_name>Ramona Publishers</pub_name>
-        <city>Dallas</city>
-        <state>TX</state>
-        <country>USA</country>
-      </publishers>
-      <publishers diffgr:id="publishers6" msdata:rowOrder="5">
-        <pub_id>9901</pub_id>
-        <pub_name>GGG&amp;G</pub_name>
-        <city>München</city>
-        <country>Germany</country>
-      </publishers>
-      <publishers diffgr:id="publishers7" msdata:rowOrder="6">
-        <pub_id>9952</pub_id>
-        <pub_name>Scootney Books</pub_name>
-        <city>New York</city>
-        <state>NY</state>
-        <country>USA</country>
-      </publishers>
-      <publishers diffgr:id="publishers8" msdata:rowOrder="7">
-        <pub_id>9999</pub_id>
-        <pub_name>Lucerne Publishing</pub_name>
-        <city>Paris</city>
-        <country>France</country>
-      </publishers>
-      <authors diffgr:id="authors1" msdata:rowOrder="0">
-        <au_id>172-32-1176</au_id>
-        <au_lname>White</au_lname>
-        <au_fname>Johnson</au_fname>
-        <phone>408 496-7223</phone>
-        <address>10932 Bigge Rd.</address>
-        <city>Menlo Park</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94025</zip>
-      </authors>
-      <authors diffgr:id="authors2" msdata:rowOrder="1">
-        <au_id>213-46-8915</au_id>
-        <au_lname>Green</au_lname>
-        <au_fname>Marjorie</au_fname>
-        <phone>415 986-7020</phone>
-        <address>309 63rd St. #411</address>
-        <city>Oakland</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94618</zip>
-      </authors>
-      <authors diffgr:id="authors3" msdata:rowOrder="2">
-        <au_id>238-95-7766</au_id>
-        <au_lname>Carson</au_lname>
-        <au_fname>Cheryl</au_fname>
-        <phone>415 548-7723</phone>
-        <address>589 Darwin Ln.</address>
-        <city>Berkeley</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94705</zip>
-      </authors>
-      <authors diffgr:id="authors4" msdata:rowOrder="3">
-        <au_id>267-41-2394</au_id>
-        <au_lname>O'Leary</au_lname>
-        <au_fname>Michael</au_fname>
-        <phone>408 286-2428</phone>
-        <address>22 Cleveland Av. #14</address>
-        <city>San Jose</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>95128</zip>
-      </authors>
-      <authors diffgr:id="authors5" msdata:rowOrder="4">
-        <au_id>274-80-9391</au_id>
-        <au_lname>Straight</au_lname>
-        <au_fname>Dean</au_fname>
-        <phone>415 834-2919</phone>
-        <address>5420 College Av.</address>
-        <city>Oakland</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94609</zip>
-      </authors>
-      <authors diffgr:id="authors6" msdata:rowOrder="5">
-        <au_id>341-22-1782</au_id>
-        <au_lname>Smith</au_lname>
-        <au_fname>Meander</au_fname>
-        <phone>913 843-0462</phone>
-        <address>10 Mississippi Dr.</address>
-        <city>Lawrence</city>
-        <state>KS</state>
-        <contract>false</contract>
-        <zip>66044</zip>
-      </authors>
-      <authors diffgr:id="authors7" msdata:rowOrder="6">
-        <au_id>409-56-7008</au_id>
-        <au_lname>Bennet</au_lname>
-        <au_fname>Abraham</au_fname>
-        <phone>415 658-9932</phone>
-        <address>6223 Bateman St.</address>
-        <city>Berkeley</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94705</zip>
-      </authors>
-      <authors diffgr:id="authors8" msdata:rowOrder="7">
-        <au_id>427-17-2319</au_id>
-        <au_lname>Dull</au_lname>
-        <au_fname>Ann</au_fname>
-        <phone>415 836-7128</phone>
-        <address>3410 Blonde St.</address>
-        <city>Palo Alto</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94301</zip>
-      </authors>
-      <authors diffgr:id="authors9" msdata:rowOrder="8">
-        <au_id>472-27-2349</au_id>
-        <au_lname>Gringlesby</au_lname>
-        <au_fname>Burt</au_fname>
-        <phone>707 938-6445</phone>
-        <address>PO Box 792</address>
-        <city>Covelo</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>95428</zip>
-      </authors>
-      <authors diffgr:id="authors10" msdata:rowOrder="9">
-        <au_id>486-29-1786</au_id>
-        <au_lname>Locksley</au_lname>
-        <au_fname>Charlene</au_fname>
-        <phone>415 585-4620</phone>
-        <address>18 Broadway Av.</address>
-        <city>San Francisco</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94130</zip>
-      </authors>
-      <authors diffgr:id="authors11" msdata:rowOrder="10">
-        <au_id>527-72-3246</au_id>
-        <au_lname>Greene</au_lname>
-        <au_fname>Morningstar</au_fname>
-        <phone>615 297-2723</phone>
-        <address>22 Graybar House Rd.</address>
-        <city>Nashville</city>
-        <state>TN</state>
-        <contract>false</contract>
-        <zip>37215</zip>
-      </authors>
-      <authors diffgr:id="authors12" msdata:rowOrder="11">
-        <au_id>648-92-1872</au_id>
-        <au_lname>Blotchet-Halls</au_lname>
-        <au_fname>Reginald</au_fname>
-        <phone>503 745-6402</phone>
-        <address>55 Hillsdale Bl.</address>
-        <city>Corvallis</city>
-        <state>OR</state>
-        <contract>true</contract>
-        <zip>97330</zip>
-      </authors>
-      <authors diffgr:id="authors13" msdata:rowOrder="12">
-        <au_id>672-71-3249</au_id>
-        <au_lname>Yokomoto</au_lname>
-        <au_fname>Akiko</au_fname>
-        <phone>415 935-4228</phone>
-        <address>3 Silver Ct.</address>
-        <city>Walnut Creek</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94595</zip>
-      </authors>
-      <authors diffgr:id="authors14" msdata:rowOrder="13">
-        <au_id>712-45-1867</au_id>
-        <au_lname>del Castillo</au_lname>
-        <au_fname>Innes</au_fname>
-        <phone>615 996-8275</phone>
-        <address>2286 Cram Pl. #86</address>
-        <city>Ann Arbor</city>
-        <state>MI</state>
-        <contract>true</contract>
-        <zip>48105</zip>
-      </authors>
-      <authors diffgr:id="authors15" msdata:rowOrder="14">
-        <au_id>722-51-5454</au_id>
-        <au_lname>DeFrance</au_lname>
-        <au_fname>Michel</au_fname>
-        <phone>219 547-9982</phone>
-        <address>3 Balding Pl.</address>
-        <city>Gary</city>
-        <state>IN</state>
-        <contract>true</contract>
-        <zip>46403</zip>
-      </authors>
-      <authors diffgr:id="authors16" msdata:rowOrder="15">
-        <au_id>724-08-9931</au_id>
-        <au_lname>Stringer</au_lname>
-        <au_fname>Dirk</au_fname>
-        <phone>415 843-2991</phone>
-        <address>5420 Telegraph Av.</address>
-        <city>Oakland</city>
-        <state>CA</state>
-        <contract>false</contract>
-        <zip>94609</zip>
-      </authors>
-      <authors diffgr:id="authors17" msdata:rowOrder="16">
-        <au_id>724-80-9391</au_id>
-        <au_lname>MacFeather</au_lname>
-        <au_fname>Stearns</au_fname>
-        <phone>415 354-7128</phone>
-        <address>44 Upland Hts.</address>
-        <city>Oakland</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94612</zip>
-      </authors>
-      <authors diffgr:id="authors18" msdata:rowOrder="17">
-        <au_id>756-30-7391</au_id>
-        <au_lname>Karsen</au_lname>
-        <au_fname>Livia</au_fname>
-        <phone>415 534-9219</phone>
-        <address>5720 McAuley St.</address>
-        <city>Oakland</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94609</zip>
-      </authors>
-      <authors diffgr:id="authors19" msdata:rowOrder="18">
-        <au_id>807-91-6654</au_id>
-        <au_lname>Panteley</au_lname>
-        <au_fname>Sylvia</au_fname>
-        <phone>301 946-8853</phone>
-        <address>1956 Arlington Pl.</address>
-        <city>Rockville</city>
-        <state>MD</state>
-        <contract>true</contract>
-        <zip>20853</zip>
-      </authors>
-      <authors diffgr:id="authors20" msdata:rowOrder="19">
-        <au_id>846-92-7186</au_id>
-        <au_lname>Hunter</au_lname>
-        <au_fname>Sheryl</au_fname>
-        <phone>415 836-7128</phone>
-        <address>3410 Blonde St.</address>
-        <city>Palo Alto</city>
-        <state>CA</state>
-        <contract>true</contract>
-        <zip>94301</zip>
-      </authors>
-      <authors diffgr:id="authors21" msdata:rowOrder="20">
-        <au_id>893-72-1158</au_id>
-        <au_lname>McBadden</au_lname>
-        <au_fname>Heather</au_fname>
-        <phone>707 448-4982</phone>
-        <address>301 Putnam</address>
-        <city>Vacaville</city>
-        <state>CA</state>
-        <contract>false</contract>
-        <zip>95688</zip>
-      </authors>
-      <authors diffgr:id="authors22" msdata:rowOrder="21">
-        <au_id>899-46-2035</au_id>
-        <au_lname>Ringer</au_lname>
-        <au_fname>Anne</au_fname>
-        <phone>801 826-0752</phone>
-        <address>67 Seventh Av.</address>
-        <city>Salt Lake City</city>
-        <state>UT</state>
-        <contract>true</contract>
-        <zip>84152</zip>
-      </authors>
-      <authors diffgr:id="authors23" msdata:rowOrder="22">
-        <au_id>998-72-3567</au_id>
-        <au_lname>Ringer</au_lname>
-        <au_fname>Albert</au_fname>
-        <phone>801 826-0752</phone>
-        <address>67 Seventh Av.</address>
-        <city>Salt Lake City</city>
-        <state>UT</state>
-        <contract>true</contract>
-        <zip>84152</zip>
-      </authors>
-      <titleauthor diffgr:id="titleauthor1" msdata:rowOrder="0">
-        <au_id>172-32-1176</au_id>
-        <title_id>PS3333</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor2" msdata:rowOrder="1">
-        <au_id>213-46-8915</au_id>
-        <title_id>BU1032</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>40</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor3" msdata:rowOrder="2">
-        <au_id>213-46-8915</au_id>
-        <title_id>BU2075</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor4" msdata:rowOrder="3">
-        <au_id>238-95-7766</au_id>
-        <title_id>PC1035</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor5" msdata:rowOrder="4">
-        <au_id>267-41-2394</au_id>
-        <title_id>BU1111</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>40</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor6" msdata:rowOrder="5">
-        <au_id>267-41-2394</au_id>
-        <title_id>TC7777</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>30</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor7" msdata:rowOrder="6">
-        <au_id>274-80-9391</au_id>
-        <title_id>BU7832</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor8" msdata:rowOrder="7">
-        <au_id>409-56-7008</au_id>
-        <title_id>BU1032</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>60</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor9" msdata:rowOrder="8">
-        <au_id>427-17-2319</au_id>
-        <title_id>PC8888</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>50</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor10" msdata:rowOrder="9">
-        <au_id>472-27-2349</au_id>
-        <title_id>TC7777</title_id>
-        <au_ord>3</au_ord>
-        <royaltyper>30</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor11" msdata:rowOrder="10">
-        <au_id>486-29-1786</au_id>
-        <title_id>PC9999</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor12" msdata:rowOrder="11">
-        <au_id>486-29-1786</au_id>
-        <title_id>PS7777</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor13" msdata:rowOrder="12">
-        <au_id>648-92-1872</au_id>
-        <title_id>TC4203</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor14" msdata:rowOrder="13">
-        <au_id>672-71-3249</au_id>
-        <title_id>TC7777</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>40</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor15" msdata:rowOrder="14">
-        <au_id>712-45-1867</au_id>
-        <title_id>MC2222</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor16" msdata:rowOrder="15">
-        <au_id>722-51-5454</au_id>
-        <title_id>MC3021</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>75</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor17" msdata:rowOrder="16">
-        <au_id>724-80-9391</au_id>
-        <title_id>BU1111</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>60</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor18" msdata:rowOrder="17">
-        <au_id>724-80-9391</au_id>
-        <title_id>PS1372</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>25</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor19" msdata:rowOrder="18">
-        <au_id>756-30-7391</au_id>
-        <title_id>PS1372</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>75</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor20" msdata:rowOrder="19">
-        <au_id>807-91-6654</au_id>
-        <title_id>TC3218</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor21" msdata:rowOrder="20">
-        <au_id>846-92-7186</au_id>
-        <title_id>PC8888</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>50</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor22" msdata:rowOrder="21">
-        <au_id>899-46-2035</au_id>
-        <title_id>MC3021</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>25</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor23" msdata:rowOrder="22">
-        <au_id>899-46-2035</au_id>
-        <title_id>PS2091</title_id>
-        <au_ord>2</au_ord>
-        <royaltyper>50</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor24" msdata:rowOrder="23">
-        <au_id>998-72-3567</au_id>
-        <title_id>PS2091</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>50</royaltyper>
-      </titleauthor>
-      <titleauthor diffgr:id="titleauthor25" msdata:rowOrder="24">
-        <au_id>998-72-3567</au_id>
-        <title_id>PS2106</title_id>
-        <au_ord>1</au_ord>
-        <royaltyper>100</royaltyper>
-      </titleauthor>
-      <jobs diffgr:id="jobs1" msdata:rowOrder="0">
-        <job_id>1</job_id>
-        <job_desc>New Hire - Job not specified</job_desc>
-        <max_lvl>10</max_lvl>
-        <min_lvl>10</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs2" msdata:rowOrder="1">
-        <job_id>2</job_id>
-        <job_desc>Chief Executive Officer</job_desc>
-        <max_lvl>250</max_lvl>
-        <min_lvl>200</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs3" msdata:rowOrder="2">
-        <job_id>3</job_id>
-        <job_desc>Business Operations Manager</job_desc>
-        <max_lvl>225</max_lvl>
-        <min_lvl>175</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs4" msdata:rowOrder="3">
-        <job_id>4</job_id>
-        <job_desc>Chief Financial Officier</job_desc>
-        <max_lvl>250</max_lvl>
-        <min_lvl>175</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs5" msdata:rowOrder="4">
-        <job_id>5</job_id>
-        <job_desc>Publisher</job_desc>
-        <max_lvl>250</max_lvl>
-        <min_lvl>150</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs6" msdata:rowOrder="5">
-        <job_id>6</job_id>
-        <job_desc>Managing Editor</job_desc>
-        <max_lvl>225</max_lvl>
-        <min_lvl>140</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs7" msdata:rowOrder="6">
-        <job_id>7</job_id>
-        <job_desc>Marketing Manager</job_desc>
-        <max_lvl>200</max_lvl>
-        <min_lvl>120</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs8" msdata:rowOrder="7">
-        <job_id>8</job_id>
-        <job_desc>Public Relations Manager</job_desc>
-        <max_lvl>175</max_lvl>
-        <min_lvl>100</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs9" msdata:rowOrder="8">
-        <job_id>9</job_id>
-        <job_desc>Acquisitions Manager</job_desc>
-        <max_lvl>175</max_lvl>
-        <min_lvl>75</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs10" msdata:rowOrder="9">
-        <job_id>10</job_id>
-        <job_desc>Productions Manager</job_desc>
-        <max_lvl>165</max_lvl>
-        <min_lvl>75</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs11" msdata:rowOrder="10">
-        <job_id>11</job_id>
-        <job_desc>Operations Manager</job_desc>
-        <max_lvl>150</max_lvl>
-        <min_lvl>75</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs12" msdata:rowOrder="11">
-        <job_id>12</job_id>
-        <job_desc>Editor</job_desc>
-        <max_lvl>100</max_lvl>
-        <min_lvl>25</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs13" msdata:rowOrder="12">
-        <job_id>13</job_id>
-        <job_desc>Sales Representative</job_desc>
-        <max_lvl>100</max_lvl>
-        <min_lvl>25</min_lvl>
-      </jobs>
-      <jobs diffgr:id="jobs14" msdata:rowOrder="13">
-        <job_id>14</job_id>
-        <job_desc>Designer</job_desc>
-        <max_lvl>100</max_lvl>
-        <min_lvl>25</min_lvl>
-      </jobs>
-    </PubsDataSet>
-  </diffgr:diffgram>
-</DataSet>
+  <titles>
+    <type>trad_cook   </type>
+    <royalty>10</royalty>
+    <price>27.0000</price>
+    <title_id>TC7777</title_id>
+    <notes>Detailed instructions on how to make authentic Japanese sushi in your spare time.</notes>
+    <advance>8000.0000</advance>
+    <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>Sushi, Anyone?</title>
+    <ytd_sales>4095</ytd_sales>
+  </titles>
+  <titles>
+    <type>business    </type>
+    <royalty>10</royalty>
+    <price>19.9900</price>
+    <title_id>BU1032</title_id>
+    <notes>An overview of available database systems with emphasis on common business applications. Illustrated.</notes>
+    <advance>5000.0000</advance>
+    <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
+    <pub_id>1389</pub_id>
+    <title>The Busy Executive's Database Guide</title>
+    <ytd_sales>4095</ytd_sales>
+  </titles>
+  <titles>
+    <type>business    </type>
+    <royalty>10</royalty>
+    <price>11.9500</price>
+    <title_id>BU1111</title_id>
+    <notes>Helpful hints on how to use your electronic resources to the best advantage.</notes>
+    <advance>5000.0000</advance>
+    <pubdate>1991-06-09T00:00:00.0000000+00:00</pubdate>
+    <pub_id>1389</pub_id>
+    <title>Cooking with Computers: Surreptitious Balance Sheets</title>
+    <ytd_sales>3876</ytd_sales>
+  </titles>
+  <titles>
+    <type>business    </type>
+    <royalty>24</royalty>
+    <price>2.9900</price>
+    <title_id>BU2075</title_id>
+    <notes>The latest medical and psychological techniques for living with the electronic office. Easy-to-understand explanations.</notes>
+    <advance>10125.0000</advance>
+    <pubdate>1991-06-30T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0736</pub_id>
+    <title>You Can Combat Computer Stress!</title>
+    <ytd_sales>18722</ytd_sales>
+  </titles>
+  <titles>
+    <type>business    </type>
+    <royalty>10</royalty>
+    <price>19.9900</price>
+    <title_id>BU7832</title_id>
+    <notes>Annotated analysis of what computers can do for you: a no-hype guide for the critical user.</notes>
+    <advance>5000.0000</advance>
+    <pubdate>1991-06-22T00:00:00.0000000+00:00</pubdate>
+    <pub_id>1389</pub_id>
+    <title>Straight Talk About Computers</title>
+    <ytd_sales>4095</ytd_sales>
+  </titles>
+  <titles>
+    <type>mod_cook    </type>
+    <royalty>12</royalty>
+    <price>19.9900</price>
+    <title_id>MC2222</title_id>
+    <notes>Favorite recipes for quick, easy, and elegant meals.</notes>
+    <advance>0</advance>
+    <pubdate>1991-06-09T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>Silicon Valley Gastronomic Treats</title>
+    <ytd_sales>2032</ytd_sales>
+  </titles>
+  <titles>
+    <type>mod_cook    </type>
+    <royalty>24</royalty>
+    <price>2.9900</price>
+    <title_id>MC3021</title_id>
+    <notes>Traditional French gourmet recipes adapted for modern microwave cooking.</notes>
+    <advance>15000.0000</advance>
+    <pubdate>1991-06-18T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>The Gourmet Microwave</title>
+    <ytd_sales>22246</ytd_sales>
+  </titles>
+  <titles>
+    <type>UNDECIDED   </type>
+    <title_id>MC3026</title_id>
+    <pubdate>2000-08-06T01:33:54.1230000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>The Psychology of Computer Cooking</title>
+  </titles>
+  <titles>
+    <type>popular_comp</type>
+    <royalty>16</royalty>
+    <price>22.9500</price>
+    <title_id>PC1035</title_id>
+    <notes>A survey of software for the naive user, focusing on the 'friendliness' of each.</notes>
+    <advance>7000.0000</advance>
+    <pubdate>1991-06-30T00:00:00.0000000+00:00</pubdate>
+    <pub_id>1389</pub_id>
+    <title>But Is It User Friendly?</title>
+    <ytd_sales>8780</ytd_sales>
+  </titles>
+  <titles>
+    <type>popular_comp</type>
+    <royalty>10</royalty>
+    <price>20.0000</price>
+    <title_id>PC8888</title_id>
+    <notes>Muckraking reporting on the world's largest computer hardware and software manufacturers.</notes>
+    <advance>8000.0000</advance>
+    <pubdate>1994-06-12T00:00:00.0000000+00:00</pubdate>
+    <pub_id>1389</pub_id>
+    <title>Secrets of Silicon Valley</title>
+    <ytd_sales>4095</ytd_sales>
+  </titles>
+  <titles>
+    <type>popular_comp</type>
+    <title_id>PC9999</title_id>
+    <notes>A must-read for computer conferencing.</notes>
+    <pubdate>2000-08-06T01:33:54.1400000+00:00</pubdate>
+    <pub_id>1389</pub_id>
+    <title>Net Etiquette</title>
+  </titles>
+  <titles>
+    <type>psychology  </type>
+    <royalty>10</royalty>
+    <price>21.5900</price>
+    <title_id>PS1372</title_id>
+    <notes>A must for the specialist, this book examines the difference between those who hate and fear computers and those who don't.</notes>
+    <advance>7000.0000</advance>
+    <pubdate>1991-10-21T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>Computer Phobic AND Non-Phobic Individuals: Behavior Variations</title>
+    <ytd_sales>375</ytd_sales>
+  </titles>
+  <titles>
+    <type>psychology  </type>
+    <royalty>12</royalty>
+    <price>10.9500</price>
+    <title_id>PS2091</title_id>
+    <notes>Carefully researched study of the effects of strong emotions on the body. Metabolic charts included.</notes>
+    <advance>2275.0000</advance>
+    <pubdate>1991-06-15T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0736</pub_id>
+    <title>Is Anger the Enemy?</title>
+    <ytd_sales>2045</ytd_sales>
+  </titles>
+  <titles>
+    <type>psychology  </type>
+    <royalty>10</royalty>
+    <price>7.0000</price>
+    <title_id>PS2106</title_id>
+    <notes>New exercise, meditation, and nutritional techniques that can reduce the shock of daily interactions. Popular audience. Sample menus included, exercise video available separately.</notes>
+    <advance>6000.0000</advance>
+    <pubdate>1991-10-05T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0736</pub_id>
+    <title>Life Without Fear</title>
+    <ytd_sales>111</ytd_sales>
+  </titles>
+  <titles>
+    <type>psychology  </type>
+    <royalty>10</royalty>
+    <price>19.9900</price>
+    <title_id>PS3333</title_id>
+    <notes>What happens when the data runs dry?  Searching evaluations of information-shortage effects.</notes>
+    <advance>2000.0000</advance>
+    <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0736</pub_id>
+    <title>Prolonged Data Deprivation: Four Case Studies</title>
+    <ytd_sales>4072</ytd_sales>
+  </titles>
+  <titles>
+    <type>psychology  </type>
+    <royalty>10</royalty>
+    <price>7.9900</price>
+    <title_id>PS7777</title_id>
+    <notes>Protecting yourself and your loved ones from undue emotional stress in the modern world. Use of computer and nutritional aids emphasized.</notes>
+    <advance>4000.0000</advance>
+    <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0736</pub_id>
+    <title>Emotional Security: A New Algorithm</title>
+    <ytd_sales>3336</ytd_sales>
+  </titles>
+  <titles>
+    <type>trad_cook   </type>
+    <royalty>10</royalty>
+    <price>20.9500</price>
+    <title_id>TC3218</title_id>
+    <notes>Profusely illustrated in color, this makes a wonderful gift book for a cuisine-oriented friend.</notes>
+    <advance>7000.0000</advance>
+    <pubdate>1991-10-21T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean</title>
+    <ytd_sales>375</ytd_sales>
+  </titles>
+  <titles>
+    <type>trad_cook   </type>
+    <royalty>14</royalty>
+    <price>11.9500</price>
+    <title_id>TC4203</title_id>
+    <notes>More anecdotes from the Queen's favorite cook describing life among English royalty. Recipes, techniques, tender vignettes.</notes>
+    <advance>4000.0000</advance>
+    <pubdate>1991-06-12T00:00:00.0000000+00:00</pubdate>
+    <pub_id>0877</pub_id>
+    <title>Fifty Years in Buckingham Palace Kitchens</title>
+    <ytd_sales>15096</ytd_sales>
+  </titles>
+  <publishers>
+    <pub_name>New Moon Books</pub_name>
+    <state>MA</state>
+    <pub_id>0736</pub_id>
+    <country>USA</country>
+    <city>Boston</city>
+  </publishers>
+  <publishers>
+    <pub_name>Binnet &amp; Hardley</pub_name>
+    <state>DC</state>
+    <pub_id>0877</pub_id>
+    <country>USA</country>
+    <city>Washington</city>
+  </publishers>
+  <publishers>
+    <pub_name>Algodata Infosystems</pub_name>
+    <state>CA</state>
+    <pub_id>1389</pub_id>
+    <country>USA</country>
+    <city>Berkeley</city>
+  </publishers>
+  <publishers>
+    <pub_name>Five Lakes Publishing</pub_name>
+    <state>IL</state>
+    <pub_id>1622</pub_id>
+    <country>USA</country>
+    <city>Chicago</city>
+  </publishers>
+  <publishers>
+    <pub_name>Ramona Publishers</pub_name>
+    <state>TX</state>
+    <pub_id>1756</pub_id>
+    <country>USA</country>
+    <city>Dallas</city>
+  </publishers>
+  <publishers>
+    <pub_name>GGG&amp;G</pub_name>
+    <pub_id>9901</pub_id>
+    <country>Germany</country>
+    <city>München</city>
+  </publishers>
+  <publishers>
+    <pub_name>Scootney Books</pub_name>
+    <state>NY</state>
+    <pub_id>9952</pub_id>
+    <country>USA</country>
+    <city>New York</city>
+  </publishers>
+  <publishers>
+    <pub_name>Lucerne Publishing</pub_name>
+    <pub_id>9999</pub_id>
+    <country>France</country>
+    <city>Paris</city>
+  </publishers>
+  <titleauthor>
+    <au_id>213-46-8915</au_id>
+    <title_id>BU1032</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>409-56-7008</au_id>
+    <title_id>BU1032</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>267-41-2394</au_id>
+    <title_id>BU1111</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>724-80-9391</au_id>
+    <title_id>BU1111</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>213-46-8915</au_id>
+    <title_id>BU2075</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>274-80-9391</au_id>
+    <title_id>BU7832</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>712-45-1867</au_id>
+    <title_id>MC2222</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>722-51-5454</au_id>
+    <title_id>MC3021</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>899-46-2035</au_id>
+    <title_id>MC3021</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>238-95-7766</au_id>
+    <title_id>PC1035</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>427-17-2319</au_id>
+    <title_id>PC8888</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>846-92-7186</au_id>
+    <title_id>PC8888</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>486-29-1786</au_id>
+    <title_id>PC9999</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>724-80-9391</au_id>
+    <title_id>PS1372</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>756-30-7391</au_id>
+    <title_id>PS1372</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>899-46-2035</au_id>
+    <title_id>PS2091</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>998-72-3567</au_id>
+    <title_id>PS2091</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>998-72-3567</au_id>
+    <title_id>PS2106</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>172-32-1176</au_id>
+    <title_id>PS3333</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>486-29-1786</au_id>
+    <title_id>PS7777</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>807-91-6654</au_id>
+    <title_id>TC3218</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>648-92-1872</au_id>
+    <title_id>TC4203</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>267-41-2394</au_id>
+    <title_id>TC7777</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>472-27-2349</au_id>
+    <title_id>TC7777</title_id>
+  </titleauthor>
+  <titleauthor>
+    <au_id>672-71-3249</au_id>
+    <title_id>TC7777</title_id>
+  </titleauthor>
+  <jobs>
+    <job_desc>New Hire - Job not specified</job_desc>
+    <job_id>1</job_id>
+    <max_lvl>10</max_lvl>
+    <min_lvl>10</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Chief Executive Officer</job_desc>
+    <job_id>2</job_id>
+    <max_lvl>250</max_lvl>
+    <min_lvl>200</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Business Operations Manager</job_desc>
+    <job_id>3</job_id>
+    <max_lvl>225</max_lvl>
+    <min_lvl>175</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Chief Financial Officier</job_desc>
+    <job_id>4</job_id>
+    <max_lvl>250</max_lvl>
+    <min_lvl>175</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Publisher</job_desc>
+    <job_id>5</job_id>
+    <max_lvl>250</max_lvl>
+    <min_lvl>150</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Managing Editor</job_desc>
+    <job_id>6</job_id>
+    <max_lvl>225</max_lvl>
+    <min_lvl>140</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Marketing Manager</job_desc>
+    <job_id>7</job_id>
+    <max_lvl>200</max_lvl>
+    <min_lvl>120</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Public Relations Manager</job_desc>
+    <job_id>8</job_id>
+    <max_lvl>175</max_lvl>
+    <min_lvl>100</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Acquisitions Manager</job_desc>
+    <job_id>9</job_id>
+    <max_lvl>175</max_lvl>
+    <min_lvl>75</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Productions Manager</job_desc>
+    <job_id>10</job_id>
+    <max_lvl>165</max_lvl>
+    <min_lvl>75</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Operations Manager</job_desc>
+    <job_id>11</job_id>
+    <max_lvl>150</max_lvl>
+    <min_lvl>75</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Editor</job_desc>
+    <job_id>12</job_id>
+    <max_lvl>100</max_lvl>
+    <min_lvl>25</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Sales Representative</job_desc>
+    <job_id>13</job_id>
+    <max_lvl>100</max_lvl>
+    <min_lvl>25</min_lvl>
+  </jobs>
+  <jobs>
+    <job_desc>Designer</job_desc>
+    <job_id>14</job_id>
+    <max_lvl>100</max_lvl>
+    <min_lvl>25</min_lvl>
+  </jobs>
+  <authors>
+    <contract>true</contract>
+    <au_id>172-32-1176</au_id>
+    <au_fname>Johnson</au_fname>
+    <phone>408 496-7223</phone>
+    <au_lname>White</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>213-46-8915</au_id>
+    <au_fname>Marjorie</au_fname>
+    <phone>415 986-7020</phone>
+    <au_lname>Green</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>238-95-7766</au_id>
+    <au_fname>Cheryl</au_fname>
+    <phone>415 548-7723</phone>
+    <au_lname>Carson</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>267-41-2394</au_id>
+    <au_fname>Michael</au_fname>
+    <phone>408 286-2428</phone>
+    <au_lname>O'Leary</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>274-80-9391</au_id>
+    <au_fname>Dean</au_fname>
+    <phone>415 834-2919</phone>
+    <au_lname>Straight</au_lname>
+  </authors>
+  <authors>
+    <contract>false</contract>
+    <au_id>341-22-1782</au_id>
+    <au_fname>Meander</au_fname>
+    <phone>913 843-0462</phone>
+    <au_lname>Smith</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>409-56-7008</au_id>
+    <au_fname>Abraham</au_fname>
+    <phone>415 658-9932</phone>
+    <au_lname>Bennet</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>427-17-2319</au_id>
+    <au_fname>Ann</au_fname>
+    <phone>415 836-7128</phone>
+    <au_lname>Dull</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>472-27-2349</au_id>
+    <au_fname>Burt</au_fname>
+    <phone>707 938-6445</phone>
+    <au_lname>Gringlesby</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>486-29-1786</au_id>
+    <au_fname>Charlene</au_fname>
+    <phone>415 585-4620</phone>
+    <au_lname>Locksley</au_lname>
+  </authors>
+  <authors>
+    <contract>false</contract>
+    <au_id>527-72-3246</au_id>
+    <au_fname>Morningstar</au_fname>
+    <phone>615 297-2723</phone>
+    <au_lname>Greene</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>648-92-1872</au_id>
+    <au_fname>Reginald</au_fname>
+    <phone>503 745-6402</phone>
+    <au_lname>Blotchet-Halls</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>672-71-3249</au_id>
+    <au_fname>Akiko</au_fname>
+    <phone>415 935-4228</phone>
+    <au_lname>Yokomoto</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>712-45-1867</au_id>
+    <au_fname>Innes</au_fname>
+    <phone>615 996-8275</phone>
+    <au_lname>del Castillo</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>722-51-5454</au_id>
+    <au_fname>Michel</au_fname>
+    <phone>219 547-9982</phone>
+    <au_lname>DeFrance</au_lname>
+  </authors>
+  <authors>
+    <contract>false</contract>
+    <au_id>724-08-9931</au_id>
+    <au_fname>Dirk</au_fname>
+    <phone>415 843-2991</phone>
+    <au_lname>Stringer</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>724-80-9391</au_id>
+    <au_fname>Stearns</au_fname>
+    <phone>415 354-7128</phone>
+    <au_lname>MacFeather</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>756-30-7391</au_id>
+    <au_fname>Livia</au_fname>
+    <phone>415 534-9219</phone>
+    <au_lname>Karsen</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>807-91-6654</au_id>
+    <au_fname>Sylvia</au_fname>
+    <phone>301 946-8853</phone>
+    <au_lname>Panteley</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>846-92-7186</au_id>
+    <au_fname>Sheryl</au_fname>
+    <phone>415 836-7128</phone>
+    <au_lname>Hunter</au_lname>
+  </authors>
+  <authors>
+    <contract>false</contract>
+    <au_id>893-72-1158</au_id>
+    <au_fname>Heather</au_fname>
+    <phone>707 448-4982</phone>
+    <au_lname>McBadden</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>899-46-2035</au_id>
+    <au_fname>Anne</au_fname>
+    <phone>801 826-0752</phone>
+    <au_lname>Ringer</au_lname>
+  </authors>
+  <authors>
+    <contract>true</contract>
+    <au_id>998-72-3567</au_id>
+    <au_fname>Albert</au_fname>
+    <phone>801 826-0752</phone>
+    <au_lname>Ringer</au_lname>
+  </authors>
+  <stores>
+    <stor_id>6380</stor_id>
+    <stor_name>Eric the Read Books</stor_name>
+    <stor_address>788 Catamaugus Ave.</stor_address>
+    <state>WA</state>
+    <zip>98056</zip>
+    <city>Seattle</city>
+  </stores>
+  <stores>
+    <stor_id>7066</stor_id>
+    <stor_name>Barnum's</stor_name>
+    <stor_address>567 Pasadena Ave.</stor_address>
+    <state>CA</state>
+    <zip>92789</zip>
+    <city>Tustin</city>
+  </stores>
+  <stores>
+    <stor_id>7067</stor_id>
+    <stor_name>News &amp; Brews</stor_name>
+    <stor_address>577 First St.</stor_address>
+    <state>CA</state>
+    <zip>96745</zip>
+    <city>Los Gatos</city>
+  </stores>
+  <stores>
+    <stor_id>7131</stor_id>
+    <stor_name>Doc-U-Mat: Quality Laundry and Books</stor_name>
+    <stor_address>24-A Avogadro Way</stor_address>
+    <state>WA</state>
+    <zip>98014</zip>
+    <city>Remulade</city>
+  </stores>
+  <stores>
+    <stor_id>7896</stor_id>
+    <stor_name>Fricative Bookshop</stor_name>
+    <stor_address>89 Madison St.</stor_address>
+    <state>CA</state>
+    <zip>90019</zip>
+    <city>Fremont</city>
+  </stores>
+  <stores>
+    <stor_id>8042</stor_id>
+    <stor_name>Bookbeat</stor_name>
+    <stor_address>679 Carson St.</stor_address>
+    <state>OR</state>
+    <zip>89076</zip>
+    <city>Portland</city>
+  </stores>
+  <discounts>
+    <discounttype>Initial Customer</discounttype>
+    <discount>10.50</discount>
+  </discounts>
+  <discounts>
+    <discounttype>Volume Discount</discounttype>
+    <discount>6.70</discount>
+  </discounts>
+  <discounts>
+    <discounttype>Customer Discount</discounttype>
+    <stor_id>8042</stor_id>
+    <discount>5.00</discount>
+  </discounts>
+</NewDataSet>

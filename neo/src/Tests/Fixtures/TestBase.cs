@@ -37,7 +37,10 @@ namespace Neo.Tests
 		protected DataSet GetTestDataSet()
 		{
 			DataSet dataset = new DataSet();
-			dataset.ReadXml("..\\..\\TestData.xml", XmlReadMode.Auto);
+			dataset.ReadXml("..\\..\\TestData.xml", XmlReadMode.ReadSchema);
+			// Loading a dataset that is not a diffgram will mark all rows as added;
+			// which is not what we want. Therefore, we need to call AcceptChanges()
+			dataset.AcceptChanges();
 			return dataset;
 		}
 
