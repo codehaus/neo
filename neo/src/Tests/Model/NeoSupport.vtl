@@ -393,7 +393,7 @@ internal class ${entity.ClassName}Map : EntityMap
 #elseif($entity.IdMethod.ToString == "IdBroker")
 		return new IdBrokerPkInitializer();
 #elseif($entity.IdMethod.ToString == "Guid")
-		return new GuidPkInitializer();
+		return new UuidType4PkInitializer();
 #end
 	}
     

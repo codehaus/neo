@@ -1,3 +1,10 @@
+2004-03-05 erik
+
+	* Added a new PkInitializer that uses the standard system way
+	to create a new GUID. To use, replace GuidPkInitializer in the
+	templates with NewGuidPkInitializer.
+	
+
 2004-02-17 erik
 
 	* Added support to specify the class that will be instantiated

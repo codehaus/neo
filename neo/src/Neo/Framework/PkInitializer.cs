@@ -62,7 +62,25 @@ namespace Neo.Framework
 
 
 	//--------------------------------------------------------------------------------------
-	//	Globally Unique Primary Keys (created by the client)
+	//	Globally Unique Primary Keys (created by the client, .NET version)
+	//--------------------------------------------------------------------------------------
+
+	public class NewGuidPkInitializer : IPkInitializer
+	{
+		public void InitializeRow(DataRow row, object argument)
+		{
+			DataColumn[] pkcolumns;
+
+			pkcolumns = row.Table.PrimaryKey;
+			if((pkcolumns.Length != 1) || (pkcolumns[0].DataType != typeof(Guid)))
+				throw new InvalidOperationException("Invalid PK for GUID type.");
+			row[pkcolumns[0]] = Guid.NewGuid();
+		}
+	}
+
+
+	//--------------------------------------------------------------------------------------
+	//	Globally Unique Primary Keys (created by the client, custom version)
 	//--------------------------------------------------------------------------------------
 
 	// Currently uses 16 bytes as follows: seconds since 1-Jan-2000 (4 bytes), rolling 
