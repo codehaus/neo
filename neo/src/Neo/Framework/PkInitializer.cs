@@ -134,12 +134,6 @@ namespace Neo.Framework
 			string qstring = "SELECT * FROM Win32_NetworkAdapterConfiguration where IPEnabled = true";
 			foreach(ManagementObject mo in new ManagementObjectSearcher(qstring).Get())
 			{
-				string ipaddr = ((string[])mo["IPAddress"])[0];
-				if((ipaddr != null) && (ipaddr != String.Empty))
-				{
-					foreach(string group in ipaddr.Split('.'))
-						bytes[idx++] = (byte)Convert.ToInt16(group, 10);
-				}
 				string macaddr = ((string)mo["MacAddress"]);
 				if((macaddr != null) || (macaddr != String.Empty))
 				{
