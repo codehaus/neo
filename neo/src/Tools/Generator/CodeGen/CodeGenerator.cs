@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using Neo.Generator.Core;
 using Neo.MetaModel;
@@ -75,13 +76,15 @@ namespace Neo.Generator.CodeGen
 		}
 
 	
-		public void GenerateClassFiles(string inputFile, string outputPath, bool genUser, bool forceWrite)
+		public IList GenerateClassFiles(string inputFile, string outputPath, bool genUser, bool forceWrite)
 		{
 		    IModelReader modelReader;
+			ArrayList	 fileList;
 			Entity		 entity;
 			string		 dir;
 
 			modelReader = (IModelReader)Activator.CreateInstance(readerType);
+			fileList = new ArrayList();
 
 			modelReader.ReadConfiguration(inputFile, new ConfigDelegate(setPiAttribute));
 			if((dir = outputPath) == null)
@@ -110,7 +113,9 @@ namespace Neo.Generator.CodeGen
 						Generate(genUser ? userClassTemplate : supportClassesTemplate , ctx, writer);   	
 					}
 				}
+				fileList.Add(outputFile);
 			}
+			return fileList;
 		}
 		
 

@@ -1,3 +1,10 @@
+2004-09-29 erik
+
+    * Thanks to a tip from Christoffer Skjoldborg I found out how to 
+    add items to a project from a custom tool; and this means that the
+    VS.NET tool now automatically adds classes for new entities.
+
+
 2004-09-28 erik
 
     * Added new virtual method to create CommandBuilders to 
