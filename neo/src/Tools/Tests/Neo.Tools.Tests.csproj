@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "Neo.Tests"
+                AssemblyName = "Neo.Tools.Tests"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = 'IF NOT EXIST "$(ProjectDir)$(OutDir)norque.dtd" COPY "$(ProjectDir)norque.dtd" "$(ProjectDir)$(OutDir)"'
-                RootNamespace = "Neo.Tests"
+                RootNamespace = "Neo.Tools.Tests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >

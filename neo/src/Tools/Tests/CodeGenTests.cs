@@ -65,8 +65,6 @@ namespace Neo.Tools.Tests
 			contents = reader.ReadToEnd();
 			reader.Close();
 
-		    Console.WriteLine(contents);
-
 			// Check some random strings that should definitely be in the file
 			Assertion.Assert("No/wrong namespace def.", contents.IndexOf("namespace pubs4.Model") > 0);
 			Assertion.Assert("No/wrong class def.", contents.IndexOf("public class TitleBase : EntityObject") > 0);
