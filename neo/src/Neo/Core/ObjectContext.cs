@@ -248,6 +248,7 @@ namespace Neo.Core
 			objectTable = new ObjectTable();
 			mainDataSet = new DataSet();
 			mainDataSet.EnforceConstraints = false;
+			loadedEntities = new Hashtable();
 			eventHandlers = new Hashtable();
 		}
 
