@@ -1,6 +1,6 @@
 <!--
     Torque XML database schema DTD
-    $Id: norque.dtd,v 1.1 2004-06-16 13:14:59 erik Exp $
+    $Id: norque.dtd,v 1.2 2004-11-01 11:41:36 erik Exp $
 -->
 
 <!--
@@ -78,7 +78,7 @@ Java class or method name.
         | DATE | TIME    | TIMESTAMP   | BINARY     | VARBINARY | LONGVARBINARY
         | NULL | OTHER   | JAVA_OBJECT | DISTINCT   | STRUCT    | ARRAY
         | BLOB | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR | UNIQUEIDENTIFIER
-        | DOUBLE
+        | DOUBLE | DATETIME
     ) "VARCHAR"
   hidden (true|false) "false"
   javaType (object|primitive) #IMPLIED

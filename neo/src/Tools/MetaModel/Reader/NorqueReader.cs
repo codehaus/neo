@@ -306,7 +306,7 @@ namespace Neo.MetaModel.Reader
 								new string[] { "System.Double",		"REAL", "DOUBLE", "FLOAT" },
 								new string[] { "System.Decimal",	"NUMERIC", "DECIMAL" },
 								new string[] { "System.String",		"CHAR", "VARCHAR", "LONGVARCHAR" },
-								new string[] { "System.DateTime",	"DATE", "TIME", "TIMESTAMP" },
+								new string[] { "System.DateTime",	"DATE", "TIME", "DATETIME" },
 								new string[] { "System.Byte[]",		"BINARY", "VARBINARY" },
 								new string[] { "System.Guid",		"UNIQUEIDENTIFIER" }
 							};
