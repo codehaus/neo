@@ -111,16 +111,26 @@ namespace Neo.NAntTasks {
                 TextWriter oldStdOut = Console.Out;
                 TextWriter stdOut = new StringWriter();
                 Console.SetOut(stdOut);
-
-                foreach (string input in Schemas.FileNames)
+                try 
                 {
-                    generator.Generate(input, OutputPath);
+                    foreach (string input in Schemas.FileNames) 
+                    {
+                        generator.Generate(input, OutputPath);
+                    }
+                } 
+                catch (Exception e)
+                {
+                    throw new BuildException(String.Format("Could not generate {0} for schema{1}", outputMessage, (Schemas.FileNames.Count != 1) ? "s" : ""), e);
+                        
+                }
+                finally
+                {
+                    Console.SetOut(oldStdOut);
+                    stdOut.Close();
+                    DumpOutput(stdOut.ToString());
                 }
 
-                Console.SetOut(oldStdOut);
-                stdOut.Close();
-
-                DumpOutput(stdOut.ToString());
+                
 
             } 
             else 
