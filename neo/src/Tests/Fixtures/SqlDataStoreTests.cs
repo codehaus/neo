@@ -259,10 +259,8 @@ namespace Neo.Tests
 			}
 
 			store.ProcessInserts(tables, changeTables);
-			foreach(PkChangeTable chg in changeTables) 
-			{
-				Assertion.Assert("The Table had not generated it's primary key, it should not be in this list", chg.Count > 0);
-			}
+
+			Assertion.AssertEquals("Should not have created change tables", 0, changeTables.Count);
 		}
 
 		[Test] 

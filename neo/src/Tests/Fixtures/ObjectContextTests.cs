@@ -132,12 +132,12 @@ namespace Neo.Tests
 		public void ContextTransfersForOneObjectNotFound()
 		{
 			ObjectContext childContext;
-			Title		  titleInParent, titleInChild;
+			Title		  titleInParent;
 			
 			titleInParent = new TitleFactory(context).FindUnique("TitleId = 'TC7777'");
 			// note we are using a new context as parent context
 			childContext = new ObjectContext(new ObjectContext()); 
-			titleInChild = (Title)childContext.GetLocalObject(titleInParent);
+			childContext.GetLocalObject(titleInParent);
 		}
 
 	

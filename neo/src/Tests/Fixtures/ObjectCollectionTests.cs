@@ -1,20 +1,19 @@
 using System;
 using System.Collections;
-using System.Data;
-using NUnit.Framework;
 using Neo.Core;
+using NUnit.Framework;
 using Pubs4.Model;
 
 
 namespace Neo.Tests
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ObjectCollectionTests : TestBase
 	{
 		protected ObjectContext	context;
 
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void LoadDataSet()
 		{
 			SetupLog4Net();
@@ -23,17 +22,17 @@ namespace Neo.Tests
 		}
 
 	
-		[Test]
+		[NUnit.Framework.Test]
 		public void FindingObjectsSimple()
 		{
-			Publisher	publisher;
+		    Publisher	publisher;
 			Title		originalTitle;
 			TitleList	foundTitles;
 
 			originalTitle = new TitleFactory(context).FindObject("TC7777");
 			publisher = new PublisherFactory(context).FindObject("0877");
 			foundTitles = publisher.Titles.Find("TitleId", "TC7777");
-			Assertion.AssertEquals("Found wrong number of titles.", 1, foundTitles.Count);
+		    Assertion.AssertEquals("Found wrong number of titles.", 1, foundTitles.Count);
 			Assertion.AssertEquals("Found wrong title.", originalTitle, foundTitles[0]);
 		}
 
@@ -70,22 +69,9 @@ namespace Neo.Tests
 		public void FindingObjectsUniqueMultipleInstances()
 		{
 			Publisher	publisher;
-			Title		foundTitle;
 
 			publisher = new PublisherFactory(context).FindObject("0877");
-			try
-			{
-				foundTitle = publisher.Titles.FindUnique("Publisher", publisher);
-				Console.WriteLine(foundTitle.TheTitle);
-			}
-			catch (NotUniqueException e)
-			{
-				Assertion.AssertEquals("Incorrect exception message",
-					"[NEO] The query 'Publisher' for parameters '" + publisher.ToString() + "' was not unique.",
-					e.Message);
-				throw e;
-			}
-			Assertion.Fail("Should have thrown a NotUniqueException.");
+			publisher.Titles.FindUnique("Publisher", publisher);
 		}
 
 		[Test]
@@ -93,23 +79,10 @@ namespace Neo.Tests
 		public void FindingObjectsUniqueNoInstances()
 		{
 			Publisher	publisher;
-			Title		foundTitle;
 
 			publisher = new PublisherFactory(context).FindObject("1622");
 			Assertion.AssertNotNull("Found wrong publisher.", publisher);
-			try
-			{
-				foundTitle = publisher.Titles.FindUnique("Publisher = {0} AND Royalty = {1}", publisher, 10);
-			}
-			catch (NotUniqueException e)
-			{
-				Console.WriteLine(e.Message);
-				Assertion.AssertEquals("Incorrect exception message",
-					"[NEO] The query 'Publisher = {0} AND Royalty = {1}' for parameters '" + publisher.ToString() + "', '10' returned zero matches.",
-					e.Message);
-				throw e;
-			}
-			Assertion.Fail("Should have thrown a NotUniqueException.");
+			publisher.Titles.FindUnique("Publisher = {0} AND Royalty = {1}", publisher, 10);
 		}
 
 		[Test]
@@ -173,7 +146,7 @@ namespace Neo.Tests
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void MakeReadOnlyAndExplicitIListImpl()
 		{
-			IList	titles;
+		    IList	titles;
 
 			titles = new TitleFactory(context).FindAllObjects();
 			Assertion.Assert("Too few titles.", titles.Count > 2);
@@ -182,7 +155,6 @@ namespace Neo.Tests
 			Assertion.Assert("Assignment failed.", titles[0].Equals(titles[1]));
 			((TitleList)titles).MakeReadOnly();
 			titles[0] = titles[1];
-			Assertion.Fail("Should not have allowed mutation.");
 		}
 
 	}

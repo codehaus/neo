@@ -1,6 +1,6 @@
 2004-06-03 erik
 
-	* Added simple support for retrieving sorting fetch results.
+	* Added simple support for retrieving sorted fetch results.
 	At the moment sorting is limited to attributes, not paths, and
 	the in-memory implementation is further limited to sorting by 
 	one attribute. Note that the IFetchSpecification interface has

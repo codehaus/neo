@@ -227,19 +227,7 @@ namespace Neo.Tests
 			TitleFactory	factory;
 
 			factory = new TitleFactory(context);
-			try
-			{
-				factory.FindUnique("Type", "business    ");
-			}
-			catch (NotUniqueException e)
-			{
-				Assertion.AssertEquals("Incorrect exception message.",
-					"[NEO] The query 'Type' for parameters 'business    ' was not unique.",
-					e.Message);
-				throw e;
-			}
-
-			Assertion.Fail("Should have thrown a NotUniqueException.");
+			factory.FindUnique("Type", "business    ");
 		}
 
 
