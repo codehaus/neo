@@ -62,7 +62,7 @@ namespace Neo.Tools.Tests
 		#region Test data (multipleNamespaces)
 
 		string schema_multipleNamespaces = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../MetaModel/Reader/norque.dtd'>
 
 			<database name='pubs' package='pubs4.Model' defaultIdMethod='none'>
 				<table name='titles' javaName='Title' description='Title (Book) Table'>
@@ -89,7 +89,7 @@ namespace Neo.Tools.Tests
 		#region Test data (foreignKeyWithComments)
 
 		string schema_foreignKeyWithComments = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../MetaModel/Reader/norque.dtd'>
 
 			<database
 			name='pubs'
@@ -134,7 +134,7 @@ namespace Neo.Tools.Tests
 		#region Test data (compoundForeignKey)
 
 		string schema_compoundForeignKey = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../MetaModel/Reader/norque.dtd'>
 
 			<database
 			name='pubs'
@@ -180,7 +180,7 @@ namespace Neo.Tools.Tests
 		#region Test data (uniqueConstraint)
 
 		string schema_tableWithUniqueElement = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../MetaModel/Reader/norque.dtd'>
 
 			<database
 			name='pubs'
