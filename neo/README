@@ -1,15 +1,11 @@
 
-QUICKSTART
+Building Neo from source:
 
-Or a lame excuse for a quick start document.
-
-1) Open neo\src\Tests\Neo.Tests.sln
+1) Open neo\src\Neo.sln
 
 2) Build this.
 
-3) Run the unit tests if you want. (You will have to change the db connection 
-   string in test.config to point to a SQL server instance that has the 'pubs'
-   demo database installed.) All test must pass!
+3) Run the unit tests if you want. All test must pass!
 
 4) Open neo\src\Tools\Neo.Tools.sln
 
