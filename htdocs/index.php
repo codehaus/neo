@@ -68,9 +68,9 @@
 	<p class="navtitle">Using Neo</p>
 	   <?php navitem("Download", "download.html", $page) ?>
 	   <?php navitem("Quickstart", "quickstart.html", $page) ?>
-	   <?php navitem("Manual", "manual/manual.html", $page) ?>
 	   <?php navitem("Documents", "docs.html", $page) ?>
 	   <?php navitem("Resources", "resources.html", $page) ?>
+	   <?php navitem("Related", "related.html", $page) ?>
 </div>
 
 <div id="contentbox">
