@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="Neo" default="full" basedir=".">
 	
-	<property name="buildconfig" value="Release" />
+	<property name="buildconfig" value="Debug" />
 	
 	<target name="full" depends="clean,solution,runtests"/>
 	<target name="quick" depends="solution,runtests"/>

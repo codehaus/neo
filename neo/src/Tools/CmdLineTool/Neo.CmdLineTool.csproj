@@ -80,11 +80,6 @@
                     HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "Neo.SqlGen"
-                    Project = "{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "Neo.Model"
                     Project = "{85B07E6D-5672-419F-9902-D4F030FF58E0}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"

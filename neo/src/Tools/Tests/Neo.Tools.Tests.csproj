@@ -80,21 +80,6 @@
                     HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\lib\nunit.framework.dll"
-                />
-                <Reference
-                    Name = "Neo.SqlGen"
-                    Project = "{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Neo"
-                    AssemblyName = "Neo"
-                    HintPath = "..\..\Neo\bin\Debug\Neo.dll"
-                />
-                <Reference
                     Name = "Neo.MetaModel"
                     Project = "{85B07E6D-5672-419F-9902-D4F030FF58E0}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -103,6 +88,16 @@
                     Name = "Neo.Generator"
                     Project = "{D93135A9-8371-4A01-A8A1-71566D129587}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Neo"
+                    AssemblyName = "Neo"
+                    HintPath = "..\..\Neo\bin\Debug\Neo.dll"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\..\..\lib\nunit.framework.dll"
                 />
             </References>
         </Build>
@@ -139,15 +134,6 @@
                 />
                 <File
                     RelPath = "SingleTableSchema.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "SqlGenTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "validOutput.sql"
                     BuildAction = "Content"
                 />
             </Include>

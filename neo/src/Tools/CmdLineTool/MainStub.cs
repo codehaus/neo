@@ -3,7 +3,6 @@ using System.Collections;
 using Neo.Generator.CodeGen;
 using Neo.Generator.Core;
 using Neo.MetaModel.Reader;
-using Neo.SqlGen;
 
 
 namespace Neo.CmdLineTool
@@ -37,12 +36,6 @@ namespace Neo.CmdLineTool
 				if(arguments.Filenames.Count == 0)
 					throw new ApplicationException("No input file.");
 
-				/* These are here for compatibility reasons. If you can use the velocity generator with a SQL DDL template instead. */
-				if(genSql)
-					GenSql(rpath, opath, arguments.Filenames);
-				if(genSqlDrop)
-					GenSqlDrop(rpath, opath, arguments.Filenames);
-				
 				generator = null;
 				if(genSupport || genUser)
 				{
@@ -80,30 +73,6 @@ namespace Neo.CmdLineTool
 				if(debug)
 					Console.WriteLine("--\n{0}", e.StackTrace);
 			}
-		}
-
-		
-		
-		public static void GenSql(string rpath, string opath, IList filenames)
-		{
-		    SqlGenerator sqlGenerator = new SqlGenerator();
-			if(rpath != null)
-				sqlGenerator.ResourcePath = rpath;
-			if(opath != null)
-				sqlGenerator.OutputPath = opath;
-			foreach(string f in filenames)
-				sqlGenerator.GenerateSqlFile(f);
-		}
-
-		public static void GenSqlDrop(string rpath, string opath, IList filenames)
-		{
-			SqlDropGenerator sqlDropGenerator = new SqlDropGenerator();
-			if(rpath != null)
-				sqlDropGenerator.ResourcePath = rpath;
-			if(opath != null)
-				sqlDropGenerator.OutputPath = opath;
-			foreach(string f in filenames)
-				sqlDropGenerator.GenerateSqlFile(f);
 		}
 
 	}

@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.CmdLineTool", "CmdLineT
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.SqlGen", "SqlGen\Neo.SqlGen.csproj", "{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Tools.Tests", "Tests\Neo.Tools.Tests.csproj", "{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -37,10 +33,6 @@ Global
 		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Debug.Build.0 = Debug|.NET
 		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Release.ActiveCfg = Release|.NET
 		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Release.Build.0 = Release|.NET
-		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Debug.ActiveCfg = Debug|.NET
-		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Debug.Build.0 = Debug|.NET
-		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Release.ActiveCfg = Release|.NET
-		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Release.Build.0 = Release|.NET
 		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Debug.ActiveCfg = Debug|.NET
 		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Debug.Build.0 = Debug|.NET
 		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Release.ActiveCfg = Release|.NET
