@@ -37,7 +37,8 @@ namespace Neo.Database
 		{
 			if(connection.State != ConnectionState.Open)
 			{
-				logger.Debug("Opening connection to \"" + GetConnectionStringForLogging() + "\"");
+				if(logger.IsDebugEnabled) 
+					logger.Debug("Opening connection to \"" + GetConnectionStringForLogging() + "\"");
 				connection.Open();
 			}
 		}
@@ -47,7 +48,8 @@ namespace Neo.Database
 			if(connection.State != ConnectionState.Closed && transaction == null)
 			{
 				connection.Close();
-				logger.Debug("Closed connection to \"" + GetConnectionStringForLogging() + "\"");
+				if(logger.IsDebugEnabled) 
+					logger.Debug("Closed connection to \"" + GetConnectionStringForLogging() + "\"");
 			}
 		}
 
