@@ -109,5 +109,35 @@ namespace Neo.MetaModel
 		}
 
 
+		//--------------------------------------------------------------------------------------
+		//  helper methods
+		//--------------------------------------------------------------------------------------
+
+		public void SetDefaultColumnType(Type dataType)
+		{
+			if(dataType.Equals(typeof(Boolean)))
+				columnType = "BIT";
+			else if(dataType.Equals(typeof(Int16)))
+				columnType =  "SMALLINT";
+			else if(dataType.Equals(typeof(Int32)))
+				columnType =  "INTEGER";
+			else if(dataType.Equals(typeof(Int64)))
+				columnType =  "BIGINT";
+			else if(dataType.Equals(typeof(Double)))
+				columnType =  "DOUBLE";
+			else if(dataType.Equals(typeof(Decimal)))
+				columnType =  "DECIMAL";
+			else if(dataType.Equals(typeof(String)))
+				columnType =  "VARCHAR";
+			else if(dataType.Equals(typeof(DateTime)))
+				columnType =  "DATETIME";
+			else if(dataType.Equals(typeof(byte[])))
+				columnType =  "BINARY";
+			else if(dataType.Equals(typeof(Guid)))
+				columnType =  "UNIQUEIDENTIFIER";
+			else
+				throw new ArgumentException("Data type " + dataType + " not supported.");
+		}
+
 	}
 }

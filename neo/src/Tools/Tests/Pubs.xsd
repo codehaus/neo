@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="Pubs" targetNamespace="http://tempuri.org/Pubs.xsd" elementFormDefault="qualified"
+	attributeFormDefault="qualified" xmlns="http://tempuri.org/Pubs.xsd" xmlns:mstns="http://tempuri.org/Pubs.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+	xmlns:codegen="urn:schemas-microsoft-com:xml-msprop">
+	<xs:element name="Pubs" msdata:IsDataSet="true">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="titles" codegen:typedName="Title">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="title_id" codegen:typedName="TitleID">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="6" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="title">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="80" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="type">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="4" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="pub_id" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="4" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="price" type="xs:decimal" minOccurs="0" />
+							<xs:element name="advance" type="xs:decimal" minOccurs="0" />
+							<xs:element name="royalty" type="xs:int" minOccurs="0" />
+							<xs:element name="ytd_sales" type="xs:int" minOccurs="0" />
+							<xs:element name="notes" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="200" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="pubdate" type="xs:dateTime" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="publishers" codegen:typedName="Publisher">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="pub_id">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="4" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="pub_name" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="40" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="city" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="20" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="state" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="2" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="country" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="30" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+		<xs:unique name="titlepk" msdata:PrimaryKey="true">
+			<xs:selector xpath=".//mstns:titles" />
+			<xs:field xpath="mstns:title_id" />
+		</xs:unique>
+		<xs:unique name="publisherpk" msdata:PrimaryKey="true">
+			<xs:selector xpath=".//mstns:publishers" />
+			<xs:field xpath="mstns:pub_id" />
+		</xs:unique>
+		<xs:keyref name="publisherstitles" refer="publisherpk" codegen:typedParent="Publisher" codegen:typedChildren="Titles">
+			<xs:selector xpath=".//mstns:titles" />
+			<xs:field xpath="mstns:pub_id" />
+		</xs:keyref>
+	</xs:element>
+</xs:schema>

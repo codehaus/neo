@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = 'IF NOT EXIST "$(ProjectDir)$(OutDir)norque.dtd" COPY "$(ProjectDir)norque.dtd" "$(ProjectDir)$(OutDir)"'
                 RootNamespace = "Neo.Tests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -128,13 +128,31 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "norque.dtd"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "NorqueReaderTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Pubs.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Pubs.xsx"
+                    DependentUpon = "Pubs.xsd"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "SingleTableSchema.xml"
                     BuildAction = "Content"
+                />
+                <File
+                    RelPath = "XsdReaderTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>

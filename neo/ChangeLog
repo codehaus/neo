@@ -1,3 +1,9 @@
+2004-01-27 erik (proxy)
+
+	* Added Arjen's XsdReader which allows to define the Neo schema
+	using XSD rather than the Norque format.
+
+
 2004-01-26 erik
 
 	* Added null keyword support in qualifier formats and cleaned up
