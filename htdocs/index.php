@@ -28,6 +28,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
 	<title>Neo (.NET Entity Objects)</title>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="std.css" />
 </head>
 
@@ -39,13 +40,13 @@
     </div>
 	<div id="metanav">
         <a href="http://codehaus.org"><img src="http://codehaus.org/codehaus-small.gif" width="209" height="40" alt="codehaus.org" style="border:0px" /></a><br />
-	    <a class="mn" href="http://wiki.codehaus.org/neo">Wiki</a>
+	    <a class="mn" href="http://docs.codehaus.org/display/NEO">Wiki</a>
 	    &nbsp;&middot;&nbsp;
 	    <a class="mn" href="http://jira.codehaus.org/secure/BrowseProject.jspa?id=10377">Bugs</a>
         &nbsp;&middot;&nbsp;
         <a class="mn" href="http://lists.codehaus.org/mailman/listinfo">Lists</a>
 	    &nbsp;&middot;&nbsp;
-	    <a class="mn" href="http://cvs.codehaus.org/viewcvs.cgi/?root=neo">CVS</a>
+	    <a class="mn" href="http://cvs.neo.codehaus.org/">CVS</a>
     </div>
 </div>
 
@@ -58,7 +59,7 @@
 	<p class="navtitle">Using Neo</p>
 	   <?php navitem("Download", "download.html", $page) ?>
 	   <?php navitem("Quickstart", "quickstart.html", $page) ?>
-	   <?php navitem("Documentation", "docs.html", $page) ?>
+	   <?php navitem("Documents", "docs.html", $page) ?>
 	   <?php navitem("Resources", "resources.html", $page) ?>
 </div>
 
