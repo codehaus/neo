@@ -172,9 +172,9 @@ public class ${entity.ClassName}List : ObjectListBase
 		return (${entity.ClassName})base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new ${entity.ClassName} FindSingle(string qualifierFormat, params object[] parameters)
+	public new ${entity.ClassName} FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (${entity.ClassName})base.FindSingle(qualifierFormat, parameters);
+		return (${entity.ClassName})base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -237,9 +237,9 @@ public class ${entity.ClassName}Relation : ObjectRelationBase
 		return (${entity.ClassName})base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new ${entity.ClassName} FindSingle(string qualifierFormat, params object[] parameters)
+	public new ${entity.ClassName} FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (${entity.ClassName})base.FindSingle(qualifierFormat, parameters);
+		return (${entity.ClassName})base.FindFirst(qualifierFormat, parameters);
 	}
 
 }

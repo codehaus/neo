@@ -18,6 +18,7 @@ namespace Neo.Framework
 
 		internal readonly IEntityObject Owner;
 		internal readonly DataRelation Relation;
+		protected		  IList innerList;
 
 		protected ObjectRelationBase(IEntityObject eo, DataRelation aRelation)
 		{
@@ -25,6 +26,21 @@ namespace Neo.Framework
 				throw new ArgumentException("DataRelation cannot have compound keys.");
 			Owner = eo;
 			Relation = aRelation;
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Protected properties
+		//--------------------------------------------------------------------------------------
+
+		protected override IList InnerList
+		{
+			get
+			{
+				if(innerList == null)
+					Load();
+				return innerList;
+			}
 		}
 
 
@@ -64,9 +80,9 @@ namespace Neo.Framework
 		{
 			IEntityMap emap = Owner.Context.EntityMapFactory.GetMap(row.Table.TableName);
 			object[] pkvalues = Owner.Context.GetPrimaryKeyValuesForRow(emap, row, DataRowVersion.Current);
-			object eo = Owner.Context.GetRegisteredObject(foreignTableName, pkvalues);
+			object eo = Owner.Context.ObjectTable.GetObject(foreignTableName, pkvalues);
 			if((eo == null) && tryDeleted)
-				eo = Owner.Context.GetDeletedObject(foreignTableName, pkvalues);
+				eo = Owner.Context.ObjectTable.GetDeletedObject(foreignTableName, pkvalues);
 			return eo;
 		}
 
@@ -130,21 +146,6 @@ namespace Neo.Framework
 		}
 
 		
-		//--------------------------------------------------------------------------------------
-		//	Protected properties
-		//--------------------------------------------------------------------------------------
-
-		protected override IList InnerList
-		{
-			get
-			{
-				if(innerList == null)
-					Load();
-				return innerList;
-			}
-		}
-
-
 		//--------------------------------------------------------------------------------------
 		//	Untyped implementations to be called by subclasses
 		//--------------------------------------------------------------------------------------

@@ -16,37 +16,19 @@ namespace Neo.Core
 	/// </summary>
 	public class ObjectContext : IDataStore
 	{
+
 		//--------------------------------------------------------------------------------------
 		//	Static fields and methods
 		//--------------------------------------------------------------------------------------
 
 		private static ILog logger;
 
-		private static ObjectContext sharedInstance;
-
-		
-		public static ObjectContext SharedInstance
-		{
-			get
-			{
-				if(sharedInstance == null)
-					sharedInstance = new ObjectContext();
-				return sharedInstance;
-			}
-			set
-			{
-				sharedInstance = value;
-			}
-		
-		}
 
 		//--------------------------------------------------------------------------------------
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
-		private IDictionary			objectTable;
-		private IDictionary			objectsByEntityTable;
-		private IDictionary			deletedObjectTable;
+		private ObjectTable			objectTable;
 		private DataSet				mainDataSet;
 		private IDataStore			dataStore;
 		private bool				copiedParent;
@@ -64,11 +46,9 @@ namespace Neo.Core
 			emapFactory = DefaultEntityMapFactory.SharedInstance;
 			
 			// If you add code here, you might want to add it to Clear() as well
+			objectTable = new ObjectTable();
 			mainDataSet = new DataSet();
 			mainDataSet.EnforceConstraints = false;
-			objectTable = new Hashtable();
-			objectsByEntityTable = new Hashtable();
-			deletedObjectTable = new Hashtable();
 			eventHandlers = new Hashtable();
 			
 			logger.Debug("Initialised new object context.");
@@ -90,32 +70,6 @@ namespace Neo.Core
 				MergeData(((ObjectContext)aDataStore).DataSet, false);
 				copiedParent = true;
 			}
-		}
-
-
-		//--------------------------------------------------------------------------------------
-		//	Modifying internal data structures
-		//--------------------------------------------------------------------------------------
-
-		protected void AddObjectToTables(ObjectId oid, object eo)
-		{
-			ArrayList	entityList;
-
-			objectTable[oid] = eo;
-
-			if((entityList = (ArrayList)objectsByEntityTable[oid.TableName]) == null)
-			{
-				entityList = new ArrayList();
-				objectsByEntityTable[oid.TableName] = entityList;
-			}
-			entityList.Add(eo);
-		}
-
-
-		protected void RemoveObjectFromTables(ObjectId oid, IEntityObject eo)
-		{
-			objectTable.Remove(oid);
-			((ArrayList)objectsByEntityTable[oid.TableName]).Remove(eo);
 		}
 
 
@@ -153,15 +107,21 @@ namespace Neo.Core
 		}
 
 
-		public DataRow RowPending
+		//--------------------------------------------------------------------------------------
+		//	Protected and internal properties
+		//--------------------------------------------------------------------------------------
+
+		protected internal ObjectTable ObjectTable
+		{
+			get { return objectTable; }
+		}
+
+		
+		protected internal DataRow RowPending
 		{
 			get { return rowPending; }
 		}
 
-
-		//--------------------------------------------------------------------------------------
-		//	Protected properties
-		//--------------------------------------------------------------------------------------
 
 		protected ILog Logger
 		{
@@ -181,11 +141,9 @@ namespace Neo.Core
 
 		public virtual void Clear()
 		{
+			objectTable = new ObjectTable();
 			mainDataSet = new DataSet();
 			mainDataSet.EnforceConstraints = false;
-			objectTable = new Hashtable();
-			objectsByEntityTable = new Hashtable();
-			deletedObjectTable = new Hashtable();
 			eventHandlers = new Hashtable();
 		}
 
@@ -205,7 +163,7 @@ namespace Neo.Core
 		public virtual void AcceptChanges()
 		{
 			mainDataSet.AcceptChanges();
-			deletedObjectTable.Clear();
+			objectTable.ForgetAllDeletedObjects();
 		}
 
 	
@@ -223,7 +181,7 @@ namespace Neo.Core
 				if(pkChangeTableList != null)
 					UpdatePrimaryKeys(pkChangeTableList);
 				mainDataSet.AcceptChanges();
-				deletedObjectTable.Clear();
+				objectTable.ForgetAllDeletedObjects();
 				logger.Debug("SaveChanges. Completed.");
 			}
 			catch(Exception e)
@@ -298,7 +256,7 @@ namespace Neo.Core
 			oid = new ObjectId(emap.TableName, pkvalues);
 
 			// If the object is known to be deleted, forget about it.
-			if((eo = (IEntityObject)deletedObjectTable[oid]) != null)
+			if((eo = objectTable.GetDeletedObject(oid)) != null)
 				return null;
 
 			// We allow rows from other datasets to be passed in. Find them in the main set.
@@ -309,12 +267,12 @@ namespace Neo.Core
 			}
 
 			// If we don't have an object yet, create it.
-			if((eo = (IEntityObject)objectTable[oid]) == null)
+			if((eo = objectTable.GetObject(oid)) == null)
 			{
 				BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 				object[] args = { aRow, this };
 				eo = (IEntityObject)Activator.CreateInstance(emap.ObjectType, bflags, null, args, null);
-				AddObjectToTables(oid, eo);
+				objectTable.AddObject(oid, eo);
 			}
 			else
 			{
@@ -370,7 +328,7 @@ namespace Neo.Core
 			foreach(DataRow rowInNewTable in newTable.Rows)
 			{
 				oid = new ObjectId(tableName, GetPrimaryKeyValuesForRow(emap, rowInNewTable, DataRowVersion.Current));
-				if((objectTable[oid] == null) && (deletedObjectTable[oid] == null))
+				if((objectTable.GetObject(oid) == null) && (objectTable.GetDeletedObject(oid) == null))
 				{
 					thisTable.ImportRow(rowInNewTable);
 					GetObjectForRow(rowInNewTable);
@@ -475,7 +433,7 @@ namespace Neo.Core
 			foreach(PkChangeTable.ChangeRecord r in changeTable)
 			{
 				oid = new ObjectId(changeTable.TableName, new object[] { r.OldValue });
-				if((eo = (IEntityObject)objectTable[oid]) == null)
+				if((eo = objectTable.GetObject(oid)) == null)
 					throw new ArgumentException("PkChangeTable references unknown object " + oid.ToString());
 				eo.Row[emap.PrimaryKeyColumns[0]] = r.NewValue;
 			}
@@ -508,9 +466,9 @@ namespace Neo.Core
 			if(pkvalues != null)
 			{
 				oid = new ObjectId(emap.TableName, pkvalues);
-				if((deletedObject = (IEntityObject)deletedObjectTable[oid]) != null)
+				if((deletedObject = objectTable.GetDeletedObject(oid)) != null)
 				{
-					deletedObjectTable.Remove(oid);
+					objectTable.ForgetDeletedObject(oid);
 					existingRow = deletedObject.Row;
 				}
 			}
@@ -583,18 +541,15 @@ namespace Neo.Core
 
 		public virtual void DeleteObject(IEntityObject eo)
 		{
-			if(((IEntityObject)eo).Context != this)
+			if(eo.Context != this)
 				throw new ArgumentException("Object is not in this context.");
 			logger.Debug("Deleting object of type " + eo.GetType().ToString());
-			((IEntityObject)eo).Row.Delete();
+			eo.Row.Delete();
 		}
 
 
 		protected virtual void RowEvent(object sender, DataRowChangeEventArgs e)
 		{
-			IEntityObject	eo;
-			ObjectId		oid;
-
 			if(e.Row == rowPending)
 				return;
 
@@ -611,16 +566,7 @@ namespace Neo.Core
 
 			IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
 			object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, lookupVersion);
-			oid = new ObjectId(e.Row.Table.TableName, pkvalues);
-			eo = (IEntityObject)objectTable[oid];
-			if(eo == null)
-			{
-				if(deletedObjectTable[oid] != null)
-					return; // sort-of okay, did see this before
-				throw new InvalidOperationException("Nothing known about object " + oid.ToString());
-			}
-			RemoveObjectFromTables(oid, eo);
-			deletedObjectTable[oid] = eo;
+			objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
 		}
 
 	
@@ -640,25 +586,7 @@ namespace Neo.Core
 
 		public ICollection GetAllRegisteredObjects()
 		{
-			return new ArrayList(objectTable.Values);
-		}
-
-
-		protected ICollection GetAllDeletedObjectIds()
-		{
-			return new ArrayList(deletedObjectTable.Keys);
-		}
-
-
-		protected internal object GetRegisteredObject(string tablename, object[] pkvalues)
-		{
-			return objectTable[new ObjectId(tablename, pkvalues)];
-		}
-
-
-		protected internal object GetDeletedObject(string tablename, object[] pkvalues)
-		{
-			return deletedObjectTable[new ObjectId(tablename, pkvalues)];
+			return objectTable.GetAllObjects();
 		}
 
 
@@ -691,21 +619,24 @@ namespace Neo.Core
 
 		public virtual IEntityObject GetObjectFromTable(string tableName, object[] pkvalues)
 		{
-			object	obj;
+			IEntityObject	obj;
+			ObjectId		oid;
+			
+			oid = new ObjectId(tableName, pkvalues);
 			
 			// First, try in memory
-			if((obj = GetRegisteredObject(tableName, pkvalues)) != null)
-				return (IEntityObject)obj;
+			if((obj = objectTable.GetObject(oid)) != null)
+				return obj;
 
 			// Now check whether it's deleted.
-			if(GetDeletedObject(tableName, pkvalues) != null)
+			if(objectTable.GetDeletedObject(oid) != null)
 				return null;
 
 			// Neither, so try the store
 			if(CanLoadFromStore)
 			{
 				FetchObjectFromStore(emapFactory.GetMap(tableName), pkvalues);
-				return (IEntityObject)GetRegisteredObject(tableName, pkvalues);
+				return objectTable.GetObject(oid);
 			}
 			
 			return null;
@@ -725,7 +656,7 @@ namespace Neo.Core
 				FetchObjectsFromStore(fetchSpec);
 			}
 
-			if((objects = (ArrayList)objectsByEntityTable[tableName]) == null)
+			if((objects = objectTable.GetObjects(tableName)) == null)
 				return new ArrayList();
 
 			result = new ArrayList();
@@ -751,7 +682,7 @@ namespace Neo.Core
 
 			if(logger.IsDebugEnabled) logger.Debug("In-memory search for " + fetchSpec.ToString());
 			
-			if((objects = (ArrayList)objectsByEntityTable[fetchSpec.EntityMap.TableName]) == null)
+			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
 				return new ArrayList();
 
 			limit = fetchSpec.FetchLimit;
@@ -855,7 +786,7 @@ namespace Neo.Core
 		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
 		{
 			Qualifier	q;
-			ArrayList	objects;
+			IList		objects;
 			DataTable	myTable, resultTable;
 
 			myTable = mainDataSet.Tables[fetchSpec.EntityMap.TableName];
@@ -868,7 +799,7 @@ namespace Neo.Core
 
 			resultTable = myTable.Clone();
 
-			if((objects = (ArrayList)objectsByEntityTable[fetchSpec.EntityMap.TableName]) == null)
+			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
 				return resultTable;
 
 			q = fetchSpec.Qualifier;
@@ -894,9 +825,9 @@ namespace Neo.Core
 
 			// Detached rows don't count as changes. But if the child deleted something
 			// that we also have as added we need to delete it here, too.
-			foreach(ObjectId oid in childContext.GetAllDeletedObjectIds())
+			foreach(ObjectId oid in childContext.ObjectTable.GetAllDeletedObjectIds())
 			{
-				if(((eo = (IEntityObject)objectTable[oid]) != null) && (eo.Row.RowState == DataRowState.Added))
+				if(((eo = objectTable.GetObject(oid)) != null) && (eo.Row.RowState == DataRowState.Added))
 					DeleteObject(eo);
 			}
 

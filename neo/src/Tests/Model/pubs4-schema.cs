@@ -235,9 +235,9 @@ public class TitleList : ObjectListBase
 		return (Title)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Title FindSingle(string qualifierFormat, params object[] parameters)
+	public new Title FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Title)base.FindSingle(qualifierFormat, parameters);
+		return (Title)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -300,9 +300,9 @@ public class TitleRelation : ObjectRelationBase
 		return (Title)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Title FindSingle(string qualifierFormat, params object[] parameters)
+	public new Title FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Title)base.FindSingle(qualifierFormat, parameters);
+		return (Title)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -636,9 +636,9 @@ public class JobList : ObjectListBase
 		return (Job)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Job FindSingle(string qualifierFormat, params object[] parameters)
+	public new Job FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Job)base.FindSingle(qualifierFormat, parameters);
+		return (Job)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -701,9 +701,9 @@ public class JobRelation : ObjectRelationBase
 		return (Job)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Job FindSingle(string qualifierFormat, params object[] parameters)
+	public new Job FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Job)base.FindSingle(qualifierFormat, parameters);
+		return (Job)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -1019,9 +1019,9 @@ public class PublisherList : ObjectListBase
 		return (Publisher)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Publisher FindSingle(string qualifierFormat, params object[] parameters)
+	public new Publisher FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Publisher)base.FindSingle(qualifierFormat, parameters);
+		return (Publisher)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -1084,9 +1084,9 @@ public class PublisherRelation : ObjectRelationBase
 		return (Publisher)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Publisher FindSingle(string qualifierFormat, params object[] parameters)
+	public new Publisher FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Publisher)base.FindSingle(qualifierFormat, parameters);
+		return (Publisher)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -1381,9 +1381,9 @@ public class TitleAuthorList : ObjectListBase
 		return (TitleAuthor)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new TitleAuthor FindSingle(string qualifierFormat, params object[] parameters)
+	public new TitleAuthor FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (TitleAuthor)base.FindSingle(qualifierFormat, parameters);
+		return (TitleAuthor)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -1446,9 +1446,9 @@ public class TitleAuthorRelation : ObjectRelationBase
 		return (TitleAuthor)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new TitleAuthor FindSingle(string qualifierFormat, params object[] parameters)
+	public new TitleAuthor FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (TitleAuthor)base.FindSingle(qualifierFormat, parameters);
+		return (TitleAuthor)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -1769,9 +1769,9 @@ public class AuthorList : ObjectListBase
 		return (Author)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Author FindSingle(string qualifierFormat, params object[] parameters)
+	public new Author FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Author)base.FindSingle(qualifierFormat, parameters);
+		return (Author)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }
@@ -1834,9 +1834,9 @@ public class AuthorRelation : ObjectRelationBase
 		return (Author)base.FindUnique(qualifierFormat, parameters);
 	}
 	
-	public new Author FindSingle(string qualifierFormat, params object[] parameters)
+	public new Author FindFirst(string qualifierFormat, params object[] parameters)
 	{
-		return (Author)base.FindSingle(qualifierFormat, parameters);
+		return (Author)base.FindFirst(qualifierFormat, parameters);
 	}
 
 }

@@ -16,9 +16,6 @@ namespace Neo.Framework
 		//	Fields and Constructor
 		//--------------------------------------------------------------------------------------
 
-		protected IList innerList;
-
-
 		protected ObjectCollectionBase()
 		{
 		}
@@ -28,14 +25,9 @@ namespace Neo.Framework
 		//	Protected properties and methods
 		//--------------------------------------------------------------------------------------
 
-		protected virtual IList InnerList
+		protected abstract IList InnerList
 		{
-			get
-			{
-				if(innerList == null)
-					innerList = new ArrayList();
-				return innerList;
-			}
+			get;
 		}
 
 		protected void AssertIsMutable()
@@ -66,12 +58,12 @@ namespace Neo.Framework
 
 		public bool IsSynchronized
 		{
-            get{ return InnerList.IsSynchronized; }
+            get { return InnerList.IsSynchronized; }
         }
         
         public object SyncRoot
 		{
-            get{ return InnerList.SyncRoot; }
+            get { return InnerList.SyncRoot; }
         }
         
         public void CopyTo(System.Array arr, int index)
@@ -186,20 +178,7 @@ namespace Neo.Framework
 		//  Should be used by subclasses to implement strongly typed finders.
 		//--------------------------------------------------------------------------------------
 
-
 		protected virtual IEntityObject FindUnique(string qualifierFormat, params object[] parameters)
-		{
-			return FindUnique(qualifierFormat, true, parameters);
-		}
-
-
-		protected virtual IEntityObject FindSingle(string qualifierFormat, params object[] parameters)
-		{
-			return FindUnique(qualifierFormat, false, parameters);
-		}
-
-
-		private IEntityObject FindUnique(string qualifierFormat, bool throwIfMultiple, params object[] parameters)
 		{
 			Qualifier qualifier = Qualifier.Format(qualifierFormat, parameters);
 			IEntityObject match = null;
@@ -212,9 +191,21 @@ namespace Neo.Framework
 					match = eo;
 				}
 			}
-			if((match == null) && throwIfMultiple)
+			if(match == null)
 				throw new NotUniqueException(false, qualifierFormat, parameters);
 			return match;
+		}
+
+
+		protected virtual IEntityObject FindFirst(string qualifierFormat, params object[] parameters)
+		{
+			Qualifier qualifier = Qualifier.Format(qualifierFormat, parameters);
+			foreach(IEntityObject eo in InnerList)
+			{
+				if(qualifier.EvaluateWithObject(eo))
+					return eo;
+			}
+			return null;
 		}
 
 

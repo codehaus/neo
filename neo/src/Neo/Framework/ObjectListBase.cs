@@ -16,7 +16,23 @@ namespace Neo.Framework
 		//	Fields
 		//--------------------------------------------------------------------------------------
 
-		protected bool  isReadOnly;
+		protected ArrayList innerList;
+		protected bool		isReadOnly;
+
+
+		//--------------------------------------------------------------------------------------
+		//	Protected properties and methods
+		//--------------------------------------------------------------------------------------
+
+		protected override IList InnerList
+		{
+			get
+			{
+				if(innerList == null)
+					innerList = new ArrayList();
+				return innerList;
+			}
+		}
 
 
 		//--------------------------------------------------------------------------------------

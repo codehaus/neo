@@ -113,7 +113,7 @@ namespace Neo.Tests
 		}
 
 		[Test]
-		public void FindingObjectsSingleOneInstance()
+		public void FindingFirstObjectOneInstance()
 		{
 			Publisher	publisher;
 			Title		originalTitle;
@@ -121,49 +121,23 @@ namespace Neo.Tests
 
 			originalTitle = new TitleFactory(context).FindObject("TC7777");
 			publisher = new PublisherFactory(context).FindObject("0877");
-			foundTitle = publisher.Titles.FindSingle("TitleId", "TC7777");
+			foundTitle = publisher.Titles.FindFirst("TitleId", "TC7777");
 			Assertion.AssertEquals("Found wrong title.", originalTitle, foundTitle);
 		}
 
 
 		[Test]
-		public void FindingObjectsSingleNoInstance()
+		public void FindingFirstObjectNoInstance()
 		{
 			Publisher	publisher;
 			Title		foundTitle;
 
 			publisher = new PublisherFactory(context).FindObject("1622");
 			Assertion.AssertNotNull("Found wrong publisher.", publisher);
-			foundTitle = publisher.Titles.FindSingle("Publisher", publisher);
+			foundTitle = publisher.Titles.FindFirst("Publisher", publisher);
 			Assertion.AssertNull("Found wrong title.", foundTitle);
 		}
 
-		[Test]
-		[ExpectedException(typeof(NotUniqueException))]
-		public void FindingObjectsSingleMultipleInstances()
-		{
-			Publisher	publisher;
-			Title		originalTitle;
-			Title		foundTitle;
-
-			originalTitle = new TitleFactory(context).FindObject("TC7777");
-			publisher = new PublisherFactory(context).FindObject("0877");
-			
-			try
-			{
-				foundTitle = publisher.Titles.FindSingle("Type = {0} AND Royalty = {1}", "trad_cook   ", "10");
-				Console.WriteLine(foundTitle.TheTitle);
-			}
-			catch (NotUniqueException e)
-			{
-				Assertion.AssertEquals("Incorrect exception message.", 
-					"[NEO] The query 'Type = {0} AND Royalty = {1}' for parameters 'trad_cook   ', '10' was not unique.",
-					e.Message);
-				throw e;
-			}
-
-			Assertion.Fail("Should have thrown a NotUniqueException.");
-		}
 
 		[Test]
 		public void FindObjectsByNull()
