@@ -1,0 +1,12 @@
+<project name="iSupply" default="express">
+
+    <target name="clean">
+        <delete>
+            <fileset>
+                <includes name="src\**\bin"/>
+                <includes name="src\**\obj"/>
+            </fileset>
+        </delete>
+    </target>
+    
+</project>

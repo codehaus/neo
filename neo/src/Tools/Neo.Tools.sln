@@ -1,0 +1,69 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Model", "Model\Neo.Model.csproj", "{85B07E6D-5672-419F-9902-D4F030FF58E0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.CmdLineTool", "CmdLineTool\Neo.CmdLineTool.csproj", "{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.CodeGen", "CodeGen\Neo.CodeGen.csproj", "{3215DE0A-1640-4F95-8A0D-4F753912D80B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.DotGen", "DotGen\Neo.DotGen.csproj", "{0F012580-A5D5-49BA-8613-88B6122FFADA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.SqlGen", "SqlGen\Neo.SqlGen.csproj", "{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Tools.Tests", "Tests\Neo.Tools.Tests.csproj", "{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.VsTool", "VsTool\Neo.VsTool.csproj", "{5BC36FD5-F9C1-4737-87B4-1AE6D5A59F89}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{85B07E6D-5672-419F-9902-D4F030FF58E0}.Debug.ActiveCfg = Debug|.NET
+		{85B07E6D-5672-419F-9902-D4F030FF58E0}.Debug.Build.0 = Debug|.NET
+		{85B07E6D-5672-419F-9902-D4F030FF58E0}.Release.ActiveCfg = Release|.NET
+		{85B07E6D-5672-419F-9902-D4F030FF58E0}.Release.Build.0 = Release|.NET
+		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Debug.ActiveCfg = Debug|.NET
+		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Debug.Build.0 = Debug|.NET
+		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Release.ActiveCfg = Release|.NET
+		{51A51E2D-F1A2-4A95-BCC2-78D89C7250B0}.Release.Build.0 = Release|.NET
+		{3215DE0A-1640-4F95-8A0D-4F753912D80B}.Debug.ActiveCfg = Debug|.NET
+		{3215DE0A-1640-4F95-8A0D-4F753912D80B}.Debug.Build.0 = Debug|.NET
+		{3215DE0A-1640-4F95-8A0D-4F753912D80B}.Release.ActiveCfg = Release|.NET
+		{3215DE0A-1640-4F95-8A0D-4F753912D80B}.Release.Build.0 = Release|.NET
+		{0F012580-A5D5-49BA-8613-88B6122FFADA}.Debug.ActiveCfg = Debug|.NET
+		{0F012580-A5D5-49BA-8613-88B6122FFADA}.Debug.Build.0 = Debug|.NET
+		{0F012580-A5D5-49BA-8613-88B6122FFADA}.Release.ActiveCfg = Release|.NET
+		{0F012580-A5D5-49BA-8613-88B6122FFADA}.Release.Build.0 = Release|.NET
+		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Debug.ActiveCfg = Debug|.NET
+		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Debug.Build.0 = Debug|.NET
+		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Release.ActiveCfg = Release|.NET
+		{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}.Release.Build.0 = Release|.NET
+		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Debug.ActiveCfg = Debug|.NET
+		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Debug.Build.0 = Debug|.NET
+		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Release.ActiveCfg = Release|.NET
+		{B8DF3762-658D-4CB7-8EC1-0DD6D1B90A5D}.Release.Build.0 = Release|.NET
+		{5BC36FD5-F9C1-4737-87B4-1AE6D5A59F89}.Debug.ActiveCfg = Debug|.NET
+		{5BC36FD5-F9C1-4737-87B4-1AE6D5A59F89}.Debug.Build.0 = Debug|.NET
+		{5BC36FD5-F9C1-4737-87B4-1AE6D5A59F89}.Release.ActiveCfg = Release|.NET
+		{5BC36FD5-F9C1-4737-87B4-1AE6D5A59F89}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

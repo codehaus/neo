@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "../CodeGen/Resources/norque.dtd">
+
+<database
+  name="pubs"
+  package="pubs4.Model"
+  defaultIdMethod="none">
+
+  <table name="titles" 
+	javaName="Title"
+	description="Title (Book) Table">
+    <column
+      name="title_id"
+      required="true"
+      primaryKey="true"
+      type="CHAR"
+      size="6"
+      description="Book id"/>
+    <column
+      name="title"
+      javaName="TheTitle"
+      required="true"
+      type="VARCHAR"
+      size="80"
+      description="Book title"/>
+    <column
+      name="type"
+      required="true"
+      type="VARCHAR"
+      size="12"
+      description="Book type"/>
+    <column
+      name="pub_id"
+      hidden="true"
+      type="CHAR"
+      size="4"
+      description="FK Publisher"/>
+    <column
+      name="price"
+      type="DECIMAL"
+      description="Book price"/>
+    <column
+      name="advance"
+      type="DECIMAL"
+      description="Advance"/>
+    <column
+      name="royalty"
+      type="INTEGER"
+      description="Royalty?"/>
+    <column
+      name="ytd_sales"
+      type="INTEGER"
+      description="Sales this year"/>
+    <column
+      name="notes"
+      type="VARCHAR"
+      size="200"
+      description="Notes (free text)"/>
+    <column
+      name="pubdate"
+      javaName="PublicationDate"
+      required="true"
+      type="DATE"
+      description="Publication date"/>
+  </table>
+</database>

@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\7.1\Generators\{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}\NeoCodeGen]
+"CLSID"="{3A95AC49-6FE5-4841-A12A-16C4FBAFBB8D}"
+"GeneratesDesignTimeSource"=dword:00000001
+@="Neo code generator for support classes"

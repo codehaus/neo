@@ -1,0 +1,308 @@
+2003-12-16 erikd
+
+	* Changed the set of find methods on the factories. FindSingle
+	must go and is replaced by FindFirst which does almost the same
+	it doesn't raise if more than one is found but it uses fetch
+	limits to stop the search once a matching object is found.
+
+
+2003-12-05 erikd
+
+	* Refactored the tools solution. We now have a set of interface/
+	impl separated value objects to represent the ER model and the
+	NorqueReader creates this. API also uses IList instead of arrays
+	which introduces compatibility problems with existing templates.
+
+
+2003-11-17 spike
+
+	* Modified paramter generation for queries to allow for multiple
+	occurances of the same column.
+
+
+2003-11-10 erikd
+
+	* Fixed entity map discovery algorithm: No longer load assemblies
+	that are ignored.
+
+	* Made required attribute available to template context.
+	
+	* Refactored test suite to allow for parallel testing of
+	qualifiers against context and context with store.
+	
+	
+2003-11-03 erikd
+
+	* Added initial support for fetch limits.
+
+
+2003-10-24 erikd
+
+	* Refactored qualifier class hierarchy.
+	
+	* Added support for "query paths" and improved SQL generation for
+	simple cross table lookups.
+
+
+2003-09-03 erikd
+
+	* Added method to context and entity object to retrieve all
+	objects referencing a given object.
+
+
+2003-08-20 bccryder
+
+	* Added support for <unique> tag in xml file. To be used by
+	velocity templates and SQL generation tools.
+	
+
+2003-08-28 erikd
+
+	* Improved support for sorting lists in memory. Added a new
+	comparer implementation that compares objects based on the
+	values of a given property.
+	
+
+2003-08-20 erikd
+
+	* Refactored property access in property qualifier to improve
+	performance.
+	
+	* Refactored object tables in ObjectContext to improve
+	performance.
+
+
+2003-08-18 erikd
+
+	* Fixed various bugs related to object/row states.
+	
+	* Removed SqlConnectionFactory concept; pooling is happening at
+	a lower level anyway.
+
+
+2003-08-12 erikd (proxy)
+
+	* Added drop table generation capabilities.
+	
+
+2003-08-06 bccryder
+
+    * Added method on entity object to reject changes.
+
+
+2003-08-06 jimski3000
+
+	* Added support to SqlDataStore for qualifiers spanning multiple
+	tables.
+
+
+2003-08-15 erikd (proxy)
+
+    * Fixed two bugs which caused incorrect row states.
+    
+
+2003-08-01 erik
+
+	* Modified code generator to create multiple create methods
+	on factories for cases where a foreign key is (or is part of) 
+	the primary key and multiple relations are defined for this  
+	foreign key.
+	
+
+2003-07-30 jimski3000
+
+    * Removed SqlConnectionFactory and moved connection handling
+    into SqlDataStore.
+
+
+2003-07-30 erikd
+
+    * Created ObjectListBase, a subclass of collection base that
+    is used as superclass for the generated lists. Moved some
+    specific methods down to this new class.
+    
+    * Added Sort() method to ObjectListBase.
+    
+    * Added ToStringAllProperties() method to allow access to
+    debug printing when ToString() is overridden.
+
+
+2003-07-25 erikd
+
+    * Added HasChanges() to EntityObject.
+
+
+2003-07-18 erikd
+
+	* Lists can be made read-only by calling MakeReadOnly().
+	
+	* Relations can return a read-only version of themselves. There
+	is support in the templates to make this typesafe.
+	
+	* Fixed a longstanding bug. (Relations did not pick up changes
+	to the dataset that are the result of merge operations.)
+
+
+2003-07-15 erikd
+
+	* Added new interface (IEntityObjectLifecycle) that is used
+	to mark classes that want to receive messages about their 
+	state in the lifecycle. Exact functionality to be determined
+	but so far they will receive a SetupAfterCreate() just after
+	they were created.
+		
+
+2003-07-10 erikd
+
+	* Added capability to nest ObjectContexts, i.e. an ObjectContext
+	now also implements IDataStore and can be used by a child 
+	context to save changes. (Note that this change is not complete
+	yet.) Needed to change IDataStore interface for this.
+	
+	* Added method to ObjectContext to locate a given object from
+	another context in this context
+	
+	* Added method to EntityObject (IsSame) with which allows to
+	compare objects from different contexts.
+	
+
+2003-07-08 erikd
+
+	* Fixed bugs in the CodeGen adaptor. It now also creates
+	user class files for new entities and properly closes all
+	files when an exception is thrown.
+
+
+2003-06-25 paul-h (proxy)
+
+	* FindUnique() now throws more informative exception if no 
+	matches are found
+
+
+2003-06-23 paul-h (proxy)
+
+    * Added check for DataRowState.Deleted in 
+    ForeignColumnChanging handler. 
+
+
+2003-06-23 paul-h (proxy)
+
+    * Fixed problem with ObjectContext: The 'RowEvent' handler 
+    was being hooked up to DataTables multiple times (once for 
+    each instance of each EntityObject sub-type). It now hooks 
+    the handler up only once. 
+
+    * Fixed "Create-Delete-Create" bug: When EntityObjects were 
+    deleted, their child ObjectRelations were left "dangling" 
+    - their event handlers were still hooked up to events on 
+    the Owner's DataTable, leading to 
+    DataRowInaccessibleExceptions. EntityObjects now call 
+    OwnerPendingDelete() on any child relations, allowing them 
+    to unhook their event handlers.
+
+
+2003-06-11 erikd
+
+    * Several bugfixes regarding the creation, deletion and
+    recreation of objects with user-defined primary keys.
+    
+
+2003-06-09 erikd
+
+	* Fixed bug that ocurred when new child rows were deleted.
+
+
+2003-06-05 erikd
+
+    * Neo now has qualifiers. IFetchSpecification and its
+    implementors were changed accordingly. Not that this
+    change temporarily breaks SQL queries that span relations.
+    
+    * Changed command line tool flags. Rather than specifying
+    what you do not want generated you specify what you want.
+
+
+2003-06-02 erikd
+
+	* Added processing instruction to CodeGen input files
+	that specifies where to look for the template files.
+
+	* Fixed GUID generation for cases where no IP address is
+	available. A MAC address is always required, though.
+
+
+2003-05-29 erikd
+
+	* Fixed delete logic. (For objects that were just created
+	it is wrong in order to delete them to reject their changes 
+	because this will not fire a row delete event and hence not
+	update the caching collection.)
+
+
+2003-05-28 erikd
+
+	* Improved CodeGen to better support entities with a 
+	primary key that is made up of foreign key. It now creates
+	a createObject factory methods that takes the related
+	objects rather than the pk values.
+	
+	* Fixed 'find' methods to work with null values.
+	
+	* Fixed object context to forget objects when these are
+	deleted.
+	
+	* Fixed object context to call rejectChanges rather than 
+	delete on rows that are to be remove but still in added state.
+
+
+2003-05-26 erikd
+
+	* Refactored CodeGen to make it more flexible.
+
+	* Added a new VsTool project that can generate a long file
+	containing all support classes from within VS.NET, much
+	like the dataset tool for xsd files. (It works already but
+	at the moment the path to the templates is hardcoded.)
+
+
+2003-05-21 erikd
+
+	* Added 'find' methods to collection classes that help
+	locating objects by property/value.
+
+
+	* Renamed 'property' to 'attribute' in model reader and entity
+	map to avoid confusion with actual c# 'properties' because
+	schema relationships and schema attributes are realised as c#
+	properties.
+
+	* Change filenames for support classes to _Entity.cs to group
+	them in VS.NET
+
+
+2003-05-19 erikd
+
+	* Restructured the tools solution. Pulled the model reader 
+	classes out of the CodeGen project so that other projects
+	that work on the model can use them without referencing the
+	CodeGen project.
+	
+	* Improved the DefaultEntityMapFactory such that it finds the
+	EntityMaps without a hint.
+	
+ 
+2003-05-15 erikd
+
+	* Added the Tools solution to the source repository. All that is
+	missing now is a tutorial...
+
+
+2003-04-24 erikd
+
+	* This SourceForge project is being recycled as the original neo
+	project has merged with OpenNMS long ago. It is now used for NEO
+	as in .NET EntityObjects. The code for the original project is
+	preserved in the 'Attic' directories. ;-)
+
+
+
