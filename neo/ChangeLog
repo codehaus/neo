@@ -1,3 +1,32 @@
+2004-02-17 erik
+
+	* Fixed bug which prevented reads of optional (nullable) to-one
+	relations. This required adding two more entities to the model.
+	
+
+2004-02-12 erik
+
+	* Fixed NEO-2 (Crasher when saving schema while using the XMLSPY
+	plug-in.
+	
+
+2004-02-11 jim
+
+	* Added the capability to add attributes (in the .NET sense) to 
+	relationships.
+
+
+2004-01-16 erik
+
+        * Began refactoring of ObjectContext in order to make it smaller. 
+        Some functionality regarding the object tables is now in 
+        ObjectTable. This might affect custom subclasses of ObjectContext.
+
+	* Also completed change from FindSingle to FindFirst and fixed 
+	an error message in the GUID PK generator. An issue remains in 
+	the latter, though.
+
+
 2003-12-16 erikd
 
 	* Changed the set of find methods on the factories. FindSingle
