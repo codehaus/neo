@@ -40,6 +40,11 @@ namespace Neo.OracleClient
 			logger.Debug("Created new OracleDataStore.");
 		}
 
+        public OracleDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
+        {
+            base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
+        }
+
 		protected OracleDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 			logger.Debug("Deserialized OracleDataStore.");

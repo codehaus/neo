@@ -1,4 +1,8 @@
 2005-04-05 arjen
+	* Fixed NEO-23. Oracle table names can now delimited using double quotes.
+	When constructing a DbDataStore, you can specify a flag which indicates
+	whether to use delimiters or not. The SqlClient datastore now uses square
+	brackets as delimiters.
 
 	* Updated to nunit 2.2.
 

@@ -30,6 +30,7 @@ namespace Neo.Database
 		protected IDbConnection				connection;
 		protected IDbTransaction			transaction;
 		protected ArrayList					processedRows;
+        protected bool                      usesDelimitedIdentifiers;
 
 		public DbDataStore()
 		{
@@ -47,12 +48,14 @@ namespace Neo.Database
 			Type fType = (Type)info.GetValue("implFactoryType", typeof(Type));
 			implFactory = (IDbImplementationFactory)Activator.CreateInstance(fType);
 			connection = implFactory.CreateConnection(info.GetString("connectionString"));
+            usesDelimitedIdentifiers = info.GetBoolean("usesDelimitedIdentifiers");
 		}
 
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("connectionString", connection.ConnectionString);
 			info.AddValue("implFactoryType", implFactory.GetType());
+            info.AddValue("usesDelimitedIdentifiers", usesDelimitedIdentifiers);
 		}
 
 	
@@ -366,7 +369,13 @@ namespace Neo.Database
 
 		protected virtual IDbCommandBuilder GetCommandBuilder(DataTable table)
 		{
-			return implFactory.CreateCommandBuilder(table);
+		    IDbCommandBuilder commandBuilder = implFactory.CreateCommandBuilder(table);
+            GenericSql92Builder sql92Builder = commandBuilder as GenericSql92Builder;
+            if (sql92Builder != null)
+            {
+                sql92Builder.UsesDelimitedIdentifiers = usesDelimitedIdentifiers;   
+            }
+		    return commandBuilder;
 		}
 
 

@@ -39,7 +39,15 @@ namespace Neo.FirebirdClient
 			connection = implFactory.CreateConnection(connectionString);
 
 			logger.Debug("Created new FirebirdDataStore.");
+
+            // by default, use delimited identifier for backwards compatibility
+            base.usesDelimitedIdentifiers = true;
 		}
+
+        public FirebirdDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
+        {
+            base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
+        }
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FirebirdDataStore"/> class when given 

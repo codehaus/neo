@@ -33,8 +33,8 @@ namespace Neo.OracleClient
 			builder.Append("SELECT ");
 			WriteColumns(table.Columns);
 
-			builder.Append(" FROM ");
-			builder.Append(table.TableName);
+            builder.Append(" FROM ");
+            WriteIdentifier(table.TableName);
 
 			if(fetchSpec.Qualifier != null) 
 			{

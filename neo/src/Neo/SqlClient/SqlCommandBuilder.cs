@@ -1,4 +1,7 @@
+using System;
 using System.Data;
+using System.Text;
+
 using Neo.Core;
 using Neo.Database;
 
@@ -53,9 +56,8 @@ namespace Neo.SqlClient
 
 		}
 
-
-		//--------------------------------------------------------------------------------------
-		//  Parameter Names
+	    //--------------------------------------------------------------------------------------
+		//  Conversions
 		//--------------------------------------------------------------------------------------
 	
 		protected override string ConvertToParameterName(string column)
@@ -70,6 +72,11 @@ namespace Neo.SqlClient
 			paramName = paramName.Replace(@" ", "_");
 			return "@" + paramName;
 		}
+
+        protected override string ConvertToDelimitedIdentifier(string identifier) {
+            return String.Format("[{0}]", identifier);
+        }
+
 
 
 	}

@@ -14,7 +14,6 @@ namespace Neo.FirebirdClient
 
 		public FirebirdCommandBuilder(DataTable aTable, IDbImplementationFactory aParamFactory) : base(aTable, aParamFactory)
 		{
-			usesDelimitedIdentifiers = true;
 		}
 
 		
