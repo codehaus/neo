@@ -38,14 +38,14 @@
 	    <img src="neo-94x59.png" width="94" height="59" alt="Neo Logo" style="vertical-align:middle" />
     </div>
 	<div id="metanav">
-	   <a href="http://codehaus.org"><img src="http://codehaus.org/codehaus-small.gif" width="209" height="40" alt="codehaus.org" style="border:0px" /></a><br />
-	   <a class="mn" href="http://jira.codehaus.org/secure/BrowseProject.jspa?id=10377">Bugs</a>
-           &nbsp;&middot;&nbsp;
-           <a class="mn" href="http://lists.codehaus.org/mailman/listinfo">Lists</a>
-	   &nbsp;&middot;&nbsp;
-	   <a class="mn" href="http://cvs.codehaus.org/viewcvs.cgi/?root=neo">CVS</a>
-	   &nbsp;&middot;&nbsp;
-	   <a class="mn" href="http://wiki.codehaus.org/neo">Wiki</a>
+        <a href="http://codehaus.org"><img src="http://codehaus.org/codehaus-small.gif" width="209" height="40" alt="codehaus.org" style="border:0px" /></a><br />
+	    <a class="mn" href="http://wiki.codehaus.org/neo">Wiki</a>
+	    &nbsp;&middot;&nbsp;
+	    <a class="mn" href="http://jira.codehaus.org/secure/BrowseProject.jspa?id=10377">Bugs</a>
+        &nbsp;&middot;&nbsp;
+        <a class="mn" href="http://lists.codehaus.org/mailman/listinfo">Lists</a>
+	    &nbsp;&middot;&nbsp;
+	    <a class="mn" href="http://cvs.codehaus.org/viewcvs.cgi/?root=neo">CVS</a>
     </div>
 </div>
 
