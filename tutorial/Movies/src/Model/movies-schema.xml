@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "norque.dtd">
+<?neo path="..\..\build"?>
+
+<database
+  name="movies" 
+  package="Movies.Model"
+  defaultIdMethod="native">
+
+  <table name="persons" javaName="Person">
+	
+	<column	name="person_id"	primaryKey="true" hidden="true"		type="INTEGER" />
+	<column name="name"			required="true"						type="VARCHAR" size="500" />
+		
+    <iforeign-key foreignTable="movie_actor" name="MovieActorLinks" onDelete="cascade">
+	  <ireference local="person_id" foreign="actor_id"/>
+	</iforeign-key>
+    
+  </table>
+
+  <table name="movies" javaName="Movie">
+
+    <column name="movie_id"		primaryKey="true" hidden="true"		type="INTEGER" />
+    <column name="title"		required="true"						type="VARCHAR" size="500" />
+    <column	name="year"												type="INTEGER" />
+    <column name="director_id"	required="true" hidden="true"		type="INTEGER" />
+    
+    <foreign-key foreignTable="persons" name="Director"> 
+	  <reference local="director_id" foreign="person_id"/> 
+	</foreign-key>
+    <iforeign-key foreignTable="movie_actor" name="MovieActorLinks" onDelete="cascade">
+	  <ireference local="movie_id" foreign="movie_id"/>
+	</iforeign-key>
+
+  </table>
+  
+
+  <table name="movie_actor" javaName="MovieActorLink" idMethod="none">
+	
+	<column name="movie_id"		primaryKey="true" hidden="true"		type="INTEGER" />
+	<column name="actor_id"		primaryKey="true" hidden="true"		type="INTEGER" />
+	
+    <foreign-key foreignTable="movies" name="Movie">
+      <reference local="movie_id" foreign="movie_id"/>
+    </foreign-key>
+    <foreign-key foreignTable="persons" name="Actor">
+      <reference local="actor_id" foreign="person_id"/>
+    </foreign-key>
+
+  </table>
+
+</database>
