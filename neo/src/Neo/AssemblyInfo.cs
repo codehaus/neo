@@ -7,11 +7,11 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("Neo")]
-[assembly: AssemblyDescription("Neo main dll")]
+[assembly: AssemblyDescription("The .NET Entity Objects Framework")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("See http://neo.codehaus.org for details.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.1.0.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
@@ -58,7 +58,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyKeyName("")]
 
 //
-// Configuration for log4net. We just use the default domain and let the app
-// decide what to do.
+// Log4Net configuration. This tells log4net that messages originating from Neo are
+// to be logged using the loggers setup by the main application's domain.
 //
 [assembly: log4net.Config.Domain(UseDefaultDomain=true)]
