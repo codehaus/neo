@@ -13,12 +13,14 @@ namespace Neo.MetaModel
 
 		private string		ns;
 		private string		name;
-		private	Hashtable	entities;
+		private ArrayList	entities;
+		private	Hashtable	entityMap;
 
 
 		public Model()
 		{
-			entities = new Hashtable();
+			entities = new ArrayList();
+			entityMap = new Hashtable();
 		}
 
 
@@ -41,30 +43,31 @@ namespace Neo.MetaModel
 
 		public void AddEntity(Entity anEntity)
 		{
-			entities.Add(anEntity.TableName, anEntity);
+			entities.Add(anEntity);
+			entityMap.Add(anEntity.TableName, anEntity);
 		}
 
 		public void RemoveEntity(Entity anEntity)
 		{
-			entities.Remove(anEntity.TableName);
+			entities.Remove(anEntity);
+			entityMap.Remove(anEntity.TableName);
 		}
 
 		public ICollection Entities
 		{
-			get { return entities.Values; }
+			get { return entities; }
 		}
 		
 		
 		//--------------------------------------------------------------------------------------
 		//	helper
 		//--------------------------------------------------------------------------------------
-
 	
 		public Entity GetEntityForTable(string tableName)
 		{
 		    Entity entity;
 
-			if((entity = (Entity)entities[tableName]) == null)
+			if((entity = (Entity)entityMap[tableName]) == null)
 				throw new NullReferenceException("Reference to undefined table " + tableName + ".");
 			return entity;
 		}
