@@ -22,14 +22,17 @@ namespace Neo.Database
 		protected IEntityMap				emap;
 		protected StringBuilder				builder;
 		protected IList						parameters;
+		protected bool						usesDelimitedIdentifiers;
+		protected Hashtable					delimitedIdentifiers;
 
 		public GenericSql92Builder(DataTable aTable, IDbImplementationFactory aParamFactory)
 		{
 			table = aTable;
-		    implFactory = aParamFactory;
+			implFactory = aParamFactory;
 
 			builder = new StringBuilder();
 			parameters = new ArrayList();
+			delimitedIdentifiers = new Hashtable();
 		}
 
 
@@ -47,6 +50,13 @@ namespace Neo.Database
 		//	accessors
 		//--------------------------------------------------------------------------------------
 		
+		public bool UsesDelimitedIdentifiers
+		{
+			set { usesDelimitedIdentifiers = value; }
+			get { return usesDelimitedIdentifiers; }
+		}
+
+
 		public string Command
 		{
 			get { return builder.ToString(); }
@@ -71,7 +81,7 @@ namespace Neo.Database
 			WriteColumns(table.Columns);
 
 			builder.Append(" FROM ");
-			builder.Append(table.TableName);
+			WriteIdentifier(table.TableName);
 
 			if(fetchSpec.Qualifier != null)
 			{
@@ -104,7 +114,7 @@ namespace Neo.Database
 			{
 				if(first == false)
 					builder.Append(", ");
-				builder.Append(emap.GetColumnForAttribute(c.Property));
+				WriteIdentifier(emap.GetColumnForAttribute(c.Property));
 				if(c.SortDirection == SortDirection.Descending)
 					builder.Append(" DESC");
 				first = false;
@@ -118,7 +128,7 @@ namespace Neo.Database
 		
 		public object VisitColumnQualifier(ColumnQualifier q)
 		{
-			builder.Append(q.Column);
+			WriteIdentifier(q.Column);
 
 			if(q.Predicate.Value == DBNull.Value)
 			{
@@ -213,9 +223,9 @@ namespace Neo.Database
 
 		private void WritePathQualifier(DataTable table, IEntityMap emap, PathQualifier q, int idx)
 		{
-		    PropertyInfo	propInfo;
+			PropertyInfo	propInfo;
 			FieldInfo		fieldInfo;
-		    Type			destType;
+			Type			destType;
 			IEntityMap		leftEmap, rightEmap, newEmap;
 			DataRelation	rel;
 
@@ -241,11 +251,11 @@ namespace Neo.Database
 			if((rel = table.DataSet.Relations[leftEmap.TableName + "." + rightEmap.TableName]) == null)
 				throw new NeoException("Can't to convert write PathQualifier; did not find relation " + leftEmap.TableName + "." + rightEmap.TableName);
 
-			builder.Append((emap == rightEmap) ? rel.ChildColumns[0].ColumnName : rel.ParentColumns[0].ColumnName);
+			WriteIdentifier((emap == rightEmap) ? rel.ChildColumns[0].ColumnName : rel.ParentColumns[0].ColumnName);
 			builder.Append(" IN ( SELECT ");
-			builder.Append((emap == rightEmap) ? rel.ParentColumns[0].ColumnName : rel.ChildColumns[0].ColumnName);
+			WriteIdentifier((emap == rightEmap) ? rel.ParentColumns[0].ColumnName : rel.ChildColumns[0].ColumnName);
 			builder.Append(" FROM ");
-			builder.Append(newEmap.TableName);
+			WriteIdentifier(newEmap.TableName);
 			builder.Append(" WHERE ");
 
 			newEmap.UpdateSchemaInDataSet(table.DataSet, SchemaUpdate.Basic | SchemaUpdate.Relations);
@@ -255,7 +265,7 @@ namespace Neo.Database
 			}
 			else
 			{
-			    GenericSql92Builder clone = (GenericSql92Builder)this.Clone();
+				GenericSql92Builder clone = (GenericSql92Builder)this.Clone();
 				clone.table = table.DataSet.Tables[newEmap.TableName];
 				clone.emap = newEmap;
 				q.Qualifier.AcceptVisitor(clone);
@@ -272,7 +282,7 @@ namespace Neo.Database
 		public virtual void WriteInsert(DataRow row, IList columnList)
 		{
 			builder.Append("INSERT INTO ");
-			builder.Append(row.Table.TableName);
+			WriteIdentifier(row.Table.TableName);
 			builder.Append(" (");
 			WriteColumns(columnList);
 			builder.Append(") VALUES (");
@@ -294,7 +304,7 @@ namespace Neo.Database
 		public virtual void WriteUpdate(DataRow row)
 		{
 			builder.Append("UPDATE ");
-			builder.Append(row.Table.TableName);
+			WriteIdentifier(row.Table.TableName);
 			builder.Append(" SET");
 
 			WriteAllColumnsAndParameters("", ", ");
@@ -320,7 +330,7 @@ namespace Neo.Database
 		public virtual void WriteDelete(DataRow row)
 		{
 			builder.Append("DELETE FROM ");
-			builder.Append(row.Table.TableName);
+			WriteIdentifier(row.Table.TableName);
 			builder.Append(" WHERE");
 
 			WriteOptimisticLockMatch();
@@ -346,7 +356,7 @@ namespace Neo.Database
 			{
 				if(first == false)
 					builder.Append(", ");
-				builder.Append(c.ColumnName);
+				WriteIdentifier(c.ColumnName);
 				first = false;
 			}
 		}
@@ -380,7 +390,7 @@ namespace Neo.Database
 				firstColumn = false;
 
 				builder.Append(" ");
-				builder.Append(table.Columns[i].ColumnName);
+				WriteIdentifier(table.Columns[i].ColumnName);
 				builder.Append(" = ");
 				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + suffix));
 			}
@@ -395,14 +405,33 @@ namespace Neo.Database
 				if(i > 0)
 					builder.Append(" AND");
 				builder.Append(" ((");
-				builder.Append(table.Columns[i].ColumnName);
+				WriteIdentifier(table.Columns[i].ColumnName);
 				builder.Append(" = ");
 				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + "_ORIG"));
 				builder.Append(" ) OR ((");
-				builder.Append(table.Columns[i].ColumnName);
+				WriteIdentifier(table.Columns[i].ColumnName);
 				builder.Append(" IS NULL) AND (");
 				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + "_ORIG"));
 				builder.Append(" IS NULL)))");
+			}
+		}
+
+
+		protected void WriteIdentifier(string identifier)
+		{
+			if(UsesDelimitedIdentifiers == false)
+			{
+				builder.Append(identifier);
+			}
+			else
+			{
+				string entry = (string)delimitedIdentifiers[identifier];
+				if(entry == null) 
+				{
+					entry = ConvertToDelimitedIdentifier(identifier);
+					delimitedIdentifiers.Add(identifier, entry);
+				} 
+				builder.Append(entry);
 			}
 		}
 
@@ -413,6 +442,14 @@ namespace Neo.Database
 		}
 
 
+		protected virtual string ConvertToDelimitedIdentifier(string identifier)
+		{
+			StringBuilder newEntry = new StringBuilder();
+			newEntry.Append("\"");
+			newEntry.Append(identifier);
+			newEntry.Append("\"");
+			return newEntry.ToString();
+		}
 
 	}
 }

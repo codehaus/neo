@@ -1,5 +1,8 @@
 2004-08-16 erik
 
+	* Added slightly modified version of Dave's code to write
+	delimited identifiers.
+	
 	* Fixes for bugs NEO-4, NEO-7 and NEO-8.
 
 

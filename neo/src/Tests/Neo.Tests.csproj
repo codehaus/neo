@@ -94,6 +94,11 @@
                     Project = "{30A92E93-A729-4BDF-BBF5-8D6D45EF6A5F}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "nmock"
+                    AssemblyName = "nmock"
+                    HintPath = "..\..\lib\nmock.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -137,6 +142,11 @@
                 />
                 <File
                     RelPath = "Fixtures\FindTestsWithStore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Fixtures\GenericSql92BuilderTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
