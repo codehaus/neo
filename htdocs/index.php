@@ -35,7 +35,7 @@
 <body>
 
 <div id="header">
-    <table width="100%">
+    <table width="99%">
         <tr>
             <td valign="middle" align="left">
                    <a href="news.html"> 
