@@ -1,3 +1,10 @@
+2004-05-27 erik
+
+	* Refactored ClauseQualifier. Rather than using an enum to 
+	determine the type (and/or), it now has two subclasses that
+	do the same, i.e. replace conditional with polymorphism.
+	
+
 2004-05-06 erik (proxy)
 
 	* Added Arjen's fix for querying for NULL values.

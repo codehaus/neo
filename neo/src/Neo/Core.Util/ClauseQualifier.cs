@@ -6,32 +6,23 @@ using Neo.Core;
 
 namespace Neo.Core.Util
 {
-	public enum QualifierConjunctor
-	{
-		And,
-		Or
-	}
-
 	
-	public sealed class ClauseQualifier : Qualifier, IObjectQualifier
+	public abstract class ClauseQualifier : Qualifier
 	{
 		//--------------------------------------------------------------------------------------
 		//	Fields and Constructor
 		//--------------------------------------------------------------------------------------
 
-		private QualifierConjunctor	conjunctor;
-		private Qualifier[]			qualifiers;
+		private Qualifier[]	qualifiers;
 
 
-		public ClauseQualifier(QualifierConjunctor aConjunctor, params Qualifier[] someQualifiers) : base()
+		public ClauseQualifier(params Qualifier[] someQualifiers) : base()
 		{
-			conjunctor = aConjunctor;
 			qualifiers = someQualifiers;
 		}
 
-		public ClauseQualifier(QualifierConjunctor aConjunctor, ArrayList someQualifiers) : base()
+		public ClauseQualifier(ArrayList someQualifiers) : base()
 		{
-			conjunctor = aConjunctor;
 			qualifiers = (Qualifier[])someQualifiers.ToArray(typeof(Qualifier));
 		}
 
@@ -44,12 +35,6 @@ namespace Neo.Core.Util
 		{
 			get { return qualifiers; }
 		}
-
-		public QualifierConjunctor Conjunctor
-		{
-			get { return conjunctor; }
-		}
-
 
 		//--------------------------------------------------------------------------------------
 		//	Public properties
@@ -75,11 +60,17 @@ namespace Neo.Core.Util
 			for(int i = 0; i < qualifiers.Length; i++)
 			{
 				if(i > 0)
-					builder.Append(" " + ((Conjunctor == QualifierConjunctor.Or) ? "or" : "and") + " ");
+					builder.Append(" " + OperatorString + " ");
 				builder.Append(qualifiers[i]);
 			}
 			builder.Append(" ");
 			return builder.ToString();
+		}
+
+
+		protected abstract string OperatorString
+		{
+			get;
 		}
 
 		
@@ -104,69 +95,8 @@ namespace Neo.Core.Util
 					newQualifiers[i++] = q;
 			}
 			
-			return new ClauseQualifier(conjunctor, newQualifiers);
+			return (ClauseQualifier)Activator.CreateInstance(this.GetType(), newQualifiers);
 		}
 
-
-		//--------------------------------------------------------------------------------------
-		//	Evaluation
-		//--------------------------------------------------------------------------------------
-
-		public override bool EvaluateWithObject(IEntityObject anObject)
-		{
-			switch(conjunctor)
-			{
-				case QualifierConjunctor.And:
-					foreach(Qualifier q in qualifiers)
-					{
-						if(q.EvaluateWithObject(anObject) == false)
-							return false;
-					}
-					return true;
-
-				case QualifierConjunctor.Or:
-					foreach(Qualifier q in qualifiers)
-					{
-						if(q.EvaluateWithObject(anObject) == true)
-							return true;
-					}
-					return false;
-
-				default:
-					throw new InvalidOperationException(String.Format("Invalid conjunctor for qualifier."));
-			}
-		}
-
-
-		public bool EvaluateWithObject(object anObject)
-		{
-			switch(conjunctor)
-			{
-			case QualifierConjunctor.And:
-				foreach(Qualifier q in qualifiers)
-				{
-					IObjectQualifier objQualifier = q as IObjectQualifier;
-					if(objQualifier == null)
-						throw new InvalidOperationException("Not all children support generic object evaluation.");
-					if(objQualifier.EvaluateWithObject(anObject) == false)
-						return false;
-				}
-				return true;
-
-			case QualifierConjunctor.Or:
-				foreach(Qualifier q in qualifiers)
-				{
-					IObjectQualifier objQualifier = q as IObjectQualifier;
-					if(objQualifier == null)
-						throw new InvalidOperationException("Not all children support generic object evaluation.");
-					if(objQualifier.EvaluateWithObject(anObject) == true)
-						return true;
-				}
-				return false;
-
-			default:
-				throw new InvalidOperationException(String.Format("Invalid conjunctor for qualifier."));
-			}
-		}
 	}
 }

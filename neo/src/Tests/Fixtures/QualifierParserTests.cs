@@ -197,17 +197,16 @@ namespace Neo.Tests
 		{	
 			QualifierParser		parser;
 			Qualifier			q;
-			ClauseQualifier		cq;
+			ClauseQualifier		aq;
 
 			parser = new QualifierParser("TitleId = {0} and TitleId = {1}", "XX2222", "TC7777");
 			q = parser.GetQualifier();
 
 			Assertion.AssertNotNull("Parser failed.", q);
-			Assertion.AssertEquals("Wrong qualifier.", typeof(ClauseQualifier), q.GetType());
-			cq = q as ClauseQualifier;
-			Assertion.AssertEquals(QualifierConjunctor.And, cq.Conjunctor);
-			Assertion.AssertEquals(2, cq.Qualifiers.Length);
-			Assertion.AssertEquals("TC7777", ((PropertyQualifier)cq.Qualifiers[1]).Value);
+			Assertion.AssertEquals("Wrong qualifier.", typeof(AndQualifier), q.GetType());
+			aq = q as AndQualifier;
+			Assertion.AssertEquals(2, aq.Qualifiers.Length);
+			Assertion.AssertEquals("TC7777", ((PropertyQualifier)aq.Qualifiers[1]).Value);
 		}
 
 
@@ -216,17 +215,16 @@ namespace Neo.Tests
 		{	
 			QualifierParser		parser;
 			Qualifier			q;
-			ClauseQualifier		cq;
+			ClauseQualifier		oq;
 
 			parser = new QualifierParser("TitleId = 'TC7777' or Royalties < 7 or Royalties > 20");
 			q = parser.GetQualifier();
 
 			Assertion.AssertNotNull("Parser failed.", q);
-			Assertion.AssertEquals("Wrong qualifier.", typeof(ClauseQualifier), q.GetType());
-			cq = q as ClauseQualifier;
-			Assertion.AssertEquals(QualifierConjunctor.Or, cq.Conjunctor);
-			Assertion.AssertEquals(3, cq.Qualifiers.Length);
-			Assertion.AssertEquals(7, ((PropertyQualifier)cq.Qualifiers[1]).Value);
+			Assertion.AssertEquals("Wrong qualifier.", typeof(OrQualifier), q.GetType());
+			oq = q as ClauseQualifier;
+			Assertion.AssertEquals(3, oq.Qualifiers.Length);
+			Assertion.AssertEquals(7, ((PropertyQualifier)oq.Qualifiers[1]).Value);
 		}
 
 		

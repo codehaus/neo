@@ -112,14 +112,14 @@ namespace Neo.Core.Util
 			if(LhsMatch(TokenType.Qualifier, TokenType.Conjunctor, TokenType.Qualifier))
 			{
 				Qualifier right = (Qualifier)stack[sp--].Value;
-				QualifierConjunctor conj = (QualifierConjunctor)stack[sp--].Value; 
+				Type conjType = (Type)stack[sp--].Value; 
 				Qualifier left = (Qualifier)stack[sp--].Value;
 				ClauseQualifier q;
 
-				if(((q = left as ClauseQualifier) != null) && (q.Conjunctor == conj))
+				if(((q = left as ClauseQualifier) != null) && (q.GetType().Equals(conjType)))
 					q.AddToQualifiers(right);
 				else
-					q = new ClauseQualifier(conj, left, right);
+					q = (ClauseQualifier)Activator.CreateInstance(conjType, new object[] { left, right });
 				token = new Token(TokenType.Qualifier, q);
 			}
 			// Rule: String, Operator, Literal -> Qualfier
@@ -275,9 +275,9 @@ namespace Neo.Core.Util
 			string val = input.Substring(start, position - start);
 			string lowerVal = val.ToLower(CultureInfo.InvariantCulture);
 			if(lowerVal == "and")
-				return new Token(TokenType.Conjunctor, QualifierConjunctor.And);
+				return new Token(TokenType.Conjunctor, typeof(AndQualifier));
 			else if(lowerVal == "or")
-				return new Token(TokenType.Conjunctor, QualifierConjunctor.Or);
+				return new Token(TokenType.Conjunctor, typeof(OrQualifier));
 	
 			return new Token(TokenType.String, val);
 		}

@@ -281,17 +281,12 @@ namespace Neo.SqlClient
 		{
 			string conjunctor;
 
-			switch(q.Conjunctor)
-			{
-				case QualifierConjunctor.And:
-					conjunctor = " AND ";
-					break;
-				case QualifierConjunctor.Or:
-					conjunctor = " OR ";
-					break;
-				default:
-					throw new ArgumentException("Invalid conjunctor in qualifier.");
-			}
+			if(q is AndQualifier)
+				conjunctor = " AND ";
+			else if(q is OrQualifier)
+				conjunctor = " OR ";
+			else
+				throw new ArgumentException("Invalid conjunctor qualifier; found " + q.GetType().FullName);
 
 			bool isFirstChild = true;
 			builder.Append("(");

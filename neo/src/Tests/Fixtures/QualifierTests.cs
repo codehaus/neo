@@ -87,12 +87,12 @@ namespace Neo.Tests
 			
 			q1 = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
 			q2 = new PropertyQualifier("Royalty", QualifierOperator.GreaterThan, 9);
-			q = new ClauseQualifier(QualifierConjunctor.And, q1, q2);
+			q = new AndQualifier(q1, q2);
 			Assertion.Assert("10 not inbetween 9 and 15.", q.EvaluateWithObject(title));
 
 			q1 = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
 			q2 = new PropertyQualifier("Royalty", QualifierOperator.GreaterThan, 11);
-			q = new ClauseQualifier(QualifierConjunctor.And, q1, q2);
+			q = new AndQualifier(q1, q2);
 			Assertion.Assert("10 is inbetween 11 and 15.", q.EvaluateWithObject(title) == false);
 		}
 
@@ -105,12 +105,12 @@ namespace Neo.Tests
 			
 			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
 			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
-			q = new ClauseQualifier(QualifierConjunctor.Or, q1, q2);
+			q = new OrQualifier(q1, q2);
 			Assertion.Assert("Did not match either title id.", q.EvaluateWithObject(title));
 
 			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX1111");
 			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
-			q = new ClauseQualifier(QualifierConjunctor.Or, q1, q2);
+			q = new OrQualifier(q1, q2);
 			Assertion.Assert("Did not match a title id.", q.EvaluateWithObject(title) == false);
 		}
 
@@ -123,9 +123,9 @@ namespace Neo.Tests
 			
 			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
 			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
-			qa = new ClauseQualifier(QualifierConjunctor.Or, q1, q2);
+			qa = new OrQualifier(q1, q2);
 			qb = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
-			q = new ClauseQualifier(QualifierConjunctor.And, qa, qb);
+			q = new AndQualifier(qa, qb);
 
 			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
 		}
@@ -138,7 +138,7 @@ namespace Neo.Tests
 			ClauseQualifier	q;
 			
 			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
-			q = new ClauseQualifier(QualifierConjunctor.Or, q1);
+			q = new OrQualifier(q1);
 			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
 			q.AddToQualifiers(q2);
 
@@ -236,7 +236,7 @@ namespace Neo.Tests
 			
 			pub = title.Publisher;
 			propQualifier = new PropertyQualifier("Publisher", QualifierOperator.Equal, pub);
-			clauseQualifier = new ClauseQualifier(QualifierConjunctor.And, propQualifier);
+			clauseQualifier = new AndQualifier(propQualifier);
 			convertedQualifer = clauseQualifier.GetWithColumnQualifiers(title.Context.EntityMapFactory.GetMap(typeof(Title)));
 			
 			Assertion.AssertEquals("Wrong number of qualifiers", 1, convertedQualifer.Qualifiers.Length);

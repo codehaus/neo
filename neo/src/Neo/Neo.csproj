@@ -169,6 +169,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Core.Util\AndQualifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Core.Util\ClauseQualifier.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -200,6 +205,11 @@
                 />
                 <File
                     RelPath = "Core.Util\ObjectTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Util\OrQualifier.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

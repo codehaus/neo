@@ -954,7 +954,7 @@ namespace Neo.Core
 				ArrayList qualifiers = new ArrayList(pkcolumns.Length);
 				for(int i = 0; i < pkcolumns.Length; i++)
 					qualifiers.Add(new ColumnQualifier(pkcolumns[i], QualifierOperator.Equal, pkvalues[i]));
-				mainQualifier = new ClauseQualifier(QualifierConjunctor.And, qualifiers);
+				mainQualifier = new AndQualifier(qualifiers);
 			}
 
 			fetchSpec = new FetchSpecification(emap, mainQualifier);

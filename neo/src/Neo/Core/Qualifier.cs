@@ -72,7 +72,7 @@ namespace Neo.Core
 				qualifiers = new ArrayList(queryValues.Count);
 				foreach(DictionaryEntry e in queryValues)
 					qualifiers.Add(new PropertyQualifier((string)e.Key, QualifierOperator.Equal, e.Value));
-				return new ClauseQualifier(QualifierConjunctor.And, qualifiers);
+				return new AndQualifier(qualifiers);
 			}
 		}
 
