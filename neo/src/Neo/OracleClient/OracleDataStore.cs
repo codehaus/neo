@@ -28,7 +28,7 @@ namespace Neo.OracleClient
 			if(logger == null)
 				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
 
-			logger.Debug("Created new SqlDataStore.");
+			logger.Debug("Created new OracleDataStore.");
 
 			if(connectionString == null)
 			{
