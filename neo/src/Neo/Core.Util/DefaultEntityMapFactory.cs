@@ -16,14 +16,13 @@ namespace Neo.Core.Util
 	/// To avoid loading certain assemblies that are known not to contain entity maps use
 	/// the AddAssemblyFilters method.
 	/// </remarks>
-	public class DefaultEntityMapFactory : IEntityMapFactory
+	public class DefaultEntityMapFactory : EntityMapFactoryBase
 	{
 		//--------------------------------------------------------------------------------------
 		//	Static fields and constructor
 		//--------------------------------------------------------------------------------------
 
 		private static DefaultEntityMapFactory sharedInstance;
-		protected static ILog logger;
 
 
 		//--------------------------------------------------------------------------------------
@@ -51,11 +50,7 @@ namespace Neo.Core.Util
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 		
-		private string[] assemblyFilters;
-		private ArrayList registeredTypes;
-		private Hashtable mapByObjectTypeTable;
-		private Hashtable mapByTableNameTable;
-		
+		private string[] assemblyFilters;		
 
 		/// <summary>
 		/// Default, and non-public constructor since this class uses the singleton pattern.
@@ -94,19 +89,8 @@ namespace Neo.Core.Util
 		//	Registration
 		//--------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Checks whether Maps are registered. If not, processes assemblies in the current 
-		/// domain.
-		/// </summary>
-		protected virtual void EnsureMapsAreRegistered()
+		protected override void RegisterEntityMaps()
 		{
-			if(registeredTypes != null)
-				return;
-
-			registeredTypes = new ArrayList();
-			mapByObjectTypeTable = new Hashtable();
-			mapByTableNameTable = new Hashtable();
-
 		    Regex ignoreExpr = new Regex("^(" + String.Join("|", assemblyFilters) + ")");
 			ArrayList scheduledAssemblies = new ArrayList();
 			Queue waitingAssemblies = new Queue();
@@ -145,106 +129,5 @@ namespace Neo.Core.Util
 				}
 			}
 		}
-
-
-		/// <summary>
-		/// Runs through all concrete classes in the assembly and adds all <c>IEntityMap</c> 
-		/// classes to the list of registered types, if they are not already registered.
-		/// </summary>
-		/// <param name="assembly">Assembly to be examined</param>
-		/// <remarks>
-		/// When registered, an instance of each <c>IEntityMap</c> class is added to the 
-		/// internal maps for rapid lookup as required.
-		/// </remarks>
-		protected virtual void RegisterEntityMapsInAssembly(Assembly assembly)
-		{
-			TypeFilter filter = new TypeFilter(IsIEntityMap);
-			foreach(Type t in assembly.GetTypes())
-			{
-				if((t.IsClass == true) && (t.IsAbstract == false) && 
-					(t.FindInterfaces(filter, null).Length > 0) && (registeredTypes.Contains(t) == false))
-				{
-					registeredTypes.Add(t);
-					IEntityMap m = (IEntityMap)Activator.CreateInstance(t);
-					m.Factory = this;
-					mapByObjectTypeTable[m.ObjectType] = m;
-					mapByTableNameTable[m.TableName] = m;
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Determines whether the supplied type is a concrete subclass of <c>IEntityMap</c>
-		/// </summary>
-		/// <param name="typeObj">Class to be checked</param>
-		/// <param name="criteriaObj">Not used</param>
-		/// <returns><c>true</c> if this is a concrete class and a subclass of <c>IEntityMap</c></returns>
-		public bool IsIEntityMap(Type typeObj, Object criteriaObj)
-		{
-			return (typeObj.IsInterface) && (typeObj == typeof(IEntityMap));
-		}
-
-
-		/// <summary>
-		/// Gets all registered types, forcing a mapping check if necessary
-		/// </summary>
-		/// <returns>All registered types</returns>
-		public virtual ICollection GetRegisteredTypes()
-		{
-			EnsureMapsAreRegistered();
-			return registeredTypes;
-		}
-
-
-		//--------------------------------------------------------------------------------------
-		//	IEntityMapFactory impl
-		//--------------------------------------------------------------------------------------
-	
-		public virtual void AddCustomType(Type objType, IEntityMap map)
-		{
-			mapByObjectTypeTable[objType] = map;
-		}
-
-
-		/// <summary>
-		/// Gets a collection of all Object Type Maps
-		/// </summary>
-		/// <returns>A collection of all Object Type Maps</returns>
-		public virtual ICollection GetAllMaps()
-		{
-			EnsureMapsAreRegistered();
-			return mapByObjectTypeTable.Values;
-		}
-
-
-		/// <summary>
-		/// Gets the corresponding map for a type 
-		/// </summary>
-		/// <param name="type">Type to map</param>
-		/// <returns>IEntityMap object matching the supplied Type</returns>
-		public virtual IEntityMap GetMap(Type type)
-		{
-			EnsureMapsAreRegistered();
-			IEntityMap m = (IEntityMap)mapByObjectTypeTable[type];
-			if(m == null)
-				throw new ArgumentException("No entity map for object type " + type.FullName);
-			return m;
-		}
-
-		/// <summary>
-		/// Gets the corresponding map for a table name 
-		/// </summary>
-		/// <param name="tablename">Table Name to map</param>
-		/// <returns>IEntityMap object matching the supplied table name</returns>
-		public virtual IEntityMap GetMap(string tablename)
-		{
-			EnsureMapsAreRegistered();
-			IEntityMap m = (IEntityMap)mapByTableNameTable[tablename];
-			if(m == null)
-				throw new ArgumentException("No entity map for table name " + tablename);
-			return m;
-		}
-
 	}
 }

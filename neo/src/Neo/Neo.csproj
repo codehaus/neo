@@ -264,6 +264,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Core.Util\EntityMapFactoryBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Core.Util\InvalidPropertyException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -290,6 +295,11 @@
                 />
                 <File
                     RelPath = "Core.Util\RowChangeBroker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Util\SingleAssemblyEntityMapFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

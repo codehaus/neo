@@ -116,7 +116,7 @@ namespace Neo.MetaModel
 			capitalise = true;
 			foreach(char c in name)
 			{
-				if(c == '_')
+				if((c == '_') || (c == ' '))
 				{
 					capitalise = true;
 				}

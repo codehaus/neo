@@ -1,3 +1,15 @@
+2004-09-24 erik
+
+    * Added new SingleAssemblyEntityMap factory submitted by
+    Dave Spring and created an abstract base class that makes it
+    easier to write custom map factories.
+    
+    * Added blank alongside underscore as a word seperator for 
+    camelcasing.
+    
+    * Added FLOAT data type mapping.
+    
+
 2004-09-16 erik
 
 	* Bugfixes. NotEqual tests against database work again (NEO-12)

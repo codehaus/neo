@@ -303,7 +303,7 @@ namespace Neo.MetaModel.Reader
 								new string[] { "System.Int16",		"TINYINT", "SMALLINT" },
 								new string[] { "System.Int32",		"INTEGER" },
 								new string[] { "System.Int64",		"BIGINT" },
-								new string[] { "System.Double",		"REAL", "DOUBLE" },
+								new string[] { "System.Double",		"REAL", "DOUBLE", "FLOAT" },
 								new string[] { "System.Decimal",	"NUMERIC", "DECIMAL" },
 								new string[] { "System.String",		"CHAR", "VARCHAR", "LONGVARCHAR" },
 								new string[] { "System.DateTime",	"DATE", "TIME", "TIMESTAMP" },
