@@ -14,7 +14,7 @@
 <p class="heading1">Planned Features</p>
 
 <p class="heading2f">Single table inheritance</p>
-<p class="body">The ability to define an entity classes as a subclasses of another entity class with the limitation that all data must be fetched from the same table. A classic example is a PERSON table from which one can fetch employees as well as manangers with both of them inheriting from person. <i>(Planned for version 1.4 or 1.5)</i></p>
+<p class="body">The ability to define an entity classes as a subclasses of another entity class with the limitation that all data must be fetched from the same table. A classic example is a PERSON table from which one can fetch employees as well as manangers with both of them inheriting from person. <i>(Planned for version 1.5)</i></p>
 
 <p class="heading2">Spans</p>
 <p class="body">The ability to bring objects for related entities into memory in one query, e.g. when fetching publisher objecs one can instruct the context to also load all related title objects. Google for "<a href="http://www.google.com/search?hl=en&lr=&ie=UTF-8&q=objectspaces+spans&btnG=Search">objectspaces spans</a>" for a discussion. <i>(No concrete plans)</i></p>
@@ -34,13 +34,10 @@
 <p class="code">new TitleAuthorfactory().Find("Title[Royalty > 5000].Publisher.Country = 'Something'");
 </p>
 
-<p class="body">Maybe other <a href="http://longhorn.msdn.microsoft.com/lhsdk/ndp/daconopathreference.aspx">OPath</a> features as well.
+<p class="body">Maybe other <a href="http://longhorn.msdn.microsoft.com/lhsdk/ndp/daconopathreference.aspx">OPath</a> features as well. (Planned for version 1.4)
 
 <p class="heading2">Full sorting support</p>
-<p class="body">The current implementation only supports sorting by attributes, not paths, and the in-memory implementation is further limited to sorting by one attribute. This should be fixed.</p>
+<p class="body">The current implementation only supports sorting by attributes, not paths, and the in-memory implementation is further limited to sorting by one attribute. This should be fixed. <i>(No concrete plans)</i></p>
 
-<p class="heading2">Schema generation for 'legacy' databases</p>
-<p class="body">Sometimes you will have the need to retrofit an object layer using Neo to an existing database. In such a case it would be cool to generate either the XML file or the object model from schema information in the database. A first step would be to add Neo support to <a href="http://boss.bekk.no/boss/middlegen/">MiddleGen</a>.</p>
-
-<p class="footer">$Id: roadmap.html,v 1.6 2004-09-13 19:29:09 erik Exp $</p>
+<p class="footer">$Id: roadmap.html,v 1.7 2004-11-01 14:08:22 erik Exp $</p>
 
