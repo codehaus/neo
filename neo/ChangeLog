@@ -1,3 +1,11 @@
+2004-06-17 erik
+
+	* Made ObjectContext and DbDataStore serialisable. This means
+	that it is now possible to hold an ObjectContext in an ASP.NET
+	session. Watch out for data set size and serialisation of
+	database passwords, though.
+
+
 2004-06-16 erik
 
 	* Refactored the tools solution. The neo generator can now 
