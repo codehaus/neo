@@ -108,7 +108,7 @@ namespace Neo.Core.Util
 			mapByTableNameTable = new Hashtable();
 
 		    Regex ignoreExpr = new Regex("^(" + String.Join("|", assemblyFilters) + ")");
-			ArrayList seenAssemblies = new ArrayList();
+			ArrayList scheduledAssemblies = new ArrayList();
 			Queue waitingAssemblies = new Queue();
 
 			foreach(Assembly a in AppDomain.CurrentDomain.GetAssemblies())
@@ -118,6 +118,7 @@ namespace Neo.Core.Util
 					logger.Debug("Ignoring: " + a.FullName + " (uninteresting)");
 					continue;
 				}
+				scheduledAssemblies.Add(a.FullName);
 				waitingAssemblies.Enqueue(a);
 			}
 
@@ -125,11 +126,10 @@ namespace Neo.Core.Util
 			{
 				Assembly a = (Assembly)waitingAssemblies.Dequeue();
 				logger.Debug("Processing: " + a.FullName);
-				seenAssemblies.Add(a.FullName);
 				RegisterEntityMapsInAssembly(a);
 				foreach(AssemblyName an in a.GetReferencedAssemblies())
 				{
-					if(seenAssemblies.Contains(an.FullName))
+					if(scheduledAssemblies.Contains(an.FullName))
 					{
 						logger.Debug("Ignoring: " + an.FullName + " (processed before)");
 						continue;
@@ -140,6 +140,7 @@ namespace Neo.Core.Util
 						continue;
 					}
 					Assembly refd = Assembly.Load(an);
+					scheduledAssemblies.Add(an.FullName);
 					waitingAssemblies.Enqueue(refd);
 				}
 			}

@@ -1,7 +1,8 @@
 2004-09-16 erik
 
 	* Bugfixes. NotEqual tests against database work again (NEO-12)
-	and queries with sorting but no limit work now.
+	and queries with sorting but no limit work now. Also added two
+	fixes reported by Dave Spring on the mailing list.
 	
 
 2004-09-06 erik

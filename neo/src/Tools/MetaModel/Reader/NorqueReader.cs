@@ -316,6 +316,9 @@ namespace Neo.MetaModel.Reader
 						dotnetTypes.Add(typemap1[i][j], typemap1[i][0]);
 			}
 
+			if(dotnetTypes[norqueType] == null)
+				throw new ArgumentException("Column type " + norqueType + " not supported.");
+
 			return Type.GetType(dotnetTypes[norqueType]);
 		}
 
