@@ -93,7 +93,6 @@ namespace Neo.Generator.CodeGen
 			{
 			    CodeGenerationContext ctx;
 				string			  subDir, outputFile;
-				TextWriter		  writer;
 
 				ctx = new CodeGenerationContext(entity);
 
@@ -106,9 +105,10 @@ namespace Neo.Generator.CodeGen
 				if((forceWrite) || (File.Exists(outputFile) == false))
 				{
 					Console.WriteLine("Writing {0}", outputFile);
-					writer = new StreamWriter(outputFile);
-					Generate(genUser ? userClassTemplate : supportClassesTemplate , ctx, writer);   	
-					writer.Close();
+					using(TextWriter writer = new StreamWriter(outputFile))
+					{
+						Generate(genUser ? userClassTemplate : supportClassesTemplate , ctx, writer);   	
+					}
 				}
 			}
 		}

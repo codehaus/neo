@@ -26,14 +26,13 @@ namespace Neo.MetaModel.Reader
 
 		public void ReadConfiguration(string path, ConfigDelegate aDelegate)
 		{
-			XmlReader	reader;
 		    Regex		attrExp;
+			XmlReader	reader;
 			
 			attrExp = new Regex("(?<attr>[a-z]+?)\\s*=\\s*['\"](?<val>.+?)['\"]");
-			reader = null;
+			reader = new XmlTextReader(path);
 			try
 			{	
-				reader = new XmlTextReader(path);
 				while(reader.Read())
 				{
 					if((reader.NodeType != XmlNodeType.ProcessingInstruction) || (reader.Name != "neo"))
@@ -45,30 +44,38 @@ namespace Neo.MetaModel.Reader
 						match = match.NextMatch();
 					}
 				}
+			}
+			finally
+			{
 				reader.Close();
 			}
-			catch(Exception e)
-			{
-				if(reader != null)
-					reader.Close();
-				throw e;
-			}
-
 		}
 
 
 		public void LoadModel(string path)
 		{
-		    XmlTextReader reader = new XmlTextReader(path);
-			LoadModel(reader);
-			reader.Close();
+			XmlTextReader reader = new XmlTextReader(path);
+			try
+			{
+				LoadModel(reader);
+			}
+			finally
+			{
+				reader.Close();
+			}
 		}
 
 		public void LoadModel(TextReader textReader)
 		{
 			XmlTextReader reader = new XmlTextReader(textReader);
-			LoadModel(reader);
-			reader.Close();
+			try
+			{
+				LoadModel(reader);
+			}
+			finally
+			{
+				reader.Close();
+			}
 		}
 
 		protected void LoadModel(XmlTextReader xmlReader)
