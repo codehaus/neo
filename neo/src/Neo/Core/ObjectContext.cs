@@ -211,7 +211,7 @@ namespace Neo.Core
 		}
 
 
-		protected bool CanLoadFromStore
+		protected virtual bool CanLoadFromStore
 		{
 			get { return (dataStore != null) && ((dataStore is ObjectContext == false) || (copiedParent == false)); }
 		}
@@ -1065,6 +1065,9 @@ namespace Neo.Core
 
 			resultTable = myTable.Clone();
 
+			if(CanLoadFromStore)
+				FetchObjectsFromStore( fetchSpec );
+			
 			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
 				return resultTable;
 

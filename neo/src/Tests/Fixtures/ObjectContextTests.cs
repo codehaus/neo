@@ -255,6 +255,28 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(1, publisher2InParent.Titles.Count);
 		}
 
+
+		[Test]
+		public void NestedContextsDemandLoadFromTheDataStoreBelongingToTheirParentContexts()
+		{
+			// the context intialised in setup is used as if it were the db data store.
+			// create a resource with a title in the "database"
+			Publisher publisher = new PublisherFactory(context).CreateObject("1010");
+			Title title = new TitleFactory(context).CreateObject("XX9999");
+			title.TheTitle = "Nested Contexts Explained";
+			title.Publisher = publisher;			
+
+			ObjectContext normalContext = new ObjectContext(context, false);
+			// demand load publisher in this context, only the publisher not the title
+			normalContext.GetLocalObject(publisher);
+
+			ObjectContext childContext = new ObjectContext(normalContext, false);
+			Publisher publisherInChildContext = (Publisher)childContext.GetLocalObject(publisher);
+			Assert.AreEqual(1, publisherInChildContext.Titles.Count);
+			Assert.AreEqual("Nested Contexts Explained", publisherInChildContext.Titles[0].TheTitle);
+		}
+
+
 		[Test]
 		public void MergeUpdatesRelationsForNewObjects()
 		{
