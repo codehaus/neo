@@ -45,7 +45,7 @@
 	   &nbsp;&middot;&nbsp;
 	   <a class="mn" href="http://cvs.codehaus.org/viewcvs.cgi/?root=neo">CVS</a>
 	   &nbsp;&middot;&nbsp;
-	   <a class="mn" href="http://wiki.codehaus.org/">Wiki</a>
+	   <a class="mn" href="http://wiki.codehaus.org/neo">Wiki</a>
     </div>
 </div>
 
@@ -58,8 +58,8 @@
 	<p class="navtitle">Using Neo</p>
 	   <?php navitem("Download", "download.html", $page) ?>
 	   <?php navitem("Quickstart", "quickstart.html", $page) ?>
-	   <?php navitem("Resources", "resources.html", $page) ?>
 	   <?php navitem("Documentation", "docs.html", $page) ?>
+	   <?php navitem("Resources", "resources.html", $page) ?>
 </div>
 
 <div id="contentbox">
