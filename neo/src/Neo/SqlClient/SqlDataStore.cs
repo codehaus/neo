@@ -253,8 +253,14 @@ namespace Neo.SqlClient
 					builder.Append("<>");
 				else if(q.Predicate is LessThanPredicate)
 					builder.Append("<");
+				else if(q.Predicate is LessOrEqualPredicate)
+					builder.Append("<=");
 				else if(q.Predicate is GreaterThanPredicate)
 					builder.Append(">");
+				else if(q.Predicate is GreaterOrEqualPredicate)
+					builder.Append(">=");
+				else if(q.Predicate is LikePredicate)
+					builder.Append(" LIKE ");
 				else
 					throw new ArgumentException("Invalid predicate in qualifier; found " + q.Predicate.GetType().FullName);
 				

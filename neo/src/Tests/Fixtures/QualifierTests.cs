@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Neo.Core;
 using Neo.Core.Util;
 using NUnit.Framework;
@@ -80,7 +81,7 @@ namespace Neo.Tests
 
 
 		[Test]
-		public void AndClauses()
+		public void AndQualifier()
 		{
 			PropertyQualifier	q1, q2;
 			ClauseQualifier		q;
@@ -98,7 +99,7 @@ namespace Neo.Tests
 
 
 		[Test]
-		public void OrClauses()
+		public void OrQualifier()
 		{
 			PropertyQualifier	q1, q2;
 			ClauseQualifier		q;
@@ -184,32 +185,6 @@ namespace Neo.Tests
 
 
 		[Test]
-		public void ValueTypesAndNull()
-		{
-			Title		otherTitle;
-			Qualifier	q;
-
-			otherTitle = new TitleFactory(context).FindObject("MC3026");
-			q = Qualifier.Format("Royalty < 15");
-			Assertion.Assert("Null should not be less than anything.", q.EvaluateWithObject(otherTitle) == false);
-			q = Qualifier.Format("Royalty > 15");
-			Assertion.Assert("Null should not be greater than anything.", q.EvaluateWithObject(otherTitle) == false);
-		}
-
-
-		[Test]
-		public void NumericConversions()
-		{
-			Qualifier	q;
-
-			q = Qualifier.Format("Advance < 5000");
-			Assertion.Assert("Matched when it shouldn't.", q.EvaluateWithObject(title) == false);
-			q = Qualifier.Format("Advance > {0}", 5000);
-			Assertion.Assert("Didn't match when it should've.", q.EvaluateWithObject(title));
-		}
-
-
-		[Test]
 		public void PropertyColumnConversion()
 		{
 			Publisher			pub;
@@ -247,6 +222,32 @@ namespace Neo.Tests
 		}
 
 
+		[Test]
+		public void ConversionFromDictionaryCreatesLikeWhenRequired()
+		{
+			IDictionary			values;
+			PropertyQualifier	q;
+
+			values = new Hashtable();
+			values.Add("foo", "bar%");
+			q = Qualifier.FromPropertyDictionary(values) as PropertyQualifier;
+			Assertion.AssertNotNull("Should create PropertyQualifier.", q);
+			Assertion.Assert("Should create like when required.", q.Predicate is LikePredicate);
+		}
+			
+
+		[Test]
+		public void ConversionFromDictionaryDoesNotCreateLikeWhenNotRequired()
+		{
+			IDictionary			values;
+			PropertyQualifier	q;
+
+			values = new Hashtable();
+			values.Add("foo", "bar");
+			q = Qualifier.FromPropertyDictionary(values) as PropertyQualifier;
+			Assertion.AssertNotNull("Should create PropertyQualifier.", q);
+			Assertion.Assert("Should not create like when not required.", q.Predicate is LikePredicate == false);
+		}
 
 	}
 }

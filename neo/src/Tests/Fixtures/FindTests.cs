@@ -70,6 +70,27 @@ namespace Neo.Tests
 
 
 		[Test]
+		public void SearchUsingRelationalOperators()
+		{
+			TitleList		titles;
+
+			titles = new TitleFactory(context).Find("Advance >= 10125");
+			Assertion.AssertEquals("Should return titles correctly matching.", 2, titles.Count);
+
+		}
+
+
+		[Test]
+		public void SearchUsingLikePredicate()
+		{
+			TitleList		titles;
+
+			titles = new TitleFactory(context).Find("TheTitle like '%Cooking%'");
+			Assertion.AssertEquals("Should return titles correctly matching.", 3, titles.Count);
+		}
+
+
+		[Test]
 		public void ClauseQualifierWithRepeatedColumn()
 		{
 			TitleList result;

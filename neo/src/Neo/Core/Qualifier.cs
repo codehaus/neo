@@ -65,15 +65,25 @@ namespace Neo.Core
 				IDictionaryEnumerator enumerator = queryValues.GetEnumerator();
 				enumerator.MoveNext();
 				DictionaryEntry e = enumerator.Entry;
-				return new PropertyQualifier((string)e.Key, new EqualsPredicate(e.Value));
+				return Qualifier.ForKeyValuePair((string)e.Key, e.Value);
 			}
 			else
 			{
 				qualifiers = new ArrayList(queryValues.Count);
 				foreach(DictionaryEntry e in queryValues)
-					qualifiers.Add(new PropertyQualifier((string)e.Key, new EqualsPredicate(e.Value)));
+					qualifiers.Add(Qualifier.ForKeyValuePair((string)e.Key, e.Value));
 				return new AndQualifier(qualifiers);
 			}
+		}
+
+
+		protected static PropertyQualifier ForKeyValuePair(string aKey, object aValue)
+		{
+			String valueAsString = aValue as string;
+			if((valueAsString != null) && (valueAsString.IndexOf("%") >= 0))
+				return new PropertyQualifier(aKey, new LikePredicate(valueAsString));
+			return new PropertyQualifier(aKey, new EqualsPredicate(aValue));
+
 		}
 
 

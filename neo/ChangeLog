@@ -1,3 +1,14 @@
+2004-05-28 erik
+
+	* Added support for like, greater or equal and less or equal
+	operators on qualifiers; using Urmo's regex solution for the
+	evaluation of like in memory, Conversion from query dictionaries
+	will create a like predicate if a string contains a '%'.
+	
+	* Added predicates for string startsWith, endsWith and cntains
+	operations. There is no parser or sql support for these, though.
+
+
 2004-05-27 erik
 
 	* Refactored ClauseQualifier. Rather than using an enum to 

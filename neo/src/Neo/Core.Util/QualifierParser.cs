@@ -283,6 +283,8 @@ namespace Neo.Core.Util
 				return new Token(TokenType.Conjunctor, typeof(AndQualifier));
 			else if(lowerVal == "or")
 				return new Token(TokenType.Conjunctor, typeof(OrQualifier));
+			else if(lowerVal == "like")
+				return new Token(TokenType.Operator, typeof(LikePredicate));
 	
 			return new Token(TokenType.String, val);
 		}
@@ -301,15 +303,31 @@ namespace Neo.Core.Util
 			Type pt;
 			MoveNextChar();
 			if(c == '=')
+			{
 				pt = typeof(EqualsPredicate);
+			}
 			else if(c == '<')
-				pt = typeof(LessThanPredicate);
+			{
+				if((GetCurrentChar() == '=') && MoveNextChar())
+					pt = typeof(LessOrEqualPredicate);
+				else
+					pt = typeof(LessThanPredicate);
+			}
 			else if(c == '>')
-				pt = typeof(GreaterThanPredicate);
+			{
+				if((GetCurrentChar() == '=') && MoveNextChar())
+					pt = typeof(GreaterOrEqualPredicate);
+				else
+					pt = typeof(GreaterThanPredicate);
+			}
 			else if((c == '!') && (GetCurrentChar() == '=') && MoveNextChar())
+			{
 				pt = typeof(NotEqualPredicate);
+			}
 			else
+			{
 				throw new QualifierParserException("Unknown operator.", input, position);
+			}
 			return new Token(TokenType.Operator, pt);
 		}
 

@@ -123,6 +123,25 @@ namespace Neo.Tests
 
 
 		[Test]
+		public void TestGreaterOrEqualComparison()
+		{	
+			QualifierParser		parser;
+			Qualifier			q;
+			PropertyQualifier	cq;
+
+			parser = new QualifierParser("Royalties >= 12");
+			q = parser.GetQualifier();
+
+			Assertion.AssertNotNull("Parser failed.", q);
+			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
+			cq = q as PropertyQualifier;
+			Assertion.AssertEquals("Royalties", cq.Property);
+			Assertion.AssertEquals(typeof(GreaterOrEqualPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals(12, cq.Predicate.Value);
+		}
+
+
+		[Test]
 		public void TestNotEqualComparison()
 		{
 			QualifierParser		parser;
@@ -146,17 +165,36 @@ namespace Neo.Tests
 		{
 			QualifierParser		parser;
 			Qualifier			q;
-			PropertyQualifier	cq;
+			PropertyQualifier	pq;
 
 			parser = new QualifierParser("IsEditable = true");
 			q = parser.GetQualifier();
 
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
-			cq = q as PropertyQualifier;
-			Assertion.AssertEquals("IsEditable", cq.Property);
-			Assertion.AssertEquals(typeof(EqualsPredicate), cq.Predicate.GetType());
-			Assertion.AssertEquals(true, cq.Predicate.Value);
+			pq = q as PropertyQualifier;
+			Assertion.AssertEquals("IsEditable", pq.Property);
+			Assertion.AssertEquals(typeof(EqualsPredicate), pq.Predicate.GetType());
+			Assertion.AssertEquals(true, pq.Predicate.Value);
+		}
+
+
+		[Test]
+		public void TestLikeComparison()
+		{
+			QualifierParser		parser;
+			Qualifier			q;
+			PropertyQualifier	pq;
+
+			parser = new QualifierParser("TheTitle like 'Sushi%'");
+			q = parser.GetQualifier();
+
+			Assertion.AssertNotNull("Parser failed.", q);
+			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
+			pq = q as PropertyQualifier;
+			Assertion.AssertEquals("TheTitle", pq.Property);
+			Assertion.AssertEquals(typeof(LikePredicate), pq.Predicate.GetType());
+			Assertion.AssertEquals("Sushi%", pq.Predicate.Value);
 		}
 
 
