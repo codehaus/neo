@@ -68,7 +68,19 @@ public class ${entity.ClassName}Base : EntityObject
 
 #end
 
+	public override object GetProperty(string propName)
+	{
+#foreach($attribute in $entity.Attributes)
+#if(!$attribute.IsHidden)
+		if(propName == "$attribute.DotNetName") 
+			return $attribute.DotNetName;
+#end
+#end
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
