@@ -187,7 +187,7 @@ namespace Neo.Framework
 		bool IBindingList.AllowEdit 
 									
 		{ 
-			get { return false ; }
+			get { return true ; }
 		}
 
  		bool IBindingList.AllowNew 
