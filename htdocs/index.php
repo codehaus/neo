@@ -1,16 +1,16 @@
 <?php
-         
+
      // 1. Extract pagename from URI
     $url = strip_tags($_SERVER["REQUEST_URI"]);    $url_array = explode("/", $url);    array_shift($url_array); //the first one is empty anyway
     if($url_array[0] == "neo") // test environment?
         array_shift($url_array);
-    $page = implode("/", $url_array); 
+    $page = implode("/", $url_array);
 
     // 3. Check for index page
     if($page == "")
         $page = "news.html";
- 
- 
+
+
     function navitem($title, $target, $current)
     {
         print '<p class="navitem';
@@ -18,7 +18,7 @@
             print 'active';
         print "\"><a href=\"$target\">$title</a></p>\n";
     }
-    
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -54,9 +54,10 @@
 <div id="menubox">
 	<p class="navtitle">About Neo</p>
 	   <?php navitem("News", "news.html", $page) ?>
-	   <?php navitem("Roadmap", "roadmap.html", $page) ?>
-	   <?php navitem("Team", "team.html", $page) ?>
+	   <?php navitem("Why Neo?", "whyneo.html", $page) ?>
 	   <?php navitem("FAQ", "faq.html", $page) ?>
+	   <?php navitem("Team", "team.html", $page) ?>
+	   <?php navitem("Roadmap", "roadmap.html", $page) ?>
 	<p class="navtitle">Using Neo</p>
 	   <?php navitem("Download", "download.html", $page) ?>
 	   <?php navitem("Quickstart", "quickstart.html", $page) ?>
