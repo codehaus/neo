@@ -25,28 +25,21 @@ namespace Neo.OracleClient
 		{
 			emap = fetchSpec.EntityMap;
 
+			if(fetchSpec.FetchLimit != -1)
+			{
+				builder.Append("SELECT * FROM (");
+			}
+
 			builder.Append("SELECT ");
 			WriteColumns(table.Columns);
 
 			builder.Append(" FROM ");
 			builder.Append(table.TableName);
 
-			if((fetchSpec.Qualifier != null) || (fetchSpec.FetchLimit != -1)) 
+			if(fetchSpec.Qualifier != null) 
 			{
 				builder.Append(" WHERE ");
-				if(fetchSpec.FetchLimit != -1) 
-				{
-					builder.Append("ROWNUM <= ");
-					builder.Append(fetchSpec.FetchLimit);
-					if(fetchSpec.Qualifier == null) 
-						builder.Append(" ");
-					else 
-						builder.Append(" AND ");
-				}
-				if(fetchSpec.Qualifier != null) 
-				{
-					WriteQualifier(fetchSpec.Qualifier);
-				}
+				WriteQualifier(fetchSpec.Qualifier);
 			}
 
 			if(fetchSpec.SortOrderings != null)
@@ -54,6 +47,13 @@ namespace Neo.OracleClient
 				builder.Append(" ORDER BY ");
 				WriteSortOrderings(fetchSpec.SortOrderings);
 			}
+
+			if(fetchSpec.FetchLimit != -1)
+			{
+                builder.Append(") WHERE ROWNUM <= ");
+                builder.Append(fetchSpec.FetchLimit);
+            }
+
 		}
 
 
