@@ -6,7 +6,7 @@ using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
 	// This fixture tests functionality that is unique to the concrete EntityObject 
 	// implementation in the framework. Generic functionality tests should go into

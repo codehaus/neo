@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
 	// Some of these tests might duplicate tests in QualifierTests. Not sure yet
 	// whether it is sufficient to test in-memory evaluation from here (which also

@@ -1,22 +1,25 @@
 using System;
-using System.Data;
 using System.Collections;
-using NUnit.Framework;
+using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
 using Neo.Database;
-using Neo.SqlClient;
+using Neo.OracleClient;
+using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
+	// Of course, DbDataStore is abstract. This fixture will test either 
+	// the SqlDataStore or the OracleDataStore, see test.config for details.
+
 	[TestFixture]
-	public class SqlDataStoreTests : TestBase
+	public class DbDataStoreTests : TestBase
 	{
-		IEntityMapFactory emapFactory;
-		SqlDataStore	  store;
-		DataSet			  dataset, jobOnlyDataSet;
+	    IEntityMapFactory emapFactory;
+	    DbDataStore		  store;
+	    DataSet			  dataset, jobOnlyDataSet;
 		DataTable		  titleTable, jobTable;
 
 
@@ -26,7 +29,7 @@ namespace Neo.Tests
 			SetupLog4Net();
 
 			emapFactory = DefaultEntityMapFactory.SharedInstance;
-			store = GetDataStore();
+			store = (DbDataStore)GetDataStore();
 
 			dataset = new DataSet();
 			dataset.EnforceConstraints = false;
@@ -62,13 +65,13 @@ namespace Neo.Tests
 		public void SimpleUpdateWithCommit()
 		{
 			DataTable	fetchedTable;
-			Decimal		newPrice;
+		    Decimal		newPrice;
 
 			loadTitle("TC7777");
 			newPrice = getDifferentPrice((Decimal)titleTable.Rows[0]["price"]);
 			titleTable.Rows[0]["price"] = newPrice;
 			store.BeginTransaction();
-			ArrayList tables = new ArrayList();
+		    ArrayList tables = new ArrayList();
 			tables.Add(new OrderTable(titleTable));
 			store.ProcessUpdates(tables);
 			store.CommitTransaction();
@@ -164,13 +167,16 @@ namespace Neo.Tests
 			int			  tempId, finalId;
 			PkChangeTable changeTable;
 
+			if(store is OracleDataStore)
+				return;
+
 			jobTable = jobOnlyDataSet.Tables["jobs"];
 			newRow = jobTable.NewRow();
 			newRow["job_desc"] = "Test row for automated tests";
 			newRow["min_lvl"] = 100;
 			newRow["max_lvl"] = 200;
 			jobTable.Rows.Add(newRow);
-			tempId = (System.Int16)newRow["job_id"];
+			tempId = (Int16)newRow["job_id"];
 
 			store.BeginTransaction();
 			ArrayList changeTables = new ArrayList();
@@ -181,7 +187,7 @@ namespace Neo.Tests
 			}
 			store.ProcessInserts(tables, changeTables);
 			changeTable = (PkChangeTable) changeTables[0];
-			finalId = (System.Int16)newRow["job_id"];
+			finalId = (Int16)newRow["job_id"];
 			store.RollbackTransaction();
 
 			Assertion.AssertEquals("Inconsistent old value in change table.", tempId, changeTable[0].OldValue);
@@ -198,12 +204,14 @@ namespace Neo.Tests
 			DataRow		  newJobRow, newJobRefRow;
 			int			  tempId, finalId, finalForeignId;
 
+			if(store is OracleDataStore)
+				return;
 
 			jobTable = jobOnlyDataSet.Tables["jobs"];
 			// for this test we also need a completely new entity with a relation to job_id
 			jobRefTable = jobOnlyDataSet.Tables.Add("jobrefs");
-			column = jobRefTable.Columns.Add("job_id", typeof(System.Int16));
-			column = jobRefTable.Columns.Add("ref_id", typeof(System.String));
+			column = jobRefTable.Columns.Add("job_id", typeof(Int16));
+			column = jobRefTable.Columns.Add("ref_id", typeof(String));
 			column.Unique = true;
 			jobRefTable.PrimaryKey = new DataColumn[] { column };
 			relation = jobOnlyDataSet.Relations.Add("jobs.jobrefs", jobTable.Columns["job_id"], jobRefTable.Columns["job_id"]);
@@ -215,7 +223,7 @@ namespace Neo.Tests
 			newJobRow["min_lvl"] = 100;
 			newJobRow["max_lvl"] = 200;
 			jobTable.Rows.Add(newJobRow);
-			tempId = (System.Int16)newJobRow["job_id"];
+			tempId = (Int16)newJobRow["job_id"];
 			newJobRefRow = jobRefTable.NewRow();
 			newJobRefRow["ref_id"] = "FOO1";
 			newJobRefRow["job_id"] = tempId;
@@ -225,8 +233,8 @@ namespace Neo.Tests
 			ArrayList tables = new ArrayList();
 			tables.Add(new OrderTable(jobTable));
 			store.ProcessInserts(tables, new ArrayList());
-			finalId = (System.Int16)newJobRow["job_id"];
-			finalForeignId = (System.Int16)newJobRefRow["job_id"];
+			finalId = (Int16)newJobRow["job_id"];
+			finalForeignId = (Int16)newJobRefRow["job_id"];
 			store.RollbackTransaction();
 
 			Assertion.Assert("Final id should be different from temp id.", finalId.Equals(tempId) == false);
@@ -337,6 +345,9 @@ namespace Neo.Tests
 		{
 			DataTable	  fetchedTable;
 
+			if(store is OracleDataStore)
+				return;
+			
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
 			Assertion.AssertEquals("Wrong number of rows.", 1, fetchedTable.Rows.Count);
 			fetchedTable.Rows[0]["max_lvl"] = 20;

@@ -116,6 +116,11 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "Fixtures\DbDataStoreTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Fixtures\EntityMapTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -202,11 +207,6 @@
                 />
                 <File
                     RelPath = "Fixtures\SpeedTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Fixtures\SqlDataStoreTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

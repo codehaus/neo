@@ -1,27 +1,24 @@
-using System;
 using System.Collections;
-using System.Data;
-using NUnit.Framework;
-using Neo.Core;
 using Neo.Core.Util;
+using NUnit.Framework;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ObjectIdTests
 	{
-		[Test]
+		[NUnit.Framework.Test]
 		public void Equality()
 		{
-			ObjectId	oid1, oid2, oid3, oid4;
+		    ObjectId	oid1, oid2, oid3, oid4;
 
 			oid1 = new ObjectId("table1", new object[] { "foo" });
 			oid2 = new ObjectId("table1", new object[] { "foo" });
 			oid3 = new ObjectId("table1", new object[] { "bar" });
 			oid4 = new ObjectId("table2", new object[] { "foo" });
 
-			Assertion.Assert("oid1.Equals(null) must be false", oid1.Equals(null) == false);
+		    Assertion.Assert("oid1.Equals(null) must be false", oid1.Equals(null) == false);
 			Assertion.Assert("oid1.Equals(this) must be false", oid1.Equals(this) == false);
 
 			Assertion.Assert("oid1.Equals(oid2) must be true", oid1.Equals(oid2) == true);
@@ -58,7 +55,7 @@ namespace Neo.Tests
 		[Test]
 		public void HashtableUsage()
 		{
-			Hashtable	table;
+		    Hashtable	table;
 			ObjectId	oid1, oid2;
 
 			table = new Hashtable();

@@ -1,12 +1,12 @@
-using System;
+using System.Data;
 using Neo.Core;
 using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ScenarioTestsWithMocks : ScenarioTestsWithStore
 	{
 
@@ -22,10 +22,10 @@ namespace Neo.Tests
 		}
 
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void ObjectsAreMocks()
 		{
-			Assertion.AssertEquals("Object should be of mock type.", typeof(TitleMock), title.GetType());
+		    Assertion.AssertEquals("Object should be of mock type.", typeof(TitleMock), title.GetType());
 			Assertion.AssertEquals("Object should be of mock type.", typeof(PublisherMock), title.Publisher.GetType());
 		}
 
@@ -53,7 +53,7 @@ namespace Neo.Tests
 	
 	public class TitleMock : Title
 	{
-		protected TitleMock(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : base(aRow, aContext)
+		protected TitleMock(DataRow aRow, ObjectContext aContext) : base(aRow, aContext)
 		{
 		}
 
@@ -61,7 +61,7 @@ namespace Neo.Tests
 
 	public class PublisherMock : Publisher
 	{
-		protected PublisherMock(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : base(aRow, aContext)
+		protected PublisherMock(DataRow aRow, ObjectContext aContext) : base(aRow, aContext)
 		{
 		}
 

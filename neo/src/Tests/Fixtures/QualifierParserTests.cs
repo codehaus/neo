@@ -1,25 +1,24 @@
-using System;
 using Neo.Core;
 using Neo.Core.Parser;
 using Neo.Core.Qualifiers;
 using NUnit.Framework;
-using Pubs4.Model;
 
-namespace Neo.Tests
+
+namespace Neo.Tests.Fixtures
 {
 
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class QualifierParserTests : TestBase
 	{
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void TestTokenizer1()
 		{	
-			Token t;
+		    Token t;
 
 			Tokenizer tokenizer = new Tokenizer("royalties=20");
 			t = tokenizer.GetNextToken();
-			Assertion.AssertEquals(TokenType.String, t.Type);
+		    Assertion.AssertEquals(TokenType.String, t.Type);
 			Assertion.AssertEquals("royalties", t.Value);
 			t = tokenizer.GetNextToken();
 			Assertion.AssertEquals(TokenType.Operator, t.Type);
@@ -91,7 +90,7 @@ namespace Neo.Tests
 		public void TestLiteralComparison()
 		{	
 			QualifierParser		parser;
-			Qualifier			q;
+		    Qualifier			q;
 			PropertyQualifier	cq;
 
 			parser = new QualifierParser("TitleId = 'TC7777'");

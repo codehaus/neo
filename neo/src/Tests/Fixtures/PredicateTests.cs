@@ -1,15 +1,14 @@
 using System;
-using Neo.Core;
 using Neo.Core.Qualifiers;
 using NUnit.Framework;
 
 
 namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class PredicateTests : TestBase
 	{
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void SetupLogging()
 		{
 			SetupLog4Net();
@@ -18,13 +17,13 @@ namespace Neo.Tests.Fixtures
 
 		// For historic reasons, some of the predicates are tested indirectly from QualifierTests
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void RelationalPredicatesCanHandleNull()
 		{
-			IPredicate	p;
+		    IPredicate	p;
 
 			p = new LessThanPredicate(15);
-			Assertion.Assert("Null should not be less than anything.", p.IsTrueForValue(null, null) == false);
+		    Assertion.Assert("Null should not be less than anything.", p.IsTrueForValue(null, null) == false);
 			p = new GreaterThanPredicate(15);
 			Assertion.Assert("Null should not be greater than anything.", p.IsTrueForValue(null, null) == false);
 		}

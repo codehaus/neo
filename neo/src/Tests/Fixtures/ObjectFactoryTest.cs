@@ -1,19 +1,17 @@
-using System;
-using System.Data;
-using NUnit.Framework;
 using Neo.Core;
+using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ObjectFactoryTests : TestBase
 	{
 		protected ObjectContext context;
 
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void SetUp()
 		{
 			SetupLog4Net();
@@ -23,13 +21,13 @@ namespace Neo.Tests
 		}
 
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void ObjectCreation()
 		{
-			Title	title;
+		    Title	title;
 
 			title = new TitleFactory(context).CreateObject("TC1234");
-			Assertion.Assert("Couldn't create title object.", title != null);
+		    Assertion.Assert("Couldn't create title object.", title != null);
 		}
 
 

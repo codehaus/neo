@@ -1,13 +1,12 @@
 using System;
 using System.Data;
-using System.Xml;
 using System.IO;
-using NUnit.Framework;
+using System.Xml;
+using log4net.Config;
 using Neo.Core;
-using Neo.SqlClient;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
 	public class TestBase
 	{
@@ -18,17 +17,17 @@ namespace Neo.Tests
 		{
 			if(didSetupLog4Net)
 				return;
-			System.IO.FileInfo fi = new System.IO.FileInfo("..\\..\\log4net.config");
+		    FileInfo fi = new FileInfo("..\\..\\log4net.config");
 			if(fi.Exists == false)
 				throw new ApplicationException("Cannot find log4net configuration file at " + fi.FullName);
-			log4net.Config.DOMConfigurator.ConfigureAndWatch(fi);
+		    DOMConfigurator.ConfigureAndWatch(fi);
 			didSetupLog4Net = true;
 		}
 
 
 		protected string GetConfigValue(string name)
 		{
-			XmlDocument config = new XmlDocument();
+		    XmlDocument config = new XmlDocument();
 			config.Load("..\\..\\test.config");
 			return config.DocumentElement.GetElementsByTagName(name)[0].InnerText;
 		}
@@ -45,9 +44,12 @@ namespace Neo.Tests
 		}
 
 
-		protected SqlDataStore GetDataStore()
+		protected IDataStore GetDataStore()
 		{
-			return new SqlDataStore(GetConfigValue("sqlconnstring"));
+			String storeClassName = GetConfigValue("store");
+			String connString = GetConfigValue("sqlconnstring");
+
+			return (IDataStore)Activator.CreateInstance(Type.GetType(storeClassName + ",Neo"), new object[] { connString });
 		}
 
 	}

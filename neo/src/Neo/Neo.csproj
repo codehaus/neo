@@ -89,6 +89,11 @@
                     AssemblyName = "System.Management"
                     HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Management.dll"
                 />
+                <Reference
+                    Name = "System.Data.OracleClient"
+                    AssemblyName = "System.Data.OracleClient"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.OracleClient.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -279,22 +284,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Database\GenericSqlModWriter.cs"
+                    RelPath = "Database\DbDataStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Database\GenericSqlSelectWriter.cs"
+                    RelPath = "Database\GenericSql92Builder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Database\GenericSqlWriter.cs"
+                    RelPath = "Database\IDbCommandBuilder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Database\IParameterFactory.cs"
+                    RelPath = "Database\IDbImplementationFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -339,12 +344,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "OracleClient\OracleCommandBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OracleClient\OracleDataStore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OracleClient\OracleImplFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SqlClient\SqlCommandBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SqlClient\SqlDataStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlClient\SqlParameterFactory.cs"
+                    RelPath = "SqlClient\SqlImplFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

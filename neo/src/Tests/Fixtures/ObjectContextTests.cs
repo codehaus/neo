@@ -1,19 +1,18 @@
-using System;
 using System.Collections;
 using System.Data;
-using NUnit.Framework;
 using Neo.Core;
+using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ObjectContextTests : TestBase
 	{
 		private ObjectContext	context;
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void CreateContext()
 		{
 			SetupLog4Net();
@@ -24,13 +23,13 @@ namespace Neo.Tests
 		}
 
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void ObjectRegistration()
 		{
-			Title	title;
+		    Title	title;
 			bool	foundSampleTitle;
 
-			Assertion.Assert("No objects registered.", context.GetAllRegisteredObjects().Count > 0);
+		    Assertion.Assert("No objects registered.", context.GetAllRegisteredObjects().Count > 0);
 
 			foundSampleTitle = false;
 			foreach(object o in context.GetAllRegisteredObjects())
@@ -146,7 +145,7 @@ namespace Neo.Tests
 		{
 			ObjectContext childContext;
 			TitleList	  titlesInParent, titlesInChild;
-			IList		  returnedList;
+		    IList		  returnedList;
 			
 			childContext = new ObjectContext(context);
 			titlesInParent = new TitleFactory(context).FindAllObjects();

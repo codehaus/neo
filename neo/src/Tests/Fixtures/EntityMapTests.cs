@@ -1,19 +1,19 @@
-using System;
 using System.Data;
-using NUnit.Framework;
 using Neo.Core;
 using Neo.Core.Util;
+using NUnit.Framework;
+using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class EntityMapTests : TestBase
 	{
 		protected DefaultEntityMapFactory EmapFactory;
 		
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void SetUp()
 		{
 			SetupLog4Net();
@@ -21,10 +21,10 @@ namespace Neo.Tests
 		}
 
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void EntityMapRegistry()
 		{
-			Assertion.AssertEquals("Wrong number of maps types.", 7, EmapFactory.GetRegisteredTypes().Count);
+		    Assertion.AssertEquals("Wrong number of maps types.", 7, EmapFactory.GetRegisteredTypes().Count);
 			Assertion.AssertEquals("Wrong number of maps.", 7, EmapFactory.GetAllMaps().Count);
 		}
 
@@ -32,12 +32,12 @@ namespace Neo.Tests
 		[Test]
 		public void SchemaGeneration()
 		{
-			DataSet			dataset;
+		    DataSet			dataset;
 			DataTable		titleTable;
 			DataColumn		salesColumn;
 
 			dataset = new DataSet();
-			EmapFactory.GetMap(typeof(Pubs4.Model.Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Full);
+			EmapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Full);
 			
 			titleTable = dataset.Tables["titles"];
 			Assertion.AssertNotNull("Could not find titles table.", titleTable);

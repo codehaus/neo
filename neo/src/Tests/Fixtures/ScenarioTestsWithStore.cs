@@ -1,12 +1,10 @@
 using System;
 using Neo.Core;
-using NUnit.Framework;
-using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ScenarioTestsWithStore : ScenarioTests
 	{
 

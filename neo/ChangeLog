@@ -1,3 +1,9 @@
+2004-06-10 erik
+
+	* Further refactored the data store base implementations and 
+	added Arjen's code for Microsoft's Oracle data provider.
+	
+
 2004-06-03 erik
 
 	* Added simple support for retrieving sorted fetch results.

@@ -1,19 +1,19 @@
-using System;
 using System.Globalization;
 using Neo.Core;
 using NUnit.Framework;
 using Pubs4.Model;
 
-namespace Neo.Tests
+
+namespace Neo.Tests.Fixtures
 {
 	
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class PropertyComparerTests : TestBase
 	{
 		protected ObjectContext	context;
 
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void LoadDataSetAndGetTitleObject()
 		{
 			SetupLog4Net();
@@ -23,13 +23,13 @@ namespace Neo.Tests
 		}
 
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void SimpleSort()
 		{
-			TitleList	titles;
+		    TitleList	titles;
 
 			titles = new TitleList(new PublisherFactory(context).FindObject("0736").Titles);
-			Assertion.AssertEquals("Wrong number of titles.", 5, titles.Count);
+		    Assertion.AssertEquals("Wrong number of titles.", 5, titles.Count);
 			
 			titles.Sort(new PropertyComparer("Advance", SortDirection.Ascending));
 			for(int i = 1; i < titles.Count; i++)
@@ -75,7 +75,7 @@ namespace Neo.Tests
 		[Test]
 		public void CultureBasedSortOnStrings()
 		{
-			CultureInfo	 culture;
+		    CultureInfo	 culture;
 			TitleFactory factory;
 			TitleList	 titles;
 			Title		 t;

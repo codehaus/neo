@@ -1,37 +1,35 @@
 using System;
-using System.Data;
-using NUnit.Framework;
 using Neo.Core;
 using Neo.Core.Util;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[Ignore("[MANUAL] Speed tests only.")]
+	[NUnit.Framework.Ignore("[MANUAL] Speed tests only.")]
 	public class SpeedTests
 	{
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void SpeedOfGetProperty()
 		{
-			ObjectContext context;
-			Title		  title;
-			DateTime	  start, end;
+		    ObjectContext context;
+		    Title		  title;
+		    DateTime	  start, end;
 
 			context = new ObjectContext();
 			title = new TitleFactory(context).CreateObject("XX9999");
 		
 			start = DateTime.Now;
 			for(int i = 0; i < 500000; i++)
-				ObjectHelper.GetProperty(title, "TheTitle");
+			    ObjectHelper.GetProperty(title, "TheTitle");
 			end = DateTime.Now;
 			
 			Console.WriteLine("time spend = {0}", (end - start).TotalMilliseconds);
 		}
 
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void SpeedOfPropertyQualifier()
 		{
 			ObjectContext context;
@@ -55,7 +53,7 @@ namespace Neo.Tests
 		}
 	
 
-		[Test]
+		[NUnit.Framework.Test]
 		public void SpeedOfGetObjects()
 		{
 			ObjectContext	 context;

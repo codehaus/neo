@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Neo.Core;
 using Neo.Core.Qualifiers;
@@ -7,16 +6,16 @@ using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
 
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class QualifierTests : TestBase
 	{
 		protected ObjectContext	context;
 		protected Title			title;
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void LoadDataSetAndGetTitleObject()
 		{
 			SetupLog4Net();
@@ -25,7 +24,7 @@ namespace Neo.Tests
 			context.MergeData(GetTestDataSet());
 
 			title = new TitleFactory(context).FindObject("TC7777");
-			Assertion.AssertNotNull("Failed to find title object.", title);
+		    Assertion.AssertNotNull("Failed to find title object.", title);
 			Assertion.AssertEquals("Wrong value for royalties", 10, title.Royalty);
 		}
 
@@ -33,7 +32,7 @@ namespace Neo.Tests
 		[Test]
 		public void PropertyQualifierSimpleMatch()
 		{
-			PropertyQualifier	q;
+		    PropertyQualifier	q;
 			
 			q = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
 			Assertion.Assert("Should match (String).", q.EvaluateWithObject(title));
@@ -231,7 +230,7 @@ namespace Neo.Tests
 		[Test]
 		public void ConversionFromDictionaryCreatesLikeWhenRequired()
 		{
-			IDictionary			values;
+		    IDictionary			values;
 			PropertyQualifier	q;
 
 			values = new Hashtable();

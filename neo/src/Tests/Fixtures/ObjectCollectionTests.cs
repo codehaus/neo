@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
 	[NUnit.Framework.TestFixture]
 	public class ObjectCollectionTests : TestBase

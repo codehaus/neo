@@ -1,20 +1,17 @@
-using System;
-using System.Collections;
-using System.Data;
-using NUnit.Framework;
 using Neo.Core;
+using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ObjectRelationTests : TestBase
 	{
 		protected ObjectContext	context;
 
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void LoadDataSet()
 		{
 			SetupLog4Net();
@@ -24,15 +21,15 @@ namespace Neo.Tests
 		}
 
 	
-		[Test]
+		[NUnit.Framework.Test]
 		public void GetList()
 		{
-			Publisher		publisher;
+		    Publisher		publisher;
 			TitleList		titleList;
 
 			publisher = new PublisherFactory(context).FindObject("0877");
 			titleList = publisher.Titles.GetReadOnlyList();
-			Assertion.AssertEquals("Count differs.", publisher.Titles.Count, titleList.Count);
+		    Assertion.AssertEquals("Count differs.", publisher.Titles.Count, titleList.Count);
 			for(int i = 0; i < titleList.Count; i++)
 				Assertion.AssertEquals("Objects differ.", publisher.Titles[i], titleList[i]);
 			Assertion.Assert("List not read-only.", titleList.IsReadOnly);

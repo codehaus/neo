@@ -1,28 +1,27 @@
 using System;
-using System.Collections;
 using System.Data;
-using NUnit.Framework;
 using Neo.Core;
+using NUnit.Framework;
 using Pubs4.Model;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class ScenarioTests : TestBase
 	{
 		protected ObjectContext	context;
 		protected Title			title;
 
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void LoadDataSetAndGetTitleObject()
 		{
 			SetupLog4Net();
 			
 			context = GetContext();
 			title = new TitleFactory(context).FindObject("TC7777");
-			Assertion.AssertNotNull("Failed to find title object.", title);
+		    Assertion.AssertNotNull("Failed to find title object.", title);
 		}
 
 

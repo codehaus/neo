@@ -1,21 +1,19 @@
 using System;
-using System.Collections;
 using System.Data;
-using NUnit.Framework;
 using Neo.Core;
 using Neo.Framework;
-using Pubs4.Model;
+using NUnit.Framework;
 
 
-namespace Neo.Tests
+namespace Neo.Tests.Fixtures
 {
-	[TestFixture]
+	[NUnit.Framework.TestFixture]
 	public class PkInitializerTests : TestBase
 	{
 		protected DataTable		table;
 		protected DataColumn	pkColumn;
 
-		[SetUp]
+		[NUnit.Framework.SetUp]
 		public void SetUp()
 		{
 			table = new DataTable();
@@ -24,10 +22,10 @@ namespace Neo.Tests
 		}
 
 	
-		[Test]
+		[NUnit.Framework.Test]
 		public void NewGuidInitializer()
 		{
-			IPkInitializer	initializer;
+		    IPkInitializer	initializer;
 			DataRow			row, row2;
 			
 			pkColumn.DataType = typeof(Guid);
@@ -40,7 +38,7 @@ namespace Neo.Tests
 			row2 = table.NewRow();
 			initializer.InitializeRow(row2, null);
 
-			Assertion.AssertNotNull("Should have set value.", row["ID"]);
+		    Assertion.AssertNotNull("Should have set value.", row["ID"]);
 			Assertion.AssertNotNull("Should create different values.", row2["ID"]);
 		}
 
