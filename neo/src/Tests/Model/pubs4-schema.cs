@@ -98,6 +98,7 @@ public class TitleTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public TitleTemplate(IEntityMap anEntityMap)
 	{
@@ -122,7 +123,12 @@ public class TitleTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public System.String Type
 	{
 		get { return (System.String)queryValues["Type"]; }
@@ -241,6 +247,7 @@ public class TitleList : ObjectListBase
 	{
 		return (Title)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -350,6 +357,14 @@ public class TitleFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public TitleList Find(FetchSpecification fetchSpecification)
+	{
+		TitleList c = new TitleList();
+		foreach(Title eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new TitleList Find(string qualifierFormat, params object[] parameters)
 	{
 		TitleList c = new TitleList();
@@ -537,6 +552,7 @@ public class DiscountTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public DiscountTemplate(IEntityMap anEntityMap)
 	{
@@ -561,7 +577,12 @@ public class DiscountTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public System.String DiscountType
 	{
 		get { return (System.String)queryValues["DiscountType"]; }
@@ -638,6 +659,7 @@ public class DiscountList : ObjectListBase
 	{
 		return (Discount)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -747,6 +769,14 @@ public class DiscountFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public DiscountList Find(FetchSpecification fetchSpecification)
+	{
+		DiscountList c = new DiscountList();
+		foreach(Discount eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new DiscountList Find(string qualifierFormat, params object[] parameters)
 	{
 		DiscountList c = new DiscountList();
@@ -921,6 +951,7 @@ public class JobTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public JobTemplate(IEntityMap anEntityMap)
 	{
@@ -945,7 +976,12 @@ public class JobTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public System.String Description
 	{
 		get { return (System.String)queryValues["Description"]; }
@@ -1028,6 +1064,7 @@ public class JobList : ObjectListBase
 	{
 		return (Job)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -1137,6 +1174,14 @@ public class JobFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public JobList Find(FetchSpecification fetchSpecification)
+	{
+		JobList c = new JobList();
+		foreach(Job eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new JobList Find(string qualifierFormat, params object[] parameters)
 	{
 		JobList c = new JobList();
@@ -1306,6 +1351,7 @@ public class PublisherTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public PublisherTemplate(IEntityMap anEntityMap)
 	{
@@ -1330,7 +1376,12 @@ public class PublisherTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public System.String Name
 	{
 		get { return (System.String)queryValues["Name"]; }
@@ -1419,6 +1470,7 @@ public class PublisherList : ObjectListBase
 	{
 		return (Publisher)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -1528,6 +1580,14 @@ public class PublisherFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public PublisherList Find(FetchSpecification fetchSpecification)
+	{
+		PublisherList c = new PublisherList();
+		foreach(Publisher eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new PublisherList Find(string qualifierFormat, params object[] parameters)
 	{
 		PublisherList c = new PublisherList();
@@ -1712,6 +1772,7 @@ public class StoreTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public StoreTemplate(IEntityMap anEntityMap)
 	{
@@ -1736,7 +1797,12 @@ public class StoreTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public System.String Name
 	{
 		get { return (System.String)queryValues["Name"]; }
@@ -1825,6 +1891,7 @@ public class StoreList : ObjectListBase
 	{
 		return (Store)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -1934,6 +2001,14 @@ public class StoreFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public StoreList Find(FetchSpecification fetchSpecification)
+	{
+		StoreList c = new StoreList();
+		foreach(Store eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new StoreList Find(string qualifierFormat, params object[] parameters)
 	{
 		StoreList c = new StoreList();
@@ -2089,6 +2164,7 @@ public class TitleAuthorTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public TitleAuthorTemplate(IEntityMap anEntityMap)
 	{
@@ -2113,7 +2189,12 @@ public class TitleAuthorTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public Title Title
 	{
 		get { return (Title)queryValues["Title"]; }
@@ -2184,6 +2265,7 @@ public class TitleAuthorList : ObjectListBase
 	{
 		return (TitleAuthor)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -2293,6 +2375,14 @@ public class TitleAuthorFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public TitleAuthorList Find(FetchSpecification fetchSpecification)
+	{
+		TitleAuthorList c = new TitleAuthorList();
+		foreach(TitleAuthor eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new TitleAuthorList Find(string qualifierFormat, params object[] parameters)
 	{
 		TitleAuthorList c = new TitleAuthorList();
@@ -2473,6 +2563,7 @@ public class AuthorTemplate : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public AuthorTemplate(IEntityMap anEntityMap)
 	{
@@ -2497,7 +2588,12 @@ public class AuthorTemplate : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 	public System.Boolean ContractSigned
 	{
 		get { return (System.Boolean)queryValues["ContractSigned"]; }
@@ -2580,6 +2676,7 @@ public class AuthorList : ObjectListBase
 	{
 		return (Author)base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -2689,6 +2786,14 @@ public class AuthorFactory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public AuthorList Find(FetchSpecification fetchSpecification)
+	{
+		AuthorList c = new AuthorList();
+		foreach(Author eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new AuthorList Find(string qualifierFormat, params object[] parameters)
 	{
 		AuthorList c = new AuthorList();

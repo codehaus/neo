@@ -306,10 +306,33 @@ namespace Neo.Tests
 
 			Assertion.AssertEquals("The first item should have order of 1", 1, ((OrderTable)insertTables[0]).Order);
 			Assertion.AssertEquals("The first item should have order of 0", 0, ((OrderTable)insertTables[1]).Order);
-
-			//Assertion.AssertEquals("The first item in the list should be publishers", publisherTable.Table.TableName, ((OrderTable)insertTables[0]).Table.TableName);
-			//Assertion.AssertEquals("The second item in the list should be titles", titlesTable.Table.TableName, ((OrderTable)insertTables[1]).Table.TableName);
 		}
+
+		
+		[Test]
+		public void ShouldReturnRowsOrderedAccordingToFetchSpecification()
+		{
+			FetchSpecification	spec;
+			DataTable			fetchedTable;
+			DataRow				prevRow;
+
+			spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)));
+			spec.SortOrderings = new PropertyComparer[] { new PropertyComparer("PublicationDate", SortDirection.Ascending),
+														  new PropertyComparer("Type", SortDirection.Descending)};
+
+			fetchedTable = store.FetchRows(spec);
+			Assertion.Assert("Should have more than 2 rows", fetchedTable.Rows.Count > 2);
+
+			prevRow = fetchedTable.Rows[0];
+			foreach(DataRow currRow in fetchedTable.Rows)
+			{
+				Assertion.Assert("Should return titles in correct order.", (DateTime)prevRow["pubdate"] <= (DateTime)currRow["pubdate"]);
+				if((DateTime)prevRow["pubdate"] == (DateTime)currRow["pubdate"])
+					Assertion.Assert("Should return titles in correct order.", Comparer.Default.Compare((String)prevRow["type"], (String)currRow["type"]) >= 0);
+				prevRow = currRow;
+			}
+		}
+
 
 		[Test]
 		public void UpdateTableWithIdentityColumn()

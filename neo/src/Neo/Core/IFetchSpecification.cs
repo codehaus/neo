@@ -25,6 +25,11 @@ namespace Neo.Core
 		/// Specifies how many object to get.
 		/// </summary>
 		Int32 FetchLimit { get; }
+
+		/// <summary>
+		/// Specifies the order in which the objects are returned. First comparer has highest precedence.
+		/// </summary>
+		PropertyComparer[] SortOrderings { get; }
 	}
 
 }

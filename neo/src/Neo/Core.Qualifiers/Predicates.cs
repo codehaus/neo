@@ -26,8 +26,10 @@ namespace Neo.Core.Qualifiers
 		{
 			if(predValue == nullVal)
 				return (aValue == nullVal);
+			if(aValue == nullVal)
+				return false;
 
-			if((aValue != nullVal) && (predValue.GetType() != aValue.GetType()) && (predValue is IConvertible))
+			if((predValue.GetType() != aValue.GetType()) && (predValue is IConvertible))
 				predValue = (IComparable)Convert.ChangeType(predValue, aValue.GetType());
 			
 			return predValue.Equals(aValue);

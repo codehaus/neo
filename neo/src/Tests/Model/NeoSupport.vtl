@@ -77,6 +77,7 @@ public class ${entity.ClassName}Template : IFetchSpecification
 	private IEntityMap entityMap;
 	private ListDictionary queryValues;
 	private int fetchLimit;
+	private PropertyComparer[] sortOrderings;
 	
 	public ${entity.ClassName}Template(IEntityMap anEntityMap)
 	{
@@ -101,7 +102,12 @@ public class ${entity.ClassName}Template : IFetchSpecification
 		set { fetchLimit = value; }
 	}
 	
-
+	public PropertyComparer[] SortOrderings
+	{
+		get { return sortOrderings; }
+		set { sortOrderings = value; }
+	}
+	
 #foreach($attributes in $entity.Attributes)
 #if(!$attributes.IsHidden)
 	public $attributes.DotNetType $attributes.DotNetName
@@ -178,6 +184,7 @@ public class ${entity.ClassName}List : ObjectListBase
 	{
 		return (${entity.ClassName})base.FindFirst(qualifierFormat, parameters);
 	}
+	
 
 }
 
@@ -313,6 +320,14 @@ public class ${entity.ClassName}Factory : Neo.Framework.ObjectFactory
 		return c;
 	}
 
+	public ${entity.ClassName}List Find(FetchSpecification fetchSpecification)
+	{
+		${entity.ClassName}List c = new ${entity.ClassName}List();
+		foreach(${entity.ClassName} eo in base.Find(fetchSpecification))
+			c.Add(eo);
+		return c;
+	}
+	
 	public new ${entity.ClassName}List Find(string qualifierFormat, params object[] parameters)
 	{
 		${entity.ClassName}List c = new ${entity.ClassName}List();

@@ -324,10 +324,6 @@ namespace Neo.SqlClient
 				changesToOrder = false;
 				foreach(OrderTable t in tables)
 				{
-					//how many parents
-					DataRelationCollection parents = t.Table.ParentRelations;
-					string tableN = t.Table.TableName;
-
 					foreach(OrderTable t2 in tables)
 					{
 						if (t.IsChildOf(t2) && t2.Order <= t.Order && t.Table.TableName != t2.Table.TableName) 
@@ -411,13 +407,12 @@ namespace Neo.SqlClient
 		public virtual void ClearTable(string tableName)
 		{
 			StringBuilder	builder;
-			int				rowsAffected;
 
 			builder = new StringBuilder();
 			builder.Append("DELETE FROM ");
 			builder.Append(tableName);
 			
-			rowsAffected = ExecuteNonQuery(builder.ToString(), null);
+			ExecuteNonQuery(builder.ToString(), null);
 		}
 
 

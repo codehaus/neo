@@ -59,23 +59,21 @@ namespace Neo.Database
 			builder.Append(" FROM ");
 			builder.Append(table.TableName);
 
-			Qualifier qualifier = fetchSpec.Qualifier; 
-
-			if(qualifier != null)
+			if(fetchSpec.Qualifier != null)
 			{
 				builder.Append(" WHERE ");
-				WriteQualifier(qualifier);
+				fetchSpec.Qualifier.AcceptVisitor(this);
+			}
+
+			if(fetchSpec.SortOrderings != null)
+			{
+				builder.Append(" ORDER BY ");
+				WriteSortOrderings(fetchSpec.SortOrderings);
 			}
 		}
 
 
-		protected void WriteQualifier(Qualifier q)
-		{
-			q.AcceptVisitor(this);
-		}
-
-
-		//--------------------------------------------------------------------------------------
+	    //--------------------------------------------------------------------------------------
 		//	IQualifierVisitor impl
 		//--------------------------------------------------------------------------------------
 		
@@ -224,6 +222,27 @@ namespace Neo.Database
 
 			builder.Append(" )");
 		}
+
+
+
+		//--------------------------------------------------------------------------------------
+		//	Writing sort orderings
+		//--------------------------------------------------------------------------------------
+
+		protected void WriteSortOrderings(PropertyComparer[] orderings)
+		{
+			bool first = true;
+			foreach(PropertyComparer c in orderings)
+			{
+				if(first == false)
+					builder.Append(", ");
+				builder.Append(emap.GetColumnForAttribute(c.Property));
+				if(c.SortDirection == SortDirection.Descending)
+					builder.Append(" DESC");
+				first = false;
+			}
+		}
+
 
 	}
 }

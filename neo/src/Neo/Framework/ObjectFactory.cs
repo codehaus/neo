@@ -46,6 +46,8 @@ namespace Neo.Framework
 
 		public IList Find(IFetchSpecification fetchSpec)
 		{
+			if((fetchSpec.EntityMap == null) && (fetchSpec is FetchSpecification))
+				((FetchSpecification)fetchSpec).EntityMap = EntityMap;
 			return Context.GetObjects(fetchSpec);
 		}
 		

@@ -72,7 +72,7 @@ namespace Neo.Core
 		/// <summary>
 		/// Constructor. Takes data from the supplied data set into this context
 		/// </summary>
-		/// <param name="aDataStore">data to be imported</param>
+		/// <param name="aDataSet">data to be imported</param>
 		public ObjectContext(DataSet aDataSet) : this()
 		{
 			MergeData(aDataSet, false);
@@ -876,7 +876,7 @@ namespace Neo.Core
 			limit = fetchSpec.FetchLimit;
 			if(fetchSpec.Qualifier == null)
 			{
-				if(limit == -1)
+				if((limit == -1) || (limit > objects.Count) || (fetchSpec.SortOrderings != null))
 				{
 					result = objects;
 				}
@@ -896,10 +896,16 @@ namespace Neo.Core
 					if(q.EvaluateWithObject(eo))
 					{
 						result.Add(eo);
-						if(--limit == 0)
+						if((fetchSpec.SortOrderings == null) && (result.Count == limit))
 							break;
 					}
 				}
+			}
+			if(fetchSpec.SortOrderings != null)
+			{
+				ArrayList objectsSorted = new ArrayList(result);
+				fetchSpec.SortOrderings[0].Sort(objectsSorted);
+				result = objectsSorted.GetRange(0, Math.Min(limit, objectsSorted.Count));
 			}
 
 			return result;

@@ -214,10 +214,9 @@ namespace Neo.Tests
 		public void FindUniqueNone()
 		{
 			TitleFactory	factory;
-			Title			title;
 
 			factory = new TitleFactory(context);
-			title = factory.FindUnique("TitleId = 'XX1111'");
+			factory.FindUnique("TitleId = 'XX1111'");
 		}
 
 		
@@ -226,12 +225,11 @@ namespace Neo.Tests
 		public void FindUniqueMany()
 		{
 			TitleFactory	factory;
-			Title			title;
 
 			factory = new TitleFactory(context);
 			try
 			{
-				title = factory.FindUnique("Type", "business    ");
+				factory.FindUnique("Type", "business    ");
 			}
 			catch (NotUniqueException e)
 			{
@@ -266,6 +264,45 @@ namespace Neo.Tests
 			factory = new TitleFactory(context);
 			title = factory.FindFirst("TitleId = 'XX1111'");
 			Assertion.AssertNull("Wrong title returned.", title);
+		}
+
+
+		[Test]
+		public void FindSortedWithExcessiveLimit()
+		{
+			TitleFactory		factory;
+			FetchSpecification	spec;
+			TitleList			result;
+			
+			spec = new FetchSpecification();
+			spec.SortOrderings = new PropertyComparer[] { new PropertyComparer("PublicationDate", SortDirection.Descending) };
+			spec.FetchLimit = 5000;
+
+			factory = new TitleFactory(context);
+			result = factory.Find(spec);
+
+			Assertion.Assert("Should return several titles.", result.Count > 0);
+			Assertion.AssertEquals("Should return title with lastest date.", "PC9999", result[0].TitleId);
+		}
+		
+		
+		[Test]
+		public void FindSortedWithLimitAndQualifier()
+		{
+			TitleFactory		factory;
+			FetchSpecification	spec;
+			TitleList			result;
+			
+			spec = new FetchSpecification();
+			spec.Qualifier = Qualifier.Format("Publisher.Name = {0}", publisher.Name);
+			spec.SortOrderings = new PropertyComparer[] { new PropertyComparer("PublicationDate", SortDirection.Ascending) };
+			spec.FetchLimit = 1;
+
+			factory = new TitleFactory(context);
+			result = factory.Find(spec);
+
+			Assertion.AssertEquals("Should return just one.", 1, result.Count);
+			Assertion.AssertEquals("Should return title with earliest date for this publisher.", "BU1111", result[0].TitleId);
 		}
 
 
