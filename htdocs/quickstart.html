@@ -1,10 +1,40 @@
 
-<p class="heading1">Installation</p>
+<p class="heading1">Neo quickstart</p>
 
-<p class="body"><ol>    <li>Open neo\src\Neo.sln</li>
-    <li>Build this solution.</li>
-    <li>Run the unit tests if you want. All test must pass!</li>    <li>Open neo\src\Tools\Neo.Tools.sln</li>    <li>Build this solution.</li>    <li>Open a VisualStudio command prompt. Go to neo\src\Tools\VsTool\Resources   and run the setup.bat script. (This is only necessary if you want to use   the VisualStudio integration.)</li>
-</ol><p class="body">Viola. You are ready to go. Now please check the <a href="docs.html">documentation</a>.</p>
+<p class="body"><ol>    <li>Download and install the Neo MSI installer from the <a href="http://dist.codehaus.org/neo/distributions">distributions directory</a> on this site.</li>
+    <li>Create a new solution in VisualStudio.NET 2003 and add Neo.dll as reference to the project. Note that VisualStudio 2005 (a.k.a. Whidbey) is not supported yet.</li>
+    
+    <li>Write a model file for your entities and the relationships between them. Have a look at the following sample model for some inspiration.
+    <p class="code"><pre>&lt;database name="movies" package="Movies.Model" defaultIdMethod="native"&gt;
+  &lt;table name="person"&gt;
+    &lt;column name="person_id" primaryKey="true" hidden="true" type="INTEGER" /&gt;
+    &lt;column name="name" required="true" type="VARCHAR" size="500" /&gt;
+  &lt;/table&gt;
+  &lt;table name="movie"&gt;
+    &lt;column name="movie_id" primaryKey="true" hidden="true" type="INTEGER" /&gt;
+    &lt;column name="title" required="true" type="VARCHAR" size="500" /&gt;
+    &lt;column name="director_id" required="true" hidden="true" type="INTEGER" /&gt;
+    &lt;foreign-key foreignTable="persons" name="Director"&gt; 
+      &lt;reference local="director_id" foreign="person_id"/&gt; 
+    &lt;/foreign-key&gt;
+  &lt;/table&gt;
+&lt;/database&gt;</pre></p>
+    </li>
+    
+    <li>Add the Neo code generator to the model file as described in the VsToolGuide available on the <a href="docs.html">docs</a> page. Now, whenever you make changes to the model, Neo will update the underlying source code.</li>
+    
+    <li>Write your application code. The lines below retrieve a movie from the database, then create a new director and assign it to the movie and finally save all changes back in one transaction.
+        <p class="code"><pre>    IDataStore store = new SqlDataStore(" ... connection string ... ");
+    ObjectContext context = new ObjectContext(store);
+    MovieFactory factory = new MovieFactory(context);
+    Movie starwars = factory.Find("title = 'Star Wars');
+    Person george = new PersonFactory(context).CreateObject();
+    george.Name = "George Lucas";
+    starwars.Director = george;
+    context.SaveChanges();</pre></p>
+    </li>
 
-<p class="footer">$Id: quickstart.html,v 1.2 2005-02-02 17:26:54 erik Exp $</p>
+</ol><p class="body">As easy as that! Now please check the <a href="docs.html">documentation</a>.</p>
+
+<p class="footer">$Id: quickstart.html,v 1.3 2005-03-21 19:33:13 erik Exp $</p>
 
