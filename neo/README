@@ -1,1 +1,26 @@
-Please see http://neo.codehaus.org for info.
+
+QUICKSTART
+
+Or a lame excuse for a quick start document.
+
+1) Open neo\src\Tests\Neo.Tests.sln
+
+2) Build this.
+
+3) Run the unit tests if you want. (You will have to change the db connection 
+   string in test.config to point to a SQL server instance that has the 'pubs'
+   demo database installed.) All test must pass!
+
+4) Open neo\src\Tools\Neo.Tools.sln
+
+5) Build this.
+
+6) Open a VisualStudio command prompt. Go to neo\src\Tools\VsTool\Resources
+   and run the setup.bat script. (This is only necessary if you want to use
+   the VisualStudio integration.)
+
+Viola. You are ready to go.
+
+Now, please check out the documentation at http://neo.codehaus.org/docs.html
+
+
