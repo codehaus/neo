@@ -2,6 +2,9 @@
 
 	* Added null keyword support in qualifier formats and cleaned up
 	some fixtures.
+	
+	* Added support for defining a default namespace from the command 
+	line.
 
 
 2004-11-11 erik (proxy)

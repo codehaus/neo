@@ -19,6 +19,7 @@ namespace Neo.Generator.CodeGen
 		private bool	generatesUserClasses;
 	    private bool	generatesSupportClasses;
 		private bool	forcesUserClassGen;
+		private string	defaultNamespace;
 
 		
 		public CodeGenerator() : base()
@@ -62,6 +63,12 @@ namespace Neo.Generator.CodeGen
 			get { return forcesUserClassGen; }
 		}
 
+		public string DefaultNamespace
+		{
+			get { return defaultNamespace; }
+			set { defaultNamespace = value; }
+		}
+
 		
 		//--------------------------------------------------------------------------------------
 		//	generate files
@@ -92,8 +99,10 @@ namespace Neo.Generator.CodeGen
 			if((dir = outputPath) == null)
 				if((dir = Path.GetDirectoryName(inputFile)) == null)
 					dir = "";
-
 			modelReader.LoadModel(inputFile);
+			if(modelReader.Model.Namespace == null)
+				modelReader.Model.Namespace = DefaultNamespace;
+
 			while((entity = modelReader.GetNextEntity()) != null)
 			{
 			    CodeGenerationContext ctx;
@@ -133,6 +142,9 @@ namespace Neo.Generator.CodeGen
 			modelReader = (IModelReader)Activator.CreateInstance(readerType);
 			modelReader.ReadConfiguration(inputFile, new ConfigDelegate(setPiAttribute));
 			modelReader.LoadModel(inputFile);
+			if(modelReader.Model.Namespace == null)
+				modelReader.Model.Namespace = DefaultNamespace;
+
 			while((entity = modelReader.GetNextEntity()) != null)
 			{
 			    CodeGenerationContext ctx = new CodeGenerationContext(entity);
