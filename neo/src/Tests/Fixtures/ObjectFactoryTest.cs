@@ -57,6 +57,20 @@ namespace Neo.Tests.Fixtures
 			Assertion.AssertEquals("Matched zero or too many titles.", 1, titleList.Count);
 		}
 
+		
+		[Test]
+		public void EmptyTemplateBasedFind()
+		{
+			TitleFactory	factory;
+			TitleTemplate	template;
+			TitleList		titleList;
+
+			factory = new TitleFactory(context);
+			template = factory.GetQueryTemplate();
+			titleList = factory.Find(template);
+			Assertion.AssertEquals("Empty Template should fetch all records.", 18, titleList.Count);
+		}
+
 
 		[Test]
 		public void TemplateBasedFindWithRelation()
