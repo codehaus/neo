@@ -1,12 +1,20 @@
 <?xml version="1.0"?>
 <project name="Neo" default="full" basedir=".">
 	
+	<!-- ========================================================== -->
+	<!--  properties                                                -->
+	<!-- ========================================================== -->
+
 	<property name="buildconfig" value="Debug" />
 	<property name="builddir" value="Neo/bin/${buildconfig}" />
 	<property name="docdir" value="Neo/obj/Doc" />
 	
-	<target name="full" depends="clean,solution,runtests"/>
-	<target name="quick" depends="solution,runtests"/>
+	<!-- ========================================================== -->
+	<!--  top-level targets                                         -->
+	<!-- ========================================================== -->
+
+	<target name="full" depends="clean,prepare,buildsln,runtests"/>
+	<target name="quick" depends="prepare,buildsln,runtests"/>
 	
 	<target name="clean">
 	 	<delete>
@@ -17,6 +25,10 @@
 		</delete>
 	</target>
 	
+	<!-- ========================================================== -->
+	<!--  internal targets                                          -->
+	<!-- ========================================================== -->
+
 	<target name="reallyclean" depends="clean">
 	 	<delete>
 			<fileset>
@@ -25,18 +37,26 @@
 		</delete>
 	</target>
 	
-	<target name="runtests">
-		<nunit2>
-			<formatter type="Plain" />
-			<test assemblyname="Tests/bin/${buildconfig}/Neo.Tests.dll" />
-		</nunit2>
+	<target name="prepare">
+		<mkdir dir="../build"/>
+		<mkdir dir="../dist"/>
 	</target>
 	
-	<target name="solution">
+	<target name="buildsln">
 		<solution configuration="${buildconfig}" solutionfile="Neo.sln" verbose="false" />
 		<copy file="Tests/Resources/fbembed.dll" todir="Tests/bin/${buildconfig}" />
+		<solution configuration="${buildconfig}" solutionfile="Tools/Neo.Tools.sln" verbose="false" />
 	</target>
 	
+	<target name="runtests">
+		<exec program="../tools/nunit/nunit-console.exe" commandline="Tests/bin/${buildconfig}/Neo.Tests.dll /xml:${nant.project.basedir}/../build/Neo-results.xml /nologo"/>
+		<exec program="../tools/nunit/nunit-console.exe" commandline="Tools/Tests/bin/${buildconfig}/Neo.Tools.Tests.dll /xml:${nant.project.basedir}/../build/Neo.Tools-results.xml /nologo"/>
+	</target>
+		
+	<!-- ========================================================== -->
+	<!--  additional targets (not used by top-level)                -->
+	<!-- ========================================================== -->
+
 	<target name="ndoc" >
 		<ndoc verbose="false">
 	        <assemblies basedir="${builddir}">
@@ -94,6 +114,24 @@
 			</documenters>
 		</ndoc>
 		<copy file="${docdir}/Neo API Documentation.chm" todir="../docs" />
+	</target>
+
+	<target name="dist">
+		<zip zipfile="..\dist\neo-source.zip">
+			<fileset>
+				<include name="**\*" />
+				<exclude name="build\**\*" />
+				<exclude name="dist\**\*" />
+				<exclude name="tools\**\*" />
+				<exclude name="**\bin\**\*" />
+				<exclude name="**\obj\**\*" />
+				<exclude name="**\CVS\**\*" />
+				<exclude name="*.suo" />
+				<exclude name="*.resharper*" />
+				<exclude name="**\*.csproj.user" />
+				<exclude name="_Resharper.*\**\*" />
+			</fileset>
+		</zip>
 	</target>
 		
 </project>

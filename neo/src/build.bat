@@ -1,3 +1,3 @@
 @echo off
-set PATH=%PATH%;..\build\nant
+set PATH=%PATH%;..\tools\nant
 nant -buildfile:build.xml %1
