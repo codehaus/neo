@@ -408,11 +408,12 @@ namespace Neo.Database
 				WriteIdentifier(table.Columns[i].ColumnName);
 				builder.Append(" = ");
 				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + "_ORIG"));
-				builder.Append(" ) OR ((");
+				builder.Append(" ) OR (");
+				builder.Append("COALESCE(");
 				WriteIdentifier(table.Columns[i].ColumnName);
-				builder.Append(" IS NULL) AND (");
+				builder.Append(", ");
 				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + "_ORIG"));
-				builder.Append(" IS NULL)))");
+				builder.Append(") IS NULL))");
 			}
 		}
 
