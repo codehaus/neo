@@ -17,6 +17,9 @@ namespace Neo.SqlClient
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
+		protected bool usesDelimitedIdentifiers;
+
+
 		public SqlDataStore() : base()
 		{
 			NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.sqlclient");
@@ -40,6 +43,11 @@ namespace Neo.SqlClient
 			logger.Debug("Created new SqlDataStore.");
 		}
 
+		public SqlDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
+		{
+			this.usesDelimitedIdentifiers = useDelimitedIdentifiers;
+		}
+
 		protected SqlDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 			logger.Debug("Deserialized SqlDataStore.");
@@ -50,6 +58,14 @@ namespace Neo.SqlClient
 		//	Overrides
 		//--------------------------------------------------------------------------------------
 		
+		protected override IDbCommandBuilder GetCommandBuilder(DataTable table)
+		{
+			SqlCommandBuilder builder = (SqlCommandBuilder)base.GetCommandBuilder (table);
+			builder.UsesDelimitedIdentifiers = usesDelimitedIdentifiers;
+			return builder;
+		}
+
+
 		protected override object GetFinalPk(DataRow row, IDbCommandBuilder builder)
 		{
 			object result;

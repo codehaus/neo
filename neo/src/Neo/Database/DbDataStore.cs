@@ -79,7 +79,7 @@ namespace Neo.Database
 			}
 		}
 
-		protected string GetConnectionStringForLogging()
+		protected virtual string GetConnectionStringForLogging()
 		{
 			Regex rpwd = new Regex("(?<key>.*[Pp]ass.*?)=.*");
 			ArrayList partList = new ArrayList();
@@ -133,14 +133,14 @@ namespace Neo.Database
 		//	IDataStore impl (fetching rows)
 		//--------------------------------------------------------------------------------------
 		
-		public DataTable FetchRows(IFetchSpecification fetchSpec)
+		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
 		{
 			DataSet ds = new DataSet();
 			ds.EnforceConstraints = false;
 			fetchSpec.EntityMap.UpdateSchemaInDataSet(ds, SchemaUpdate.Basic | SchemaUpdate.Relations);
 			DataTable table = ds.Tables[fetchSpec.EntityMap.TableName];
 
-		    IDbCommandBuilder builder = implFactory.CreateCommandBuilder(table);
+		    IDbCommandBuilder builder = GetCommandBuilder(table);
 		    builder.WriteSelect(fetchSpec);
 
 			FillTable(table, builder.Command, builder.Parameters);
@@ -149,7 +149,7 @@ namespace Neo.Database
 		}
 
 
-		public void FillTable(DataTable table, string sqlCommand, IList parameters)
+		public virtual void FillTable(DataTable table, string sqlCommand, IList parameters)
 		{
 			IDbCommand cmd = CreateCommand(sqlCommand);
 
@@ -183,7 +183,7 @@ namespace Neo.Database
 		//	IDataStore impl (saving changes)
 		//--------------------------------------------------------------------------------------
 
-		public ICollection SaveChangesInObjectContext(ObjectContext context)
+		public virtual ICollection SaveChangesInObjectContext(ObjectContext context)
 		{
 			ArrayList pkChangeTableList;
 			bool	  requiredTransaction;
@@ -245,7 +245,7 @@ namespace Neo.Database
 
 		}
 
-		public void ProcessInserts(ArrayList tables, ArrayList pkChangeTables)
+		public virtual void ProcessInserts(ArrayList tables, ArrayList pkChangeTables)
 		{
 			for(int ix = 0; ix < tables.Count; ix++)
 			{
@@ -266,7 +266,7 @@ namespace Neo.Database
 			}
 		}
 
-		public void ProcessDeletes(ArrayList tables)
+		public virtual void ProcessDeletes(ArrayList tables)
 		{
 			for(int ix = 0; ix < tables.Count; ix++)
 			{
@@ -281,7 +281,7 @@ namespace Neo.Database
 			}
 		}
 
-		public void ProcessUpdates(ArrayList tables)
+		public virtual void ProcessUpdates(ArrayList tables)
 		{
 			for(int ix = 0; ix < tables.Count; ix++)
 			{
@@ -296,7 +296,7 @@ namespace Neo.Database
 			}
 		}
 
-		public void SortOrderOfInsertTables(ArrayList tables)
+		public virtual void SortOrderOfInsertTables(ArrayList tables)
 		{
 			bool changesToOrder;
 			// sort of order
@@ -322,7 +322,7 @@ namespace Neo.Database
 			}
 		}
 
-		public void AssignOrderToInsertTables(ArrayList tables)
+		public virtual void AssignOrderToInsertTables(ArrayList tables)
 		{
 			bool changesToOrder = true;
 			while (changesToOrder) 
@@ -361,7 +361,7 @@ namespace Neo.Database
 					columnList.Add(column);
 			}
 
-		    builder = implFactory.CreateCommandBuilder(row.Table);
+		    builder = GetCommandBuilder(row.Table);
 		    builder.WriteInsert(row, columnList);
 	
 			rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
@@ -382,7 +382,7 @@ namespace Neo.Database
 		    IDbCommandBuilder	builder;
 			int					rowsAffected;
 
-		    builder = implFactory.CreateCommandBuilder(row.Table);
+		    builder = GetCommandBuilder(row.Table);
 		    builder.WriteDelete(row);
 			
 			rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
@@ -395,7 +395,7 @@ namespace Neo.Database
 		    IDbCommandBuilder	builder;
 			int					rowsAffected;
 
-		    builder = implFactory.CreateCommandBuilder(row.Table);
+		    builder = GetCommandBuilder(row.Table);
 		    builder.WriteUpdate(row);
 
 			rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
@@ -406,6 +406,12 @@ namespace Neo.Database
 		//--------------------------------------------------------------------------------------
 		//	Internal helper
 		//--------------------------------------------------------------------------------------
+
+		protected virtual IDbCommandBuilder GetCommandBuilder(DataTable table)
+		{
+			return implFactory.CreateCommandBuilder(table);
+		}
+
 
 		protected virtual IDbCommand CreateCommand(string text) 
 		{

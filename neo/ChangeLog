@@ -1,3 +1,11 @@
+2004-09-28 erik
+
+    * Added new virtual method to create CommandBuilders to 
+    DbDataStore so that concrete stores have a single place to 
+    customise the builder. SqlStore uses this to allow for selective
+    use of delimited identifiers. Also made more methods virtual.
+    
+
 2004-09-24 erik
 
     * Added new SingleAssemblyEntityMap factory submitted by
