@@ -52,7 +52,6 @@
 <div id="menubox">
 	<p class="navtitle">About Neo</p>
 	   <?php navitem("News", "news.html", $page) ?>
-	   <?php navitem("Overview", "overview.html", $page) ?>
 	   <?php navitem("Roadmap", "roadmap.html", $page) ?>
 	   <?php navitem("Team", "team.html", $page) ?>
 	   <?php navitem("FAQ", "faq.html", $page) ?>
