@@ -29,7 +29,8 @@
 	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
 	<title>Neo (.NET Entity Objects)</title>
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="std.css" />
+	<link rel="stylesheet" title="Standard" type="text/css" href="std.css" media="screen" />
+	<!-- <link rel="stylesheet" title="Fancy" type="text/css" href="fancy.css" />-->
 </head>
 
 <body>
