@@ -1,3 +1,7 @@
+2005-04-05 arjen
+
+	* Updated to nunit 2.2.
+
 2005-04-02 erik
 
    * Fixed NEO-6. Updates for DB generated primary keys now propagate
