@@ -15,7 +15,7 @@ namespace Neo.Core.Qualifiers
 		{
 		}
 
-		public OrQualifier(ArrayList someQualifiers) : base()
+		public OrQualifier(ArrayList someQualifiers) : base(someQualifiers)
 		{
 		}
 
