@@ -85,11 +85,6 @@
                     HintPath = "..\..\..\lib\nunit.framework.dll"
                 />
                 <Reference
-                    Name = "Neo.CodeGen"
-                    Project = "{3215DE0A-1640-4F95-8A0D-4F753912D80B}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "Neo.SqlGen"
                     Project = "{B86C8262-4CF3-45CD-AC2B-14DDF90698CC}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -100,8 +95,13 @@
                     HintPath = "..\..\Neo\bin\Debug\Neo.dll"
                 />
                 <Reference
-                    Name = "Neo.Model"
+                    Name = "Neo.MetaModel"
                     Project = "{85B07E6D-5672-419F-9902-D4F030FF58E0}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Neo.Generator"
+                    Project = "{D93135A9-8371-4A01-A8A1-71566D129587}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>

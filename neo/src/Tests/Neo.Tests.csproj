@@ -235,6 +235,10 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "Model\NeoCreateDb.vtl"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "Model\NeoSupport.vtl"
                     BuildAction = "None"
                 />

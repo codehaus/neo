@@ -1,7 +1,6 @@
 using System;
 using System.IO;
-using Neo.Model;
-using Neo.Model.Reader;
+using Neo.MetaModel;
 
 
 namespace Neo.DotGen.DotGenerator
@@ -22,10 +21,10 @@ namespace Neo.DotGen.DotGenerator
 		public void Generate(string inputPath)
 		{
 			IModelReader	reader;
-			IEntity			entity;
+			Entity			entity;
 
 			outputWriter = Console.Out;
-			reader = new Neo.Model.Reader.NorqueReader();
+			reader = new Neo.MetaModel.Reader.NorqueReader();
 			reader.LoadModel(inputPath);
 			WritePrologue();
 			while((entity = reader.GetNextEntity()) != null)
@@ -40,14 +39,14 @@ namespace Neo.DotGen.DotGenerator
 		}
 
 
-		protected virtual void WriteEntity(IEntity entity)
+		protected virtual void WriteEntity(Entity entity)
 		{
-			foreach(IRelationship r in entity.Relationships)
+			foreach(EntityRelationship r in entity.Relationships)
 			{
 				if (r.Type == RelType.ToOne && notProcessed(entity.ClassName , r.ForeignEntity.ClassName))  {
 					string head = "odot";
 					string tail = "none";
-					IRelationship backRel = r.InverseRelationship;
+					EntityRelationship backRel = r.InverseRelationship;
 					if (backRel != null && backRel.Type == RelType.ToMany) {
 						tail = "crow";
 					}

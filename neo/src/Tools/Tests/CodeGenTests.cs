@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using Neo.Generator.CodeGen;
+using Neo.MetaModel.Reader;
 using NUnit.Framework;
-using Neo.CodeGen.Core;
 
 
 namespace Neo.Tools.Tests
@@ -10,24 +11,24 @@ namespace Neo.Tools.Tests
 	public class CodeGenTests
 	{
 		string singleTableSchemaPath = @"..\..\SingleTableSchema.xml";
-		string templateDir = @"..\..\..\CodeGen\Resources";
+		string templateDir = @"..\..\..\Generator\Resources";
 
 		[SetUp]
 		public void SetUp()
 		{
-			CodeGenerator codeGenerator = new Neo.CodeGen.Core.CodeGenerator();
-			codeGenerator.ReaderType = typeof(Neo.Model.Reader.NorqueReader);
+		    CodeGenerator codeGenerator = new CodeGenerator();
+			codeGenerator.ReaderType = typeof(NorqueReader);
 			codeGenerator.ResourcePath = templateDir;
-			codeGenerator.ForceUserClassGen = true;
-			codeGenerator.OutputPath = ".";
-			codeGenerator.GenerateUserClassFiles(singleTableSchemaPath);
-			codeGenerator.GenerateSupportClassFiles(singleTableSchemaPath);
+			codeGenerator.GeneratesSupportClasses = true;
+			codeGenerator.GeneratesUserClasses = true;
+			codeGenerator.ForcesUserClassGen = true;
+			codeGenerator.Generate(singleTableSchemaPath, ".");
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			File.Delete("Title.cs");
+		    File.Delete("Title.cs");
 			File.Delete("_Title.cs");
 		}
 
@@ -64,7 +65,7 @@ namespace Neo.Tools.Tests
 			contents = reader.ReadToEnd();
 			reader.Close();
 
-			Console.WriteLine(contents);
+		    Console.WriteLine(contents);
 
 			// Check some random strings that should definitely be in the file
 			Assertion.Assert("No/wrong namespace def.", contents.IndexOf("namespace pubs4.Model") > 0);

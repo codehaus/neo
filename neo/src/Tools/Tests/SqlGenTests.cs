@@ -1,16 +1,13 @@
+using System;
+using System.Data.SqlClient;
+using System.IO;
+using Neo.SqlGen;
+using NUnit.Framework;
+
+
 namespace Neo.Tools.Tests 
 {
-	using System;
-	using System.Collections;
-	using System.Data;
-	using System.Data.SqlClient;
-	using System.IO;
-	using System.Xml;
-	using System.Xml.Xsl;
-	using NUnit.Framework;
-	using Neo.SqlGen;
-
-	[TestFixture]
+    [TestFixture]
 	public class TestTransform : Assertion
 	{
 		//TODO:Put in config file
@@ -19,7 +16,7 @@ namespace Neo.Tools.Tests
 		string transform = "..\\..\\..\\SqlGen\\Resources";
 		string validOutput = "..\\..\\validOutput.sql";
 
-		SqlGenerator _schemaGenerator;
+	    SqlGenerator _schemaGenerator;
 
 		[SetUp]
 		public void Setup() 
@@ -32,7 +29,7 @@ namespace Neo.Tools.Tests
 		public void CheckSqlIsValid() 
 		{
 			string sql = "SET PARSEONLY ON " + _schemaGenerator.ProcessFile(multiTableSchema);
-			SqlConnection conn = new SqlConnection(connectionString);
+		    SqlConnection conn = new SqlConnection(connectionString);
 			conn.Open();
 			SqlCommand command = new SqlCommand(sql, conn);
 
@@ -60,7 +57,7 @@ namespace Neo.Tools.Tests
 		[Test]
 		public void CheckConverterOutput() 
 		{
-			FileStream stream = File.OpenRead(validOutput);
+		    FileStream stream = File.OpenRead(validOutput);
 			string validSql = new StreamReader(stream).ReadToEnd();
 			stream.Close();
 

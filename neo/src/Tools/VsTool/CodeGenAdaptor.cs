@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
-using Neo.CodeGen.Core;
+using Neo.Generator.CodeGen;
 
 
 namespace Neo.VsTool
@@ -18,7 +18,7 @@ namespace Neo.VsTool
 
 			writer = new StringWriter();
 			codeGen = new CodeGenerator();
-			codeGen.ReaderType = typeof(Neo.Model.Reader.NorqueReader);
+			codeGen.ReaderType = typeof(Neo.MetaModel.Reader.NorqueReader);
 
 			try
 			{
@@ -31,7 +31,7 @@ namespace Neo.VsTool
 			}
 			try
 			{
-				codeGen.GenerateUserClassFiles(path);
+				codeGen.GenerateClassFiles(path, null, true, false);
 			}
 			catch(Exception e)
 			{

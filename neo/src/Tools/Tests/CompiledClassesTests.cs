@@ -1,12 +1,13 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Data;
 using System.IO;
-using System.CodeDom.Compiler;
 using System.Reflection;
 using Microsoft.CSharp;
+using Neo.MetaModel.Reader;
 using NUnit.Framework;
-using Neo.CodeGen.Core;
-using Neo.Framework;
+using CodeGenerator = Neo.Generator.CodeGen.CodeGenerator;
+
 
 namespace Neo.Tools.Tests
 {
@@ -16,7 +17,7 @@ namespace Neo.Tools.Tests
 		#region Fields
 
 		string schemaPath = @"..\..\MultiTableSchema.xml";
-		string templateDir = @"..\..\..\CodeGen\Resources";
+		string templateDir = @"..\..\..\Generator\Resources";
 		string[] _sourceFiles = new String[]{"_Title.cs",
 										   "_Publisher.cs",
 										   "_Author.cs",
@@ -27,7 +28,7 @@ namespace Neo.Tools.Tests
 										   "Author.cs",
 										   "TitleAuthor.cs",
 										   "Job.cs"};
-		Assembly _assembly;
+	    Assembly _assembly;
 
 		#endregion
 
@@ -35,18 +36,18 @@ namespace Neo.Tools.Tests
 
 		void GenerateSourceFiles()
 		{
-			Neo.CodeGen.Core.CodeGenerator codeGenerator = new Neo.CodeGen.Core.CodeGenerator();
-			codeGenerator.ReaderType = typeof(Neo.Model.Reader.NorqueReader);
+		    CodeGenerator codeGenerator = new CodeGenerator();
+			codeGenerator.ReaderType = typeof(NorqueReader);
 			codeGenerator.ResourcePath = templateDir;
-			codeGenerator.ForceUserClassGen = true;
-			codeGenerator.OutputPath = ".";
-			codeGenerator.GenerateUserClassFiles(schemaPath);
-			codeGenerator.GenerateSupportClassFiles(schemaPath);
+			codeGenerator.GeneratesSupportClasses = true;
+			codeGenerator.GeneratesUserClasses = true;
+			codeGenerator.ForcesUserClassGen = true;
+			codeGenerator.Generate(schemaPath, ".");
 		}
 
 		void CompileSourcesToAssembly()
 		{
-			ICodeCompiler compiler = new CSharpCodeProvider().CreateCompiler();
+		    ICodeCompiler compiler = new CSharpCodeProvider().CreateCompiler();
 
 			string[] referencedAssemblies = new String[]{"Neo.dll", 
 															"System.dll",
@@ -81,7 +82,7 @@ namespace Neo.Tools.Tests
 		{
 			foreach(string fileName in _sourceFiles)
 			{
-				File.Delete(fileName);
+			    File.Delete(fileName);
 			}
 		}
 
@@ -98,7 +99,7 @@ namespace Neo.Tools.Tests
 			Type titleBaseType = _assembly.GetType("pubs4.Model.TitleBase", /*ThrowOnError = */ true);
 			Type titleType = _assembly.GetType("pubs4.Model.Title", /*ThrowOnError = */ true);
 
-			AssertEquals("TitleBase does not inherit from EntityObject", typeof(EntityObject), titleBaseType.BaseType);
+			AssertEquals("TitleBase does not inherit from EntityObject", typeof(Neo.Framework.EntityObject), titleBaseType.BaseType);
 			AssertEquals("Title does not inherit from TitleBase", titleBaseType, titleType.BaseType);
 		}
 

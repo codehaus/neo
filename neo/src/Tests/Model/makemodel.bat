@@ -1,2 +1,1 @@
-..\..\Tools\CmdLineTool\bin\Debug\neo.exe /o . /user true /r ..\..\Tools\CodeGen\Resources pubs4-schema.xml
-
+..\..\Tools\CmdLineTool\bin\Debug\neo.exe /user /support /o . pubs4-schema.xml

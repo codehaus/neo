@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.IO;
+using Neo.MetaModel;
+using Neo.MetaModel.Reader;
 using NUnit.Framework;
-using Neo.Model;
 
 
 namespace Neo.Tools.Tests
@@ -13,18 +14,18 @@ namespace Neo.Tools.Tests
 
 		protected IModelReader GetModelReader(string contents)
 		{
-			Neo.Model.Reader.NorqueReader reader;
+		    NorqueReader reader;
 
-			reader = new Neo.Model.Reader.NorqueReader();
+			reader = new NorqueReader();
 			reader.LoadModel(new StringReader(contents));
 			return reader;
 		}
 
 
-		protected IEntity GetTitleEntity(string contents)
+		protected Entity GetTitleEntity(string contents)
 		{
 			IModelReader	reader;
-			IEntity			e;
+			Entity			e;
 
 			reader = GetModelReader(contents);
 			while((e = reader.GetNextEntity()) != null)
@@ -40,7 +41,7 @@ namespace Neo.Tools.Tests
 		[Test]
 		public void EntityTest() 
 		{
-			IEntity	e = GetTitleEntity(schema_multipleNamespaces);
+			Entity	e = GetTitleEntity(schema_multipleNamespaces);
 
 			Assertion.AssertEquals("Wrong class name.", "Title", e.ClassName);
 			Assertion.AssertEquals("Wrong id method (inherited.)", IdMethod.None, e.IdMethod);
@@ -51,8 +52,8 @@ namespace Neo.Tools.Tests
 		[Test]
 		public void UsingListTest()
 		{
-			IEntity	e = GetTitleEntity(schema_multipleNamespaces);
-			ArrayList namespaces = new ArrayList(e.UsedNamespaces);
+			Entity	e = GetTitleEntity(schema_multipleNamespaces);
+		    ArrayList namespaces = new ArrayList(e.UsedNamespaces);
 			
 			Assertion.AssertEquals("Wrong number of namespaces for 'using'.", 1, namespaces.Count);
 			Assertion.Assert("Did not find namespace pubs4.Model.X", namespaces.Contains("pubs4.Model.X"));
@@ -61,7 +62,7 @@ namespace Neo.Tools.Tests
 		#region Test data (multipleNamespaces)
 
 		string schema_multipleNamespaces = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../CodeGen/Resources/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
 
 			<database name='pubs' package='pubs4.Model' defaultIdMethod='none'>
 				<table name='titles' javaName='Title' description='Title (Book) Table'>
@@ -88,7 +89,7 @@ namespace Neo.Tools.Tests
 		#region Test data (foreignKeyWithComments)
 
 		string schema_foreignKeyWithComments = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../SqlGen/Resources/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
 
 			<database
 			name='pubs'
@@ -133,7 +134,7 @@ namespace Neo.Tools.Tests
 		#region Test data (compoundForeignKey)
 
 		string schema_compoundForeignKey = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../SqlGen/Resources/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
 
 			<database
 			name='pubs'
@@ -179,7 +180,7 @@ namespace Neo.Tools.Tests
 		#region Test data (uniqueConstraint)
 
 		string schema_tableWithUniqueElement = @"<?xml version='1.0' encoding='ISO-8859-1' standalone='no'?>
-			<!DOCTYPE database SYSTEM '../../../SqlGen/Resources/norque.dtd'>
+			<!DOCTYPE database SYSTEM '../../../Model/Reader/norque.dtd'>
 
 			<database
 			name='pubs'

@@ -85,17 +85,17 @@
                     HintPath = "..\..\..\lib\BaseCodeGeneratorWithSite.dll"
                 />
                 <Reference
-                    Name = "Neo.CodeGen"
-                    Project = "{3215DE0A-1640-4F95-8A0D-4F753912D80B}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "System.Windows.Forms"
                     AssemblyName = "System.Windows.Forms"
                     HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
                 />
                 <Reference
-                    Name = "Neo.Model"
+                    Name = "Neo.Generator"
+                    Project = "{D93135A9-8371-4A01-A8A1-71566D129587}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Neo.MetaModel"
                     Project = "{85B07E6D-5672-419F-9902-D4F030FF58E0}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />

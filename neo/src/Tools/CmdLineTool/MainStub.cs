@@ -1,5 +1,8 @@
 using System;
-using Neo.CodeGen.Core;
+using System.Collections;
+using Neo.Generator.CodeGen;
+using Neo.Generator.Core;
+using Neo.MetaModel.Reader;
 using Neo.SqlGen;
 
 
@@ -11,10 +14,8 @@ namespace Neo.CmdLineTool
 		static void Main(string[] args)
 		{
 			CmdLineArguments	arguments;
-			CodeGenerator		codeGenerator;
-			SqlGenerator		sqlGenerator;
-			SqlDropGenerator	sqlDropGenerator;
-			string				rpath, opath;
+		    VelocityGenerator	generator;
+		    string				rpath, opath, template;
 			bool				force, debug, genSql, genSqlDrop, genSupport, genUser;
 
 			arguments = new CmdLineArguments(args);
@@ -24,6 +25,7 @@ namespace Neo.CmdLineTool
 			genSqlDrop = (arguments["sqldrop"] == "true");
 			genSupport = (arguments["support"] == "true");
 			genUser = (arguments["user"] == "true");
+			template = arguments["t"];
 			rpath = arguments["r"];
 			opath = arguments["o"];
 			
@@ -35,48 +37,41 @@ namespace Neo.CmdLineTool
 				if(arguments.Filenames.Count == 0)
 					throw new ApplicationException("No input file.");
 
-				codeGenerator = null;
+				/* These are here for compatibility reasons. If you can use the velocity generator with a SQL DDL template instead. */
+				if(genSql)
+					GenSql(rpath, opath, arguments.Filenames);
+				if(genSqlDrop)
+					GenSqlDrop(rpath, opath, arguments.Filenames);
+				
+				generator = null;
 				if(genSupport || genUser)
 				{
-					codeGenerator = new CodeGenerator();
-					codeGenerator.ReaderType = typeof(Neo.Model.Reader.NorqueReader);
-					if(rpath != null)
-						codeGenerator.ResourcePath = rpath;
-					if(opath != null) 
-						codeGenerator.OutputPath = opath;
-					codeGenerator.ForceUserClassGen = force;
-				}
+					if(template != null)
+						throw new ApplicationException("Cannot use template and code generator at the same time.");
 
-				sqlGenerator = null;
-				if(genSql)
-				{
-					sqlGenerator = new SqlGenerator();
-					if(rpath != null)
-						sqlGenerator.ResourcePath = rpath;
-					if(opath != null)
-						sqlGenerator.OutputPath = opath;
+					CodeGenerator codeGenerator = new CodeGenerator();
+					codeGenerator.ForcesUserClassGen = force;
+					codeGenerator.GeneratesSupportClasses = genSupport;
+					codeGenerator.GeneratesUserClasses = genUser;
+					generator = codeGenerator;
 				}
-
-				sqlDropGenerator = null;
-				if(genSqlDrop)
+				else if(template != null)
 				{
-					sqlDropGenerator = new SqlDropGenerator();
-					if(rpath != null)
-						sqlDropGenerator.ResourcePath = rpath;
-					if(opath != null)
-						sqlDropGenerator.OutputPath = opath;
+					generator = new VelocityGenerator();
+					generator.ReaderType = typeof(NorqueReader);
+					generator.Template = template;
 				}
-
-				foreach(string filename in arguments.Filenames)
+			
+				if(generator != null)
 				{
-					if(genUser)
-						codeGenerator.GenerateUserClassFiles(filename);
-					if(genSupport)
-						codeGenerator.GenerateSupportClassFiles(filename);
-					if(genSql)
-						sqlGenerator.GenerateSqlFile(filename);
-					if(genSqlDrop)
-						sqlDropGenerator.GenerateSqlFile(filename);
+					generator.ReaderType = typeof(NorqueReader);
+					if(rpath != null)
+						generator.ResourcePath = rpath;
+
+					foreach(string input in arguments.Filenames)
+					{
+						generator.Generate(input, opath);
+					}
 				}
 			}
 			catch(Exception e)
@@ -86,5 +81,30 @@ namespace Neo.CmdLineTool
 					Console.WriteLine("--\n{0}", e.StackTrace);
 			}
 		}
+
+		
+		
+		public static void GenSql(string rpath, string opath, IList filenames)
+		{
+		    SqlGenerator sqlGenerator = new SqlGenerator();
+			if(rpath != null)
+				sqlGenerator.ResourcePath = rpath;
+			if(opath != null)
+				sqlGenerator.OutputPath = opath;
+			foreach(string f in filenames)
+				sqlGenerator.GenerateSqlFile(f);
+		}
+
+		public static void GenSqlDrop(string rpath, string opath, IList filenames)
+		{
+			SqlDropGenerator sqlDropGenerator = new SqlDropGenerator();
+			if(rpath != null)
+				sqlDropGenerator.ResourcePath = rpath;
+			if(opath != null)
+				sqlDropGenerator.OutputPath = opath;
+			foreach(string f in filenames)
+				sqlDropGenerator.GenerateSqlFile(f);
+		}
+
 	}
 }
