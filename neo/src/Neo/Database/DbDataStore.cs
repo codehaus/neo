@@ -159,14 +159,18 @@ namespace Neo.Database
 
 		public ICollection SaveChangesInObjectContext(ObjectContext context)
 		{
-			ArrayList pkChangeTableList = new ArrayList();
+			ArrayList pkChangeTableList;
+			bool	  requiredTransaction;
+			
+			pkChangeTableList = new ArrayList();
+			
+			EnsureOpen();
+			requiredTransaction = (transaction == null);
+			if(requiredTransaction)
+				BeginTransaction();
 
 			try
 			{
-				EnsureOpen();
-				
-				BeginTransaction();
-
 				ArrayList parentFirstTables = new ArrayList();
 
 				foreach(DataTable t in context.DataSet.Tables)
@@ -196,11 +200,13 @@ namespace Neo.Database
 				}
 				if(errorString.Length > 0)
 					throw new DataStoreSaveException("Errors while saving: " + errorString.ToString());
-				CommitTransaction();
+				if(requiredTransaction)
+					CommitTransaction();
 			}
 			catch(Exception e)
 			{
-				RollbackTransaction();
+				if(requiredTransaction)
+					RollbackTransaction();
 				if(e is DataStoreSaveException)
 					throw e;
 				throw new DataStoreSaveException(e);
@@ -424,8 +430,10 @@ namespace Neo.Database
 
 		protected virtual object ExecuteScalar(string sqlCommand, IList parameters)
 		{
-			IDbCommand cmd = CreateCommand(sqlCommand);
-
+			IDbCommand  cmd;
+			object		result;
+			
+			cmd = CreateCommand(sqlCommand);
 			if(parameters != null)
 			{
 				foreach(DictionaryEntry entry in parameters)
@@ -435,15 +443,8 @@ namespace Neo.Database
 			if(logger.IsDebugEnabled) 
 				logger.Debug(cmd.CommandText);
 
-			object result;
-
-			if(logger.IsDebugEnabled) 
-				logger.Debug(cmd.CommandText);
-
 			EnsureOpen();
-
 			result = cmd.ExecuteScalar();
-
 			Close();
 
 			if(logger.IsDebugEnabled) 

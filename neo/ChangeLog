@@ -1,3 +1,10 @@
+2004-06-11 erik
+
+	* Added feature to ObjectContext to delay loading from
+	parent context. Fixed several bugs related to db generated
+	keys.
+
+
 2004-06-10 erik
 
 	* Further refactored the data store base implementations and 

@@ -11,7 +11,7 @@ namespace Neo.Core.Util
 	{
 		private IDictionary		objectTable;
 		private IDictionary		objectsByEntityTable;
-		private IDictionary			deletedObjectTable;
+		private IDictionary		deletedObjectTable;
 
 
 		public ObjectTable()

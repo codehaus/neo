@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
-using System.Data.OracleClient;
 using System.Reflection;
 using log4net;
 using Neo.Core;

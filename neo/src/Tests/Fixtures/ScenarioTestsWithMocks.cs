@@ -6,15 +6,20 @@ using Pubs4.Model;
 
 namespace Neo.Tests.Fixtures
 {
-	[NUnit.Framework.TestFixture]
-	public class ScenarioTestsWithMocks : ScenarioTestsWithStore
+	[TestFixture]
+	public class ScenarioTestsWithMocks : ScenarioTests
 	{
 
 		protected override ObjectContext GetContext()
 		{
-			ObjectContext context;
+			ObjectContext parentContext;
 			
-			context = new ObjectContext(GetDataStore());
+			// We are setting up the context to use a parent context with on-demand loading
+			// because if we set it up from a dataset or with copy-in-ctor all objects would
+			// be created before we can do our type substitution below.
+			parentContext = new ObjectContext(GetTestDataSet());
+			context = new ObjectContext(parentContext, false);
+			
 			context.EntityMapFactory.GetMap(typeof(Title)).ConcreteObjectType = typeof(TitleMock);
 			context.EntityMapFactory.GetMap(typeof(Publisher)).ConcreteObjectType = typeof(PublisherMock);
 
@@ -22,7 +27,7 @@ namespace Neo.Tests.Fixtures
 		}
 
 
-		[NUnit.Framework.Test]
+		[Test]
 		public void ObjectsAreMocks()
 		{
 		    Assertion.AssertEquals("Object should be of mock type.", typeof(TitleMock), title.GetType());

@@ -215,22 +215,21 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
-		public void CascadingDeletionsWithNewObjectsAndRecreations()
+		public void ShouldAllowRecreationOfObjectWithFixedPkAfterCascadingDelete()
 		{
 			Author		author;
-			TitleAuthor	ta;
 
 			author = new AuthorFactory(context).FindObject("486-29-1786");
-			ta = new TitleAuthorFactory(context).CreateObject(author, title);
+			new TitleAuthorFactory(context).CreateObject(author, title);
 			title.Delete();
 
 			title = new TitleFactory(context).CreateObject("TC7777");
-			ta = new TitleAuthorFactory(context).CreateObject(author, title);
+			new TitleAuthorFactory(context).CreateObject(author, title);
 		}
 
 
 		[Test]
-		public void SetNullDeletions()
+		public void ShouldRemoveDeletedObjectsFromRelations()
 		{
 			Publisher	publisher;
 
@@ -308,7 +307,6 @@ namespace Neo.Tests.Fixtures
 			Assertion.Assert("The title should not be referenced", referencedTitle.GetReferences(true).Count == 0);
 			Assertion.Assert("The title should not be referenced", unreferencedTitle.GetReferences(true).Count == 0);
 		}
-
 
 	}
 }

@@ -98,6 +98,28 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Constructor. Takes data from the supplied parent context into this context
+		/// </summary>
+		/// <remarks>
+		/// Data from a parent context is normally copied to improve performace. If 
+		/// the parent context is huge it might improve overall performance to enable 
+		/// on-demand copying.
+		/// </remarks>
+		/// <param name="parentContext">data to be imported</param>
+		/// <param name="copyInCtor">whether to copy the parent intially or on demand</param>
+		public ObjectContext(ObjectContext parentContext, bool copyInCtor) : this()
+		{
+			dataStore = parentContext;
+
+			if(copyInCtor)
+			{
+				MergeData(parentContext.DataSet, false);
+				copiedParent = true;
+			}
+
+		}
+
 		//--------------------------------------------------------------------------------------
 		//	Public properties
 		//--------------------------------------------------------------------------------------
@@ -154,7 +176,7 @@ namespace Neo.Core
 		//	Protected and internal properties
 		//--------------------------------------------------------------------------------------
 
-		protected internal ObjectTable ObjectTable
+	    protected internal ObjectTable ObjectTable
 		{
 			get { return objectTable; }
 		}
@@ -538,7 +560,7 @@ namespace Neo.Core
 		public virtual void UpdatePrimaryKeys(PkChangeTable changeTable)
 		{
 			IEntityMap	  emap;
-			ObjectId	  oid;
+			ObjectId	  oldOid, newOid;
 			IEntityObject eo;
 
 			// What happens if we have sub contexts? How will they find out about these changes?
@@ -547,15 +569,17 @@ namespace Neo.Core
 			emap = emapFactory.GetMap(changeTable.TableName);
 			if(emap.PrimaryKeyColumns.Length > 1)
 				throw new ArgumentException("PkChangeTable refers to a table that has a compound primary key.");
-			// WARNING: This is a bit naive. What happens when you create a Title as well as a
-			// TitleAuthor? If the TitleAuthor is updated first, the TitleAuthorRelation in 
-			// Title will drop it because it doesn't match its owner's PK...
+
 			foreach(PkChangeTable.ChangeRecord r in changeTable)
 			{
-				oid = new ObjectId(changeTable.TableName, new object[] { r.OldValue });
-				if((eo = objectTable.GetObject(oid)) == null)
-					throw new ArgumentException("PkChangeTable references unknown object " + oid.ToString());
+				oldOid = new ObjectId(changeTable.TableName, r.OldValue);
+				newOid = new ObjectId(changeTable.TableName, r.NewValue);
+				eo = objectTable.GetObject(oldOid);
+				if(eo == null)
+					throw new ArgumentException("PkChangeTable references unknown object " + oldOid.ToString());
 				eo.Row[emap.PrimaryKeyColumns[0]] = r.NewValue;
+				objectTable.RemoveObject(oldOid, eo);
+				objectTable.AddObject(newOid, eo);
 			}
 
 		}
@@ -1015,14 +1039,20 @@ namespace Neo.Core
 			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
 				return resultTable;
 
-			q = new QualifierConverter(fetchSpec.EntityMap).ConvertPropertyQualifiers(fetchSpec.Qualifier);
-
-			foreach(IEntityObject eo in objects)
+			if(fetchSpec.Qualifier == null)
 			{
-				if((q == null) || (q.EvaluateWithObject(eo)))
+				foreach(IEntityObject eo in objects)
 					resultTable.ImportRow(eo.Row);
 			}
-			
+			else
+			{
+				q = new QualifierConverter(fetchSpec.EntityMap).ConvertPropertyQualifiers(fetchSpec.Qualifier);	
+				foreach(IEntityObject eo in objects)
+				{
+					if(q.EvaluateWithObject(eo))
+						resultTable.ImportRow(eo.Row);
+				}
+			}
 			return resultTable;
 		}
 
