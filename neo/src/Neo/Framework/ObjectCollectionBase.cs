@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using Neo.Core;
-
+using Neo.Core.Util;
 
 namespace Neo.Framework
 {
@@ -295,6 +295,7 @@ namespace Neo.Framework
  			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
  		}
 
+		
 		//--------------------------------------------------------------------------------------
 		//	Finder methods
 		//  Should be used by subclasses to implement strongly typed finders.
@@ -339,6 +340,50 @@ namespace Neo.Framework
 				if(qualifier.EvaluateWithObject(eo))
 					resultSet.Add(eo);
 			}
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Comparison methods
+		//--------------------------------------------------------------------------------------
+		
+		private const string InThisListMarker = "i";
+		private const string InOtherListMarker = "o";
+
+		public bool ContainsSameObjects(ObjectCollectionBase other)
+		{
+			Hashtable oidTable;
+
+			if(this.Count != other.Count)
+				return false;
+
+			oidTable = new Hashtable(InnerList.Count);
+			foreach(IEntityObject eo in InnerList)
+			{
+				ObjectId oid = ObjectId.GetObjectIdForObject(eo);
+				oidTable[oid] = InThisListMarker;
+			}
+			foreach(IEntityObject eo in other)
+			{
+				ObjectId oid = ObjectId.GetObjectIdForObject(eo);
+				if(Object.ReferenceEquals(oidTable[oid], InThisListMarker) == false)
+					return false;
+				oidTable[oid] = InOtherListMarker;
+			}
+			return true;
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Mapping methods
+		//--------------------------------------------------------------------------------------
+
+		public IList GetProperty(string propName)
+		{
+			ArrayList result = new ArrayList(InnerList.Count);
+			foreach(IEntityObject eo in InnerList)
+				result.Add(ObjectHelper.GetProperty(eo, propName));
+			return result;
 		}
 
 

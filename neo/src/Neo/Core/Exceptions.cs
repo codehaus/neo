@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Neo.Core
 {
 	/// <summary>
-	/// General Neo exception
+	/// General Neo exception and base class for other Neo exceptions.
 	/// </summary>
 	/// <remarks>
 	/// All exception that are thrown as a part of the normal operation of Neo are subclasses
@@ -35,7 +35,7 @@ namespace Neo.Core
 
 
 	/// <summary>
-	/// General DataStore exception, thrown when saves fail
+	/// General DataStore exception, thrown when saves fail.
 	/// </summary>
 	[Serializable]
 	public class DataStoreSaveException : NeoException
@@ -61,7 +61,7 @@ namespace Neo.Core
 
 
 	/// <summary>
-	/// Thrown when a unique value is expected but none or more than one is found
+	/// Thrown when a unique value is expected but none or more than one was found.
 	/// </summary>
 	[Serializable]
 	public class NotUniqueException : NeoException
@@ -105,11 +105,12 @@ namespace Neo.Core
 
 
 	/// <summary>
-	/// Thrown when a database null is not valid for a given attribute or column
+	/// Thrown when a database <c>null</c> is not valid for a given attribute or column.
 	/// </summary>
 	/// <remarks>
-	/// You can implement HandleNullValue on your entity objects to deal with null values 
-	/// arriving from the database, e.g. convert null into zero for an int.
+	/// You can implement HandleNullValue on your entity objects to deal with <c>null</c> 
+	/// values arriving from the database, e.g. convert <c>null</c> into zero for an 
+	/// <c>int</c>.
 	/// </remarks>
 	[Serializable]
 	public class InvalidDbNullException : NeoException
@@ -131,8 +132,11 @@ namespace Neo.Core
 
 
 	/// <summary>
-	/// Thrown when an object is not found
+	/// Thrown when an object was not found when looking for it via a foreign key.
 	/// </summary>
+	/// <remarks>
+	/// An exception is thrown because this condition indicates a data integrity problem.
+	/// </remarks>
 	[Serializable]
 	public class ObjectNotFoundException : NeoException
 	{
@@ -153,7 +157,7 @@ namespace Neo.Core
 
 
 	/// <summary>
-	/// Thrown when a query is invalid, for various reasons
+	/// Thrown when a query is invalid.
 	/// </summary>
 	[Serializable]
 	public class InvalidQueryException : NeoException

@@ -4,11 +4,11 @@ using System.Data;
 namespace Neo.Core
 {
 	/// <summary>
-	/// Minimal interface for a persistable object
+	/// Interface required for objects that are managed by an <c>ObjectContext</c>
 	/// </summary>
 	/// <remarks>
 	/// The object must also implement a constructor taking an <c>ObjectContext</c> and
-	/// a <c>DataRow</c> to be usable with <c>ObjectContext</c>
+	/// a <c>DataRow</c>.
 	/// </remarks>
 	public interface IEntityObject
 	{
@@ -22,9 +22,9 @@ namespace Neo.Core
 		/// </summary>
 		/// <remarks>
 		/// Modifications to this Row via object properties are persisted back into the 
-		/// underlying store. It is perfectly acceptablel, while most of the time not
+		/// underlying store. It is perfectly acceptable, while most of the time not
 		/// advisable, to modify the row directly; it is guaranteed to be in sync with
-		/// the object's properties.
+		/// the object&apos;s properties.
 		/// </remarks>
 		DataRow Row { get; }
 	}

@@ -6,6 +6,9 @@ using Neo.Core.Qualifiers;
 
 namespace Neo.Core.Parser
 {
+	/// <summary>
+	/// Internal class used to create a tree of qualifier objects from a format string.
+	/// </summary>
 	public class QualifierParser
 	{
 		//--------------------------------------------------------------------------------------
@@ -16,7 +19,11 @@ namespace Neo.Core.Parser
 		private TokenStack	stack;
 		private object[]	parameters;
 		
-		
+		/// <summary>
+		/// Constructor. Creates a new parser.
+		/// </summary>
+		/// <param name="qformat">The format to parse</param>
+		/// <param name="someParameters">The position paramters for the format</param>
 		public QualifierParser(string qformat, params object[] someParameters)
 		{
 			parameters = (someParameters != null) ? someParameters : (new object[] { null });
@@ -28,6 +35,10 @@ namespace Neo.Core.Parser
 		//	Parser Loop
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Parses the format and creates the qualifier objects.
+		/// </summary>
+		/// <returns>The top-level qualifier</returns>
 		public Qualifier GetQualifier()
 		{
 			Token		token;
@@ -57,6 +68,7 @@ namespace Neo.Core.Parser
 
 			return qualifier;
 		}
+
 
 		protected Token Reduce()
 		{

@@ -6,4 +6,10 @@ namespace Neo.Core.Qualifiers
 		object Value { get; } // this shouldn't really be on the interface a not predicate wouldn't have a value
 	}
 
+
+	internal interface IMutablePredicate : IPredicate
+	{
+		void SetPredicateValue(object aValue);
+	}
+
 }

@@ -7,7 +7,7 @@ namespace Neo.Core.Qualifiers
 	//	Base class for relational predicates (abstract)
 	//--------------------------------------------------------------------------------------
 
-	public abstract class RelationalPredicateBase
+	public abstract class RelationalPredicateBase : IMutablePredicate
 	{
 		protected IComparable predValue;
 
@@ -35,6 +35,10 @@ namespace Neo.Core.Qualifiers
 
 		protected abstract bool IsTrueForCompareResult(int result);
 
+		public void SetPredicateValue(object aValue)
+		{
+			predValue = (IComparable)aValue;
+		}
 		
 		public override string ToString()
 		{

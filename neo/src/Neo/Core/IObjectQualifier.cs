@@ -1,8 +1,8 @@
 namespace Neo.Core
 {
 	/// <summary>
-	/// Some qualifier classes can evaluate against regular obejcts as well as 
-	/// against <c>IEntityObjects</c>.
+	/// Some qualifier classes can evaluate against regular objects, not only 
+	/// against <c>IEntityObjects</c>. These qualifiers implement <c>IObjectQualifier</c>.
 	/// </summary>
 	public interface IObjectQualifier
 	{

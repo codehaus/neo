@@ -1,9 +1,12 @@
 using System;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Data;
 using System.IO;
 using System.Reflection;
 using Microsoft.CSharp;
+using Neo.Core;
+using Neo.Framework;
 using Neo.MetaModel.Reader;
 using NUnit.Framework;
 using CodeGenerator = Neo.Generator.CodeGen.CodeGenerator;
@@ -14,156 +17,173 @@ namespace Neo.Tools.Tests
 	[TestFixture]
 	public class CompiledClassesTests : Assertion
 	{
-		#region Fields
+		string[] sourceFileNames;
+		Assembly assembly;
 
-		string schemaPath = @"..\..\MultiTableSchema.xml";
-		string templateDir = @"..\..\..\Generator\Resources";
-		string[] _sourceFiles = new String[]{"_Title.cs",
-										   "_Publisher.cs",
-										   "_Author.cs",
-										   "_TitleAuthor.cs",
-										   "_Job.cs",
-										   "Title.cs",
-										   "Publisher.cs",
-										   "Author.cs",
-										   "TitleAuthor.cs",
-										   "Job.cs"};
-	    Assembly _assembly;
 
-		#endregion
-
-		#region SupportMethods
-
-		void GenerateSourceFiles()
-		{
-		    CodeGenerator codeGenerator = new CodeGenerator();
-			codeGenerator.ReaderType = typeof(NorqueReader);
-			codeGenerator.ResourcePath = templateDir;
-			codeGenerator.GeneratesSupportClasses = true;
-			codeGenerator.GeneratesUserClasses = true;
-			codeGenerator.ForcesUserClassGen = true;
-			codeGenerator.Generate(schemaPath, ".");
-		}
-
-		void CompileSourcesToAssembly()
-		{
-		    ICodeCompiler compiler = new CSharpCodeProvider().CreateCompiler();
-
-			string[] referencedAssemblies = new String[]{"Neo.dll", 
-															"System.dll",
-															"System.Data.dll",
-															"System.Xml.dll"};
-
-			CompilerParameters options = new CompilerParameters(referencedAssemblies);
-
-			options.OutputAssembly = "pubs4";
-			options.GenerateInMemory = true;
-			CompilerResults results = null;
-
-			results = compiler.CompileAssemblyFromFileBatch(options , _sourceFiles);
-
-			foreach(CompilerError error in results.Errors)
-			{
-				Console.WriteLine(error.ToString());
-			}
-
-			_assembly = results.CompiledAssembly;
-		}
-
-		#endregion
-
-		[SetUp] public void SetUp()
+		[SetUp] 
+		public void SetUp()
 		{
 			GenerateSourceFiles();
 			CompileSourcesToAssembly();
 		}
 
-		[TearDown] public void TearDown()
+		[TearDown] 
+		public void TearDown()
 		{
-			foreach(string fileName in _sourceFiles)
-			{
-			    File.Delete(fileName);
-			}
+			foreach(string fileName in sourceFileNames)
+				File.Delete(fileName);
 		}
 
 
-		[Test] public void NamespaceIsCorrect()
+		[Test] 
+		public void NamespaceIsCorrect()
 		{
-			Type titleType = _assembly.GetType("pubs4.Model.Title", /*ThrowOnError = */ true);
+			Type titleType = assembly.GetType("pubs4.Model.Title", true);
 
 			AssertEquals("Namespace is wrong", "pubs4.Model", titleType.Namespace);
 		}
 
-		[Test] public void EntityObjectInheritenceChainIsCorrect()
+		[Test] 
+		public void EntityObjectInheritenceChainIsCorrect()
 		{
-			Type titleBaseType = _assembly.GetType("pubs4.Model.TitleBase", /*ThrowOnError = */ true);
-			Type titleType = _assembly.GetType("pubs4.Model.Title", /*ThrowOnError = */ true);
+			Type titleBaseType = assembly.GetType("pubs4.Model.TitleBase", true);
+			Type titleType = assembly.GetType("pubs4.Model.Title", true);
 
-			AssertEquals("TitleBase does not inherit from EntityObject", typeof(Neo.Framework.EntityObject), titleBaseType.BaseType);
+			AssertEquals("TitleBase does not inherit from EntityObject", typeof(EntityObject), titleBaseType.BaseType);
 			AssertEquals("Title does not inherit from TitleBase", titleBaseType, titleType.BaseType);
 		}
 
-		[Test] public void SupportClassesExist()
+		[Test] 
+		public void SupportClassesExist()
 		{
 			//GetType will throw if any of these types aren't found, failing the test
-			_assembly.GetType("pubs4.Model.TitleList",		/*ThrowOnError = */ true);
-			_assembly.GetType("pubs4.Model.TitleFactory",	/*ThrowOnError = */ true);
-			_assembly.GetType("pubs4.Model.TitleMap",		/*ThrowOnError = */ true);
-			_assembly.GetType("pubs4.Model.TitleTemplate",	/*ThrowOnError = */ true);
-			_assembly.GetType("pubs4.Model.TitleRelation",	/*ThrowOnError = */ true);
+			assembly.GetType("pubs4.Model.TitleList",		true);
+			assembly.GetType("pubs4.Model.TitleFactory",	true);
+			assembly.GetType("pubs4.Model.TitleMap",		true);
+			assembly.GetType("pubs4.Model.TitleTemplate",	true);
+			assembly.GetType("pubs4.Model.TitleRelation",	true);
 		}
 
-		[Test] public void ConstructorsAreCorrect()
+		[Test] 
+		public void ConstructorsAreCorrect()
 		{
-			Type titleBaseType = _assembly.GetType("pubs4.Model.Title", /*ThrowOnError = */ true);
+			Type titleBaseType = assembly.GetType("pubs4.Model.Title", true);
 			ConstructorInfo[] constructors = titleBaseType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
-
 			Assert("Wrong number of constructors", constructors.Length == 1);
 
 			ConstructorInfo constructor = constructors[0];
-
-			Assert("Constructor should be protected", constructor.IsFamily);
+			Assert("Constructor should be protected internal", constructor.IsFamilyOrAssembly);
 
 			ParameterInfo[] parameters = constructor.GetParameters();
-
 			Assert("Wrong number of args", parameters.Length == 2);
-
-			ParameterInfo rowParam = parameters[0];
-			ParameterInfo contextParam = parameters[1];
-
-			AssertEquals("Arg 1 type is wrong", typeof(DataRow), rowParam.ParameterType);
-			AssertEquals("Arg 2 type is wrong", typeof(Neo.Core.ObjectContext), contextParam.ParameterType);
+			AssertEquals("Arg 1 type is wrong", typeof(DataRow), parameters[0].ParameterType);
+			AssertEquals("Arg 2 type is wrong", typeof(ObjectContext), parameters[1].ParameterType);
 		}
-		[Test] public void TemplatesImplementIFetchSpecification()
+
+		[Test] 
+		public void MultiValueCreateMethodsAreCorrect()
 		{
-			Type titleTemplateType = _assembly.GetType("pubs4.Model.TitleTemplate", /*ThrowOnError = */ true);
+			Type factoryType = assembly.GetType("pubs4.Model.JobRecordFactory", true);
+			MethodInfo method = factoryType.GetMethod("CreateObject", BindingFlags.Instance | BindingFlags.Public);
+			AssertNotNull("Should have generated CreateObject method on factory.", method);
+
+			ParameterInfo[] parameters = method.GetParameters();
+			AssertEquals("Wrong number of args", 2, parameters.Length);
+			AssertEquals("Arg 1 type is wrong", "Job", parameters[0].ParameterType.Name);
+			AssertEquals("Arg 2 type is wrong", typeof(DateTime), parameters[1].ParameterType);
+		}
+
+		[Test] 
+		public void MultiValueFindMethodsAreCorrect()
+		{
+			Type factoryType = assembly.GetType("pubs4.Model.JobRecordFactory", true);
+			MethodInfo method = factoryType.GetMethod("CreateObject", BindingFlags.Instance | BindingFlags.Public);
+			AssertNotNull("Should have generated FindObject method on factory.", method);
+
+			ParameterInfo[] parameters = method.GetParameters();
+			AssertEquals("Wrong number of args", 2, parameters.Length);
+			AssertEquals("Arg 1 type is wrong", "Job", parameters[0].ParameterType.Name);
+			AssertEquals("Arg 2 type is wrong", typeof(DateTime), parameters[1].ParameterType);
+		}
+
+		[Test] 
+		public void MultiRelationCreateMethodsAreCorrect()
+		{
+			Type factoryType = assembly.GetType("pubs4.Model.CorrelationFactory", true);
+			MethodInfo method1 = factoryType.GetMethod("CreateObject", GetTypes("Publisher", "Publisher"));
+			AssertNotNull("Should have generated CreateObject method with two publishers on factory.", method1);
+
+			MethodInfo method2 = factoryType.GetMethod("CreateObject", GetTypes("Publisher", "Title"));
+			AssertNotNull("Should have generated CreateObject method with publisher/title on factory.", method2);
+
+			MethodInfo method3 = factoryType.GetMethod("CreateObject", GetTypes("Title", "Publisher"));
+			AssertNotNull("Should have generated CreateObject method with publisher/title on factory.", method3);
+		
+			MethodInfo method4 = factoryType.GetMethod("CreateObject", GetTypes("Title", "Title"));
+			AssertNotNull("Should have generated CreateObject method with two titles on factory.", method4);
+		}
+
+		[Test] 
+		public void QueryTemplatesImplementIFetchSpecification()
+		{
+			Type titleTemplateType = assembly.GetType("pubs4.Model.TitleTemplate", true);
 			Type iFetchSpecificationType = titleTemplateType.GetInterface("IFetchSpecification");
 
 			AssertNotNull("Template type should implement IFetchSpecification", iFetchSpecificationType);
 		}
-		[Test] public void ClassesWithRelationsOverrideDelete()
-		{
-			Type titleType = _assembly.GetType("pubs4.Model.Title", /*ThrowOnError = */ true);
-			MethodInfo deleteMethod = titleType.GetMethod("Delete", BindingFlags.Instance | BindingFlags.Public);
-			
-			AssertNotNull("Method not found in Assembly", deleteMethod);
-		}
 
-		[Test] public void ClassesWithNoRelationsDoNotOverrideDelete()
+		[Test] 
+		public void PropertiesAreCorrect()
 		{
-			Type jobType = _assembly.GetType("pubs4.Model.Job", /*ThrowOnError = */ true);
-			MethodInfo deleteMethod = jobType.GetMethod("Delete", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-
-			AssertNull("Delete should not have been overridden", deleteMethod);
-		}
-
-		[Test] public void PropertiesAreCorrect()
-		{
-			Type jobBaseType = _assembly.GetType("pubs4.Model.JobBase", /*ThrowOnError = */ true);
+			Type jobBaseType = assembly.GetType("pubs4.Model.JobBase", true);
 
 			PropertyInfo[] properties = jobBaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
 			AssertEquals("Wrong number of properties", 4, properties.Length);
 		}
+
+		#region SupportMethods
+
+		void GenerateSourceFiles()
+		{
+			CodeGenerator codeGenerator = new CodeGenerator();
+			codeGenerator.ReaderType = typeof(NorqueReader);
+			codeGenerator.ResourcePath = @"..\..\..\Generator\Resources";
+			codeGenerator.GeneratesSupportClasses = true;
+			codeGenerator.GeneratesUserClasses = true;
+			codeGenerator.ForcesUserClassGen = true;
+			IList files = codeGenerator.Generate(@"..\..\CompiledClassesTestsSchema.xml", @".");
+			sourceFileNames = new string[files.Count];
+			files.CopyTo(sourceFileNames, 0);
+		}
+
+		void CompileSourcesToAssembly()
+		{
+			ICodeCompiler compiler = new CSharpCodeProvider().CreateCompiler();
+			string[] referencedAssemblies = new String[]{"Neo.dll", "System.dll", "System.Data.dll", "System.Xml.dll"};
+			CompilerParameters options = new CompilerParameters(referencedAssemblies);
+			options.OutputAssembly = "pubs4";
+			options.GenerateInMemory = true;
+			CompilerResults results = compiler.CompileAssemblyFromFileBatch(options , sourceFileNames);
+
+			foreach(CompilerError error in results.Errors)
+				Console.WriteLine(error.ToString());
+			Assertion.Assert("Failed to compile assembly. (See console output for details.)", results.Errors.Count == 0);
+			
+			assembly = results.CompiledAssembly;
+		}
+
+		Type[] GetTypes(params string[] names)
+		{
+			Type[] types = new Type[names.Length];
+			for(int i = 0; i < names.Length; i++)
+				types[i] = assembly.GetType("pubs4.Model." + names[i]);
+			return types;
+		}
+
+		#endregion
+
+
 	}
 }

@@ -210,6 +210,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Fixtures\QualifierConverterTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Fixtures\QualifierParserTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

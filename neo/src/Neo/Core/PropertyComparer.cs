@@ -8,7 +8,8 @@ using Neo.Core.Util;
 namespace Neo.Core
 {
 	/// <summary>
-	/// Determines the direction of sorting, and case sensitivity
+	/// Determines the direction of sorting, and case sensitivity. Used by 
+	/// <c>PropertyComparer</c>.
 	/// </summary>
 	public enum SortDirection
 	{
@@ -47,7 +48,7 @@ namespace Neo.Core
 		private Type		   lastType;
 
 		/// <summary>
-		/// Constructor. Sets property name and sort direction to be used in subsequent sorts
+		/// Constructor. Sets property name and sort direction to be used in subsequent sorts.
 		/// </summary>
 		/// <param name="aPropName">Name of property value to compare</param>
 		/// <param name="aDirection">Sort direction and case matching</param>
@@ -63,7 +64,7 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Constructor. Sets property name and sort direction to be used in subsequent sorts
+		/// Constructor. Sets property name and sort direction to be used in subsequent sorts.
 		/// </summary>
 		/// <param name="aPropName">Name of property value to compare</param>
 		/// <param name="aDirection">Sort direction and case matching</param>
@@ -84,7 +85,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Name of property to compare when sorting
+		/// Name of property to compare when sorting.
 		/// </summary>
 		public string Property
 		{
@@ -93,7 +94,7 @@ namespace Neo.Core
 
 		
 		/// <summary>
-		/// Sort direction (Ascending, Descending)
+		/// Sort direction (Ascending, Descending).
 		/// </summary>
 		public SortDirection SortDirection
 		{
@@ -106,7 +107,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Compares one <c>EntityObject</c> instance with another using the value of <c>Property</c>
+		/// Compares one <c>IEntityObject</c> instance with another using the value of <c>Property</c>
 		/// </summary>
 		/// <param name="x">First object to compare</param>
 		/// <param name="y">Second object to compare</param>
@@ -132,7 +133,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 	
 		/// <summary>
-		/// Uses <c>ArrayList</c>&apos; QuickSort implementation to sort the supplied list
+		/// Uses <c>ArrayList</c>&apos; QuickSort implementation to sort the supplied list.
 		/// </summary>
 		/// <param name="list">list to be sorted</param>
 		public void Sort(ArrayList list)

@@ -45,7 +45,7 @@ namespace Neo.Tests.Fixtures
 			
 			titleTable = dataset.Tables["titles"];
 			Assertion.AssertNotNull("Could not find titles table.", titleTable);
-			Assertion.AssertNotNull("Could not find publishers.titles relation.", dataset.Relations["publishers.titles"]);
+			Assertion.AssertNotNull("Could not find publishers.titles relation.", dataset.Relations["publishers*titles.pub_id"]);
 			Assertion.AssertEquals("Wrong number of columns in titles.", 10, titleTable.Columns.Count);
 			salesColumn = titleTable.Columns["ytd_sales"];
 			Assertion.AssertNotNull("Could not find sales column.", salesColumn);

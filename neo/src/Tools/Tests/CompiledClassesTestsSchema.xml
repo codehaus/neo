@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "../MetaModel/Reader/norque.dtd">
+
+<database
+  name="pubs"
+  package="pubs4.Model"
+  defaultIdMethod="none">
+
+  <table name="titles" javaName="Title" description="Title (Book) Table">
+    <column name="title_id" required="true" primaryKey="true" type="CHAR" size="6" />
+    <column name="title" javaName="TheTitle" required="true" type="VARCHAR" size="80" />
+    <column name="type" required="true" type="VARCHAR" size="12" />
+    <column name="pub_id" hidden="true" type="CHAR" size="4" />
+    <column name="price" type="DECIMAL" />
+    <column name="advance" type="DECIMAL" />
+    <column name="royalty" type="INTEGER" />
+    <column name="ytd_sales" type="INTEGER" description="Sales this year" />
+    <column name="notes" type="VARCHAR" size="200" />
+    <column name="pubdate" javaName="PublicationDate" required="true" type="DATE"/>
+    <foreign-key foreignTable="publishers" name="Publisher">
+      <reference local="pub_id" foreign="pub_id"/>
+    </foreign-key>
+  </table>
+
+
+  <table name="publishers" javaName="Publisher" description="Publisher Table">
+    <column name="pub_id" required="true" primaryKey="true" hidden="true" type="CHAR" size="4" />
+    <column name="pub_name" javaName="Name" type="VARCHAR" size="40" />
+    <column name="city" type="VARCHAR" size="20" />
+    <column name="state" type="CHAR" size="2" />
+    <column name="country" type="VARCHAR" size="30" />
+    <iforeign-key foreignTable="titles" name="Titles" onDelete="setnull">
+      <ireference local="pub_id" foreign="pub_id"/>
+    </iforeign-key>
+  </table>
+  
+  
+  <table name="jobs" javaName="Job" idMethod="native">
+	<column name="job_id" hidden="false" primaryKey="true" type="SMALLINT" />
+	<column name="job_desc" javaName="Description" required="true" type="CHAR" size="50" />
+	<column name="min_lvl" javaName="MinLevel" required="true" type="TINYINT"/>
+	<column name="max_lvl" javaName="MaxLevel" required="true" type="TINYINT"/>
+  </table>
+  
+  
+  <table name="jobrecords" javaName="JobRecord" idMethod="none">
+	<column name="job_id" hidden="true" primaryKey="true" type="SMALLINT" />
+	<column name="month" primaryKey="true" type="DATETIME" />
+    <column name="employee_name" required="true" type="VARCHAR" size="100" />
+    <foreign-key foreignTable="jobs" name="Job">
+      <reference local="job_id" foreign="job_id"/>
+    </foreign-key>
+  </table>
+  
+  <table name="correlations" javaName="Correlation" idMethod="none">
+  	<column name="id1" hidden="true" primaryKey="true" type="CHAR" size="10" />
+  	<column name="id2" hidden="true" primaryKey="true" type="CHAR" size="10" />
+	<column name="desc" required="true" type="VARCHAR" size="50" />
+    <foreign-key foreignTable="publishers" name="Pub1">
+      <reference local="id1" foreign="pub_id"/>
+    </foreign-key>
+    <foreign-key foreignTable="titles" name="Title1">
+      <reference local="id1" foreign="title_id"/>
+    </foreign-key>
+    <foreign-key foreignTable="publishers" name="Pub2">
+      <reference local="id2" foreign="pub_id"/>
+    </foreign-key>
+    <foreign-key foreignTable="titles" name="Title2">
+      <reference local="id2" foreign="title_id"/>
+    </foreign-key>
+  </table>
+  
+  
+</database>

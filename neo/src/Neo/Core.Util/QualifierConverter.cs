@@ -1,12 +1,11 @@
 using System;
-using System.Data;
 using Neo.Core.Qualifiers;
 
 
 namespace Neo.Core.Util
 {
 
-	public class QualifierConverter : IQualifierVisitor
+	public class QualifierConverter
 	{
 		//--------------------------------------------------------------------------------------
 		//	Fields and Constructor
@@ -21,26 +20,21 @@ namespace Neo.Core.Util
 
 		
 		//--------------------------------------------------------------------------------------
-		//	Simple conversions
+		//	Property to Column qualifier
 		//--------------------------------------------------------------------------------------
 
-		public ColumnQualifier ConvertPropertyQualifier(PropertyQualifier propQualifier)
+		public ColumnQualifier ConvertToColumnQualifier(PropertyQualifier propQualifier)
 		{
 			IEntityObject	eo;
-			IEntityMap		otherEmap;
-		    DataRelation	rel;
 			IPredicate		predicate;
 			string			column;
 			object			compVal;
 
 			if((eo = propQualifier.Predicate.Value as IEntityObject) != null)
 			{
-				emap.UpdateSchemaInDataSet(eo.Context.DataSet, SchemaUpdate.Basic|SchemaUpdate.Relations);
-				otherEmap = eo.Context.EntityMapFactory.GetMap(eo.GetType());
-				if((rel = eo.Context.DataSet.Relations[otherEmap.TableName + "." + emap.TableName]) == null)
-					throw new NeoException("Can't to convert PropertyQualifier to ColumnQualifier; did not find relation " + otherEmap.TableName + "." + emap.TableName);
-				column = rel.ChildColumns[0].ColumnName;
-				compVal = eo.Row[rel.ParentColumns[0]];
+				RelationInfo info = emap.GetRelationInfo(propQualifier.Property);
+				column = info.ChildKey;
+				compVal = eo.Row[info.ParentKey];
 			}
 			else
 			{
@@ -55,19 +49,85 @@ namespace Neo.Core.Util
 		}
 
 		
-		//--------------------------------------------------------------------------------------
-		//	Recursive conversion
-		//--------------------------------------------------------------------------------------
-
-		public Qualifier ConvertPropertyQualifiers(Qualifier aQualifier)
+		public Qualifier ConvertToColumnQualifiersRecursively(Qualifier aQualifier)
 		{
-			return (Qualifier)aQualifier.AcceptVisitor(this);
+			return (Qualifier)aQualifier.AcceptVisitor(new PropertyToColumnConverter(this));
+		}
+
+
+		protected class PropertyToColumnConverter : CopyingConverterBase
+		{
+			
+			public PropertyToColumnConverter(QualifierConverter outer) : base(outer)
+			{
+			}
+		
+			public override object VisitPropertyQualifier(PropertyQualifier propQualifier)
+			{
+				return outer.ConvertToColumnQualifier(propQualifier);
+			}
+
 		}
 
 
 		//--------------------------------------------------------------------------------------
-		//	IQualifierVisitor impl
+		//	Changing entity objects
 		//--------------------------------------------------------------------------------------
+		
+		public PropertyQualifier MoveEntityObject(PropertyQualifier propQualifier, ObjectContext newContext)
+		{
+			IEntityObject	eo, eoInNewContext;
+			IPredicate		predicate;
+
+			if((eo = propQualifier.Predicate.Value as IEntityObject) == null)
+				return propQualifier;
+
+			eoInNewContext = newContext.GetLocalObject(eo, false);
+			if(eoInNewContext == null)
+				throw new ObjectNotFoundException("Cannot convert object in qualifier; object not found in new context.");
+
+			predicate = (IPredicate)Activator.CreateInstance(propQualifier.Predicate.GetType(), new object[] { eoInNewContext });
+			return new PropertyQualifier(propQualifier.Property, predicate);
+		}
+
+        
+		public Qualifier MoveEntityObjectsRecursively(Qualifier aQualifier, ObjectContext newContext)
+		{
+			return (Qualifier)aQualifier.AcceptVisitor(new EntityObjectConverter(this, newContext));
+		}
+
+
+		protected class EntityObjectConverter : CopyingConverterBase
+		{
+			private ObjectContext otherContext;
+
+			public EntityObjectConverter(QualifierConverter outer, ObjectContext otherContext) : base(outer)
+			{
+				this.otherContext = otherContext;
+			}
+
+
+			public override object VisitPropertyQualifier(PropertyQualifier propQualifier)
+			{
+				return outer.MoveEntityObject(propQualifier, otherContext);
+			}
+
+		}
+		
+		
+		//--------------------------------------------------------------------------------------
+		//	Generic IQualifierVisitor impl
+		//--------------------------------------------------------------------------------------
+
+		protected class CopyingConverterBase : IQualifierVisitor
+		{
+			protected QualifierConverter	outer;
+
+			public CopyingConverterBase(QualifierConverter outer)
+			{
+				this.outer = outer;
+			}
+
 
 		public object VisitColumnQualifier(ColumnQualifier columnQualifier)
 		{
@@ -75,9 +135,9 @@ namespace Neo.Core.Util
 		}
 
 
-		public object VisitPropertyQualifier(PropertyQualifier propQualifier)
+			public virtual object VisitPropertyQualifier(PropertyQualifier propQualifier)
 		{
-			return ConvertPropertyQualifier(propQualifier);
+				return propQualifier;
 		}
 
 
@@ -107,6 +167,8 @@ namespace Neo.Core.Util
 			return convertedQualifiers;
 		}
 
+		}
+	
 
 	}
 }

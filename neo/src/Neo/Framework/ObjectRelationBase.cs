@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using Neo.Core;
+using Neo.Core.Util;
 
 
 namespace Neo.Framework
@@ -18,15 +19,13 @@ namespace Neo.Framework
 		//--------------------------------------------------------------------------------------
 
 		internal readonly IEntityObject Owner;
-		internal readonly DataRelation Relation;
+		internal readonly RelationInfo Relation;
 		protected		  IList innerList;
 
-		protected ObjectRelationBase(IEntityObject eo, DataRelation aRelation)
+		protected ObjectRelationBase(IEntityObject eo, string relation)
 		{
-			if(aRelation.ParentColumns.Length > 1)
-				throw new ArgumentException("DataRelation cannot have compound keys.");
 			Owner = eo;
-			Relation = aRelation;
+			Relation = eo.Context.EntityMapFactory.GetMap(eo.GetType()).GetRelationInfo(relation);
 		}
 
 
@@ -50,17 +49,17 @@ namespace Neo.Framework
 
 		private string foreignTableName
 		{
-			get { return Relation.ChildTable.TableName; }
+			get { return Relation.ChildEntity.TableName; }
 		}
 
 		private string localColumnName
 		{
-			get { return Relation.ParentColumns[0].ColumnName; }
+			get { return Relation.ParentKey; }
 		}
 
 		private string foreignColumnName
 		{
-			get { return Relation.ChildColumns[0].ColumnName; }
+			get { return Relation.ChildKey; }
 		}
 
 
@@ -74,8 +73,8 @@ namespace Neo.Framework
 
 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 			
-			Owner.Context.RegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildTable.TableName, foreignColumnName);
-			Owner.Context.RegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildTable.TableName);
+			Owner.Context.RegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildEntity.TableName, foreignColumnName);
+			Owner.Context.RegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildEntity.TableName);
 		}
 
 		private object ObjectForForeignRow(DataRow row, bool tryDeleted)
@@ -207,8 +206,8 @@ namespace Neo.Framework
 		public virtual void InvalidateCache()
 		{
 			innerList = null;
-			Owner.Context.UnRegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildTable.TableName, foreignColumnName);
-			Owner.Context.UnRegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildTable.TableName);
+			Owner.Context.UnRegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildEntity.TableName, foreignColumnName);
+			Owner.Context.UnRegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildEntity.TableName);
 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 

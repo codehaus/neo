@@ -4,30 +4,33 @@ using System;
 namespace Neo.Core
 {
 	/// <summary>
-	/// <c>IFetchSpecification</c> is used to select objects in object contexts and data stores.
+	/// Defines which objects should be fetched from a context or datastore.
 	/// </summary>
 	/// <remarks>
-	/// Concrete implementations of this class may be used to form templates for finding similar objects
+	/// The <c>FetchSpecification</c> class is a straigh-forward implementation of this interface 
+	/// which allows to set all aspects directly. The Code Generator creates query templates for 
+	/// each entity that also implement <c>IFetchSpecification</c> and provide a strongly typed API.
 	/// </remarks>
 	public interface IFetchSpecification
 	{
 		/// <summary>
-		/// Entity map translating Attributes to Columns and vice versa
+		/// Entity map used to specify the entity from which to fetch the objects.
 		/// </summary>
 		IEntityMap EntityMap { get; }
 
 		/// <summary>
-		/// Specifies which rows to get
+		/// The <c>Qualifier</c> to apply to the fetched objects.
 		/// </summary>
 		Qualifier Qualifier { get; }
 
 		/// <summary>
-		/// Specifies how many object to get.
+		/// The maximum number of objects to return, or -1 for no limit.
 		/// </summary>
 		Int32 FetchLimit { get; }
 
 		/// <summary>
-		/// Specifies the order in which the objects are returned. First comparer has highest precedence.
+		/// An array of <c>PropertyComparer</c> that describes how the returned objects are to
+		/// be sorted. First comparer has highest precedence.
 		/// </summary>
 		PropertyComparer[] SortOrderings { get; }
 	}

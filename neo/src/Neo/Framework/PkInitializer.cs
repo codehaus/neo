@@ -130,8 +130,9 @@ namespace Neo.Framework
 
 			if(guidbase == null)
 			{
-				guidbase = new byte[16];
-				writeGuidBase(guidbase);
+				byte[] tempbase = new byte[16];
+				writeGuidBase(tempbase);
+				guidbase = tempbase;
 			}
 			guidbase.CopyTo(guid, 0);
 			writeGuidDyn(guid);

@@ -1,5 +1,8 @@
 namespace Neo.Core.Parser
 {
+	/// <summary>
+	/// Specifies the type of a <c>Token</c>.
+	/// </summary>
 	public enum TokenType
 	{
 		String,
@@ -15,7 +18,10 @@ namespace Neo.Core.Parser
 		CloseBracket
 	}
 
-	
+
+	/// <summary>
+	/// Internal class used by the <c>QualifierParser</c>.
+	/// </summary>
 	public class Token
 	{
 		public readonly TokenType	Type;

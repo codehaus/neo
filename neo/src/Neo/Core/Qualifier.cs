@@ -7,9 +7,10 @@ using Neo.Core.Qualifiers;
 namespace Neo.Core
 {
 	/// <summary>
-	/// Qualifiers define criteria for selections.
+	/// Qualifiers define criteria for object selections.
 	/// </summary>
-	/// <remarks>They are normally constructed using formats.
+	/// <remarks>There are class hierarchies for different qualifiers types and predicates but
+	/// normally qualifiers are constructed using formats:
 	/// <code>
 	/// q = Qualifier.Format("name = {0}", input);
 	/// </code>
@@ -18,10 +19,16 @@ namespace Neo.Core
 	/// q = Qualifier.Format("name = &apos;Haruki&apos;");
 	/// q = Qualifier.Format("name = {0} and locked = false", input);
 	/// </code>
+	/// Formats can contain brackets and paths spanning multiple entities:
+	/// <code>
+	/// q = Qualifier.Format("Publisher.Name = {0}", pubname);
+	/// q = Qualifier.Format("TitleAuthor.Title.(TheTitle like 'A%' or TheTitle like 'B%')");
+	/// </code>
 	/// Formats provide a shortcut for simple matches:
 	/// <code>q = new Qualifier.Format("Name", input);</code>
-	/// Qualifiers can evaluate whether an object matches their criteria:
-	/// <code>if (q.EvaluateWithObject(anAuthor))
+	/// Qualifiers are used in conjunction with <c>FetchSpecification</c> or can be used to 
+	/// evaluate whether an object matches their criteria:
+	/// <code>if(q.EvaluateWithObject(anAuthor))
 	///     doSomething(anAuthor);</code>
 	/// </remarks>
 	public abstract class Qualifier
@@ -31,10 +38,10 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Returns <c>Qualifier</c> to test IEntityObjects against the qualifier text
+		/// Creates a <c>Qualifier</c> for the given query.
 		/// </summary>
 		/// <param name="qformat">string version of test</param>
-		/// <returns><c>Qualifier</c> object to test other objects</returns>
+		/// <returns><c>Qualifier</c> object for the query</returns>
 		public static Qualifier Format(string qformat)
 		{
 			return new QualifierParser(qformat, new object[0]).GetQualifier();
@@ -42,22 +49,22 @@ namespace Neo.Core
 
 		
 		/// <summary>
-		/// Returns <c>Qualifier</c> to test IEntityObjects against the qualifier text and supplied values
+		/// Creates a <c>Qualifier</c> for the given query.
 		/// </summary>
-		/// <param name="qformat">string version of test</param>
-		/// <param name="values">additional information for test</param>
-		/// <returns><c>Qualifier</c> object to test other objects</returns>
-		public static Qualifier Format(string qformat, params object[] values)
+		/// <param name="formatString">string version of the query</param>
+		/// <param name="values">positional parameters for the query string</param>
+		/// <returns><c>Qualifier</c> object for the query</returns>
+		public static Qualifier Format(string formatString, params object[] values)
 		{
-			return new QualifierParser(qformat, values).GetQualifier();
+			return new QualifierParser(formatString, values).GetQualifier();
 		}
 
 		
 		/// <summary>
-		/// Returns <c>Qualifier</c> to test IEntityObjects against the supplied property/value
+		/// Creates a <c>Qualifier</c> which tests for the supplied property/value pairs.
 		/// </summary>
 		/// <param name="queryValues">property/value pairs to be compared</param>
-		/// <returns><c>Qualifier</c> object to test other objects</returns>
+		/// <returns><c>Qualifier</c> object for the query</returns>
 		public static Qualifier FromPropertyDictionary(IDictionary queryValues)
 		{
 			ArrayList	qualifiers;
@@ -113,7 +120,17 @@ namespace Neo.Core
 		//	Visitor
 		//--------------------------------------------------------------------------------------
 
-		public abstract object AcceptVisitor(IQualifierVisitor v);
+		/// <summary>
+		/// Begins traversal of the qualifier. The visitor passed in will receive methods from
+		/// the <c>IQualifierVisitor</c> interface as subqualifiers are reached during 
+		/// traversal.
+		/// </summary>
+		/// <remarks>
+		/// This method is not normally used from applications.
+		/// </remarks>
+		/// <param name="visitor">The visitor that receives the call-back methods</param>
+		/// <returns>The object returned from the vistor for this qualifier</returns>
+		public abstract object AcceptVisitor(IQualifierVisitor visitor);
 
 	}
 }

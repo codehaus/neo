@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Data;
 using System.Reflection;
 using Neo.Core;
+using Neo.Core.Util;
 
 
 namespace Neo.Framework
@@ -14,6 +16,7 @@ namespace Neo.Framework
 		//--------------------------------------------------------------------------------------
 
 		private IEntityMapFactory	factory;
+		private IDictionary			relationInfos;
 
 
 		//--------------------------------------------------------------------------------------
@@ -57,19 +60,18 @@ namespace Neo.Framework
 			get;
 		}
 
-
 		public abstract string[] Attributes
 		{
 			get;
 		}
 
-		
-		public abstract string[] RelatedTables
+		public abstract string[] Relations
 		{
 			get;
 		}
-
-
+		
+		protected abstract IDictionary GetRelationInfos();
+		
 		public abstract IPkInitializer GetPkInitializer();
 
 
@@ -84,22 +86,42 @@ namespace Neo.Framework
 
 		
 		//--------------------------------------------------------------------------------------
-		//	Helper
+		//	Derived properties
 		//--------------------------------------------------------------------------------------
 
 		public string GetColumnForAttribute(string attribute)
 		{
 			string[] attrs = Attributes;
+
 			for(int i = 0; i < attrs.Length; i++)
 			{
 				if(attrs[i] == attribute)
 					return Columns[i];
 			}
-			throw new ArgumentException(String.Format("Attribute {0} not found in class {1} (Maybe you are looking for a relation?)",
-				attribute, ObjectType.ToString()));
+			throw new ArgumentException(String.Format("Attribute {0} not found in class {1} (Maybe you are looking for a Relation?)",
+				attribute, ConcreteObjectType.ToString()));
 		}
-		
-		
+
+	
+		private void CacheRelationInfos()
+		{
+			if(relationInfos == null)
+				relationInfos = GetRelationInfos();
+		}
+
+
+		public RelationInfo GetRelationInfo(string relation)
+		{
+			CacheRelationInfos();
+
+			RelationInfo info = (RelationInfo)relationInfos[relation];
+			if(info != null)
+				return info;
+			
+			throw new ArgumentException(String.Format("Relation {0} not found in class {1}",
+				relation, ConcreteObjectType.ToString()));
+		}
+
 		//--------------------------------------------------------------------------------------
 		//	Object Instantiation
 		//--------------------------------------------------------------------------------------
@@ -137,8 +159,15 @@ namespace Neo.Framework
 			}
 			if((update & SchemaUpdate.Relations) != 0)
 			{
-				foreach(string t in RelatedTables)
-					factory.GetMap(t).UpdateSchemaInDataSet(aDataSet, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+				CacheRelationInfos();
+				foreach(DictionaryEntry e in relationInfos)
+				{
+					RelationInfo info = (RelationInfo)e.Value;
+					if(info.ParentEntity != this)
+						info.ParentEntity.UpdateSchemaInDataSet(aDataSet, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+					if(info.ChildEntity != this)
+						info.ChildEntity.UpdateSchemaInDataSet(aDataSet, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+				}
 				WriteRelations(aDataSet.Tables[TableName]);
 			}
 

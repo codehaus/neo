@@ -1,4 +1,27 @@
 
+2004-11-11 erik (proxy)
+
+	* Merged in changes from a forked Neo version. There are few
+	changes to the public API, mainly around IEntityMaps, but several
+	internal improvements, which among other things fix NEO-3 and 
+	NEO-15.
+	
+	* Improved code generation templates. Note that an exception is now
+	thrown when objects from different contexts are assigned. (This was 
+	always unsupported but could sometimes go undetected.) Also, the 
+	new templates contain a performance improvement for object creation
+	that requires the entity objects to have a 'protected internal'
+	constructor. Existing classes must be updated manually.
+
+
+2004-11-04 erik
+
+	* Updated inline comments and added task to produce compiled
+	help file to NAnt script.
+
+
+
+
 RELEASE 1.3.0
 ----------------------------------------------------------------
 

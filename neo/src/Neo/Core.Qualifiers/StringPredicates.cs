@@ -24,13 +24,18 @@ namespace Neo.Core.Qualifiers
 			get { return predValue; }
 		}
 
+		public void SetPredicateValue(object aValue)
+		{
+			predValue = (string)aValue;
+		}
+
 	}
 
 	//--------------------------------------------------------------------------------------
 	//	Like
 	//--------------------------------------------------------------------------------------
 
-	public class LikePredicate : StringPredicateBase, IPredicate
+	public class LikePredicate : StringPredicateBase, IMutablePredicate
 	{
 		protected string pattern;
 
@@ -63,7 +68,7 @@ namespace Neo.Core.Qualifiers
 	}
 
 	
-	public class CaseInsensitiveEqualsPredicate : StringPredicateBase, IPredicate
+	public class CaseInsensitiveEqualsPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public CaseInsensitiveEqualsPredicate(string aValue) : base(aValue)
 		{
@@ -90,7 +95,7 @@ namespace Neo.Core.Qualifiers
 	//	StartsWith
 	//--------------------------------------------------------------------------------------
 
-	public class StartsWithPredicate : StringPredicateBase, IPredicate
+	public class StartsWithPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public StartsWithPredicate(string aValue) : base(aValue)
 		{
@@ -116,7 +121,7 @@ namespace Neo.Core.Qualifiers
 	//	EndsWith
 	//--------------------------------------------------------------------------------------
 
-	public class EndsWithPredicate : StringPredicateBase, IPredicate
+	public class EndsWithPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public EndsWithPredicate(string aValue) : base(aValue)
 		{
@@ -142,7 +147,7 @@ namespace Neo.Core.Qualifiers
 	//	Contains
 	//--------------------------------------------------------------------------------------
 
-	public class ContainsPredicate : StringPredicateBase, IPredicate
+	public class ContainsPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public ContainsPredicate(string aValue) : base(aValue)
 		{

@@ -173,6 +173,28 @@ namespace Neo.Framework
 			throw new InvalidDbNullException(propName + " is a value type. DBNulls can only be converted to reference types.");
 		}
 
+		protected virtual void SetRelatedObject(IEntityObject eo, string keyColumnInThisEntity, string keyColumnInOtherEntity)
+		{
+			if(eo == null)
+			{
+				Row[keyColumnInThisEntity] = DBNull.Value;
+				return;
+			}
+			if(eo.Context != Context)
+			{
+				throw new ArgumentException("Assignment of object from different context.");
+			}
+			Row[keyColumnInThisEntity] = eo.Row[keyColumnInOtherEntity];
+		}
+
+		protected virtual object GetRelatedObject(string tableName, object fkvalue)
+		{
+			IEntityObject eo = Context.GetObjectFromTable(tableName, new object[] { fkvalue });
+			if(eo == null)
+				throw new ObjectNotFoundException(String.Format("Failed to look up object for foreign key; looking for {0}[{1}]", tableName, fkvalue));
+			return eo;
+		}
+			
 	}
 
 }

@@ -11,19 +11,27 @@ using Neo.Core.Util;
 
 namespace Neo.Core
 {
+	/// <summary>
+	/// Delegate method used by <c>ObjectContext</c> to notify column change observers.
+	/// </summary>
 	public delegate void ColumnChangeHandler(object sender, DataColumnChangeEventArgs e);
+	/// <summary>
+	/// Delegate method used by <c>ObjectContext</c> to notify row change observers.
+	/// </summary>
 	public delegate void RowChangeHandler(object sender, DataRowChangeEventArgs e);
 	
 	/// <summary>
-	/// ObjectContext provides a wrapper around core ADO.Net functionality.
+	/// Central class in the Neo core which manages <c>IEntityObject</c>s.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// ObjectContext uses a data store to retrieve objects and save changes.
-	/// A special data store could act as a façade for other data stores. 
-	/// I could select an appropriate store for a request and forward the request.
-	/// The context relies on its internal DataSet to track changes (creates, updates and deletes.)
-	/// It provides methods to save or reject the changes.
+	/// ObjectContext uses an <c>IDataStore</c> implementation to retrieve objects and save
+	/// changes. It relies on its internal DataSet to track changes, i.e. creates, updates and 
+	/// deletes. 
+	/// </para>
+	/// <para>
+	/// Generated classes, such as subclasses of <c>ObjectFactory</c>, provide a strongly typed 
+	/// API for much of the functionality in ObjectContext.
 	/// </para>
 	/// </remarks>
 	[Serializable]
@@ -34,9 +42,6 @@ namespace Neo.Core
 		//	Static fields and methods
 		//--------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Static reference to a logging facility
-		/// </summary>
 		private static ILog logger;
 
 
@@ -45,7 +50,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		private ObjectTable			objectTable;
-		private Hashtable			  loadedEntities;
+		private Hashtable			loadedEntities;
 		private DataSet				mainDataSet;
 		private IDataStore			dataStore;
 		private bool				copiedParent;
@@ -53,11 +58,11 @@ namespace Neo.Core
 		private PropertyCollection	extendedProperties;
 		private DataRow				rowPending;
 		private Hashtable			eventHandlers;
-		protected ColumnChangeBroker  columnChangeBroker;
-		protected RowChangeBroker		rowChangeBroker;
+		protected ColumnChangeBroker columnChangeBroker;
+		protected RowChangeBroker	rowChangeBroker;
 
 		/// <summary>
-		/// Default constructor. Sets up logger and default map factory
+		/// Default constructor. Creates empty context with <c>DefaultEntityMapFactory</c>.
 		/// </summary>
 		public ObjectContext()
 		{
@@ -80,7 +85,7 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Constructor. Takes data from the supplied data set into this context
+		/// Constructor. Takes data from the supplied data set into this context.
 		/// </summary>
 		/// <param name="aDataSet">data to be imported</param>
 		public ObjectContext(DataSet aDataSet) : this()
@@ -91,9 +96,8 @@ namespace Neo.Core
 		
 		/// <summary>
 		/// Constructor. Takes data from the supplied data set into this context
-		/// and uses a custom entitymapfactory to find maps.
+		/// and uses a custom <c>IEntityMapFactory</c> to find maps.
 		/// </summary>
-		/// <param name="aDataSet">data to be imported</param>
 		public ObjectContext(DataSet aDataSet, IEntityMapFactory aFactory) : this()
 		{
 			emapFactory = aFactory;
@@ -101,7 +105,7 @@ namespace Neo.Core
 		}
 	
 		/// <summary>
-		/// Constructor. Takes data from the supplied data store into this context
+		/// Constructor. Uses the supplied data store for persistence.
 		/// </summary>
 		/// <remarks>
 		/// Data from the store is usually loaded on demand.
@@ -122,7 +126,7 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Constructor. Takes data from the supplied parent context into this context
+		/// Constructor. Takes data from the supplied parent context into this context.
 		/// </summary>
 		/// <remarks>
 		/// Data from a parent context is normally copied to improve performace. If 
@@ -130,7 +134,8 @@ namespace Neo.Core
 		/// on-demand copying.
 		/// </remarks>
 		/// <param name="parentContext">data to be imported</param>
-		/// <param name="copyInCtor">whether to copy the parent intially or on demand</param>
+		/// <param name="copyInCtor">whether to copy the parent intially or load data on 
+		/// demand</param>
 		public ObjectContext(ObjectContext parentContext, bool copyInCtor) : this()
 		{
 			dataStore = parentContext;
@@ -149,7 +154,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// The DataSet containing this ObjectContext&apos;s data
+		/// The DataSet containing this ObjectContext&apos;s data.
 		/// </summary>
 		public DataSet DataSet
 		{
@@ -158,7 +163,7 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// The DataStore used to persist the DataSet&apos;s data
+		/// The DataStore used for persistence.
 		/// </summary>
 		public IDataStore DataStore
 		{
@@ -167,8 +172,13 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// The EntityMapFactory used to map entity attributes
+		/// The EntityMapFactory used to retrieve instances of <c>IEntityMap</c> which map 
+		/// objects to <c>DataTable</c> and vice versa.
 		/// </summary>
+		/// <remarks>
+		/// While settable it is not advisable to change  the factory after objects have been
+		/// loaded/created.
+		/// </remarks>
 		public IEntityMapFactory EntityMapFactory
 		{
 			set { emapFactory = value; }
@@ -178,12 +188,12 @@ namespace Neo.Core
 
 		/// <summary>
 		/// A property collection instance that can be used to store application specific
-		/// information in the context
+		/// information in the context.
 		/// </summary>
 		/// <remarks>
 		/// The context completely ignores the contents of the property collection. It is
-		/// meant as convenience to avoid having to subclass ObjectContext just because some
-		/// extra properties are needed.
+		/// meant as convenience to avoid having to subclass ObjectContext just because 
+		/// some extra properties are needed.
 		/// </remarks>
 		public PropertyCollection ExtendedProperties
 		{
@@ -200,6 +210,13 @@ namespace Neo.Core
 		//	Protected and internal properties
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// The <c>ObjectTable</c> used by this context.
+		/// </summary>
+		/// <remarks>
+		/// The context uses an <c>ObjectTable</c> to maintain the mappings from <c>ObjectId</c> to
+		/// <c>DataRow</c> instances. It also keeps information about deleted objects. 
+		/// </remarks>
 		protected internal ObjectTable ObjectTable
 		{
 			get { return objectTable; }
@@ -207,13 +224,13 @@ namespace Neo.Core
 
 		
 		/// <summary>
-		/// Marks row as being processed and change events for it to be ignored
+		/// Marks row as being processed and change events for it to be ignored.
 		/// </summary>
 		/// <remarks>
-		// This is used during object creation because for some objects the PK is also a FK
-		// and when the PK is set in the row the context doesn't have the corresponding object 
-		// for that row in its tables and thus observers wouldn't be able to look it up. The 
-		// context resends the events after its data structures are okay.
+		/// This is used during object creation because for some objects the PK is also a FK
+		/// and when the PK is set in the row the context doesn't have the corresponding object 
+		/// for that row in its tables and thus observers wouldn't be able to look it up. The 
+		/// context resends the events after its data structures are okay.
 		/// </remarks>
 		protected internal DataRow RowPending
 		{
@@ -227,6 +244,9 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// If <c>true</c> the context will try to access its store when it looks for objects.
+		/// </summary>
 		protected virtual bool CanLoadFromStore
 		{
 			get { return (dataStore != null) && ((dataStore is ObjectContext == false) || (copiedParent == false)); }
@@ -238,7 +258,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Clears and resets the internal objects in this Context
+		/// Clears and resets the this context.
 		/// </summary>
 		/// <remarks>
 		/// This makes the context effectively forget all object and their changes.
@@ -254,7 +274,7 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Gets all changes made to the main DataSet
+		/// Gets all changes made to the ObjectContext in the form of a diffgram <c>DataSet</c>.
 		/// </summary>
 		/// <returns>all changes made to the main DataSet</returns>
 		public virtual DataSet GetChanges()
@@ -264,7 +284,7 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Determines whether there are any data changes in this context
+		/// Determines whether there are any changes to objects managed by this context.
 		/// </summary>
 		/// <returns><c>true</c> if changes have been made</returns>
 		public virtual bool HasChanges()
@@ -274,7 +294,7 @@ namespace Neo.Core
 		
 
 		/// <summary>
-		/// Marks all changes as having been persisted
+		/// Marks all changes as having been persisted.
 		/// </summary>
 		/// <remarks>
 		/// Use this in conjunction with GetChanges() to implement alternative
@@ -288,7 +308,7 @@ namespace Neo.Core
 
 	
 		/// <summary>
-		/// Persists data changes in this context to the data store
+		/// Persists data changes in this context to the data store.
 		/// </summary>
 		/// <returns>list of primary keys that were changed during the operation (only for 
 		/// native scheme)</returns>
@@ -377,7 +397,7 @@ namespace Neo.Core
 
 		/// <summary>
 		/// Finds row in the existing DataSet and either returns the IEntityObject
-		/// representation of it, or creates the representation
+		/// representation of it, or creates the representation.
 		/// </summary>
 		/// <param name="aRow">row containing data to be found</param>
 		/// <returns>IEntityObject instance representing the supplied row</returns>
@@ -469,21 +489,43 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Registers an observer for column change events.
+		/// </summary>
+		/// <param name="handler">delegate to be called</param>
+		/// <param name="tableName">table name the observer is interested in</param>
+		/// <param name="columnName">column the observer is inerested in</param>
 		public void RegisterForColumnChanges(ColumnChangeHandler handler, string tableName, string columnName) 
 		{
 			columnChangeBroker.RegisterForColumnChanging(handler, tableName, columnName);
 		}
 
+		/// <summary>
+		/// Unregisters and observer for column change events.
+		/// </summary>
+		/// <param name="handler">delegate that was registered before</param>
+		/// <param name="tableName">table name the delegate wishes to stop observing</param>
+		/// <param name="columnName">column name the delegate wishes to stop observing</param>
 		public void UnRegisterForColumnChanges(ColumnChangeHandler handler, string tableName, string columnName)
 		{
 			columnChangeBroker.UnRegisterForColumnChanging(handler, tableName, columnName);
 		}
 
+		/// <summary>
+		/// Registers an observer for row change events.
+		/// </summary>
+		/// <param name="handler">delgate to be called</param>
+		/// <param name="tableName">table name the observer is interested in</param>
 		public void RegisterForRowChanges(RowChangeHandler handler, string tableName)
 		{
 			rowChangeBroker.RegisterForRowChanged(handler, tableName);
 		}
 
+		/// <summary>
+		/// Unregisters an observer for row change events.
+		/// </summary>
+		/// <param name="handler">delegate that was registered before</param>
+		/// <param name="tableName">table name the delegate wishes to stop observing</param>
 		public void UnRegisterForRowChanges(RowChangeHandler handler, string tableName)
 		{
 			rowChangeBroker.UnRegisterForRowChanged(handler, tableName);
@@ -494,6 +536,12 @@ namespace Neo.Core
 		//	Adding data from ADO.NET to this context
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Adds a <c>DataRow</c> to the context. This creates a corresponding object if 
+		/// necessary.
+		/// </summary>
+		/// <param name="aRow">row to import</param>
+		/// <returns><c>IEntityObject</c> representing the row</returns>
 		public virtual IEntityObject ImportRow(DataRow aRow)
 		{
 			DataTable	table;
@@ -520,9 +568,10 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Adds all rows for a table to the underlying DataSet
+		/// Adds all rows for a table to the context. This creates the corresponding objects if
+		/// required.
 		/// </summary>
-		/// <param name="newTable">DataTable to be added</param>
+		/// <param name="newTable">table to be added</param>
 		protected virtual void ImportRowsFromTable(DataTable newTable)
 		{
 			IEntityMap	emap;
@@ -549,14 +598,16 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Merges the supplied DataSet with the underlying DataSet
+		/// Merges the supplied DataSet with the data in the context. This creates, deletes and 
+		/// changes objects as required.
 		/// </summary>
-		/// <param name="aDataSet">DataSet object to be merged</param>
-		/// <returns>List of added <c>IEntityObject</c>s</returns>
+		/// <param name="aDataSet"><c>DataSet</c> to be merged</param>
+		/// <returns>List of <c>IEntityObject</c>s affected by merge.</returns>
 		public virtual IList MergeData(DataSet aDataSet)
 		{
 			return MergeData(aDataSet, true);
 		}
+
 
 		protected virtual IList MergeData(DataSet aDataSet, bool sendColChangeEvents)
 		{
@@ -628,19 +679,28 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// 
+		/// Updates the primary keys for the objects managed by this context.
 		/// </summary>
-		/// <param name="changeTables"></param>
+		/// <remarks>
+		/// This is used in client/server scenarios where a datastore in a different process
+		/// persisted the changes and returned the keys as generated by the database.
+		/// </remarks>
+		/// <param name="changeTables">list of tables describing the key changes</param>
 		public virtual void UpdatePrimaryKeys(ICollection changeTables)
 		{
 			foreach(PkChangeTable t in changeTables)
 				UpdatePrimaryKeys(t); 
 		}
 
+
 		/// <summary>
-		/// 
+		/// Updates the primary keys for the objects managed by this context.
 		/// </summary>
-		/// <param name="changeTable">changeTable holding keys to be updated</param>
+		/// <remarks>
+		/// The context should not have any nested objects while the keys are updated.
+		/// </remarks>
+		/// <param name="changeTable">table describing the key changes for a <c>DataTable</c>
+		/// </param>
 		public virtual void UpdatePrimaryKeys(PkChangeTable changeTable)
 		{
 			IEntityMap	  emap;
@@ -676,11 +736,14 @@ namespace Neo.Core
 		/// <summary>
 		/// Creates a new <c>IEntityObject</c> with all of the required primary key values
 		/// </summary>
+		/// <remarks>
+		/// It is usually better to use the strongly typed API on the factory for the
+		/// required entity or the untyped API on <c>ObjectFactory</c>.
+		/// </remarks>
 		/// <param name="objectType"><c>IEntityObject</c> type to be created</param>
-		/// <param name="pkvalues">array holding exactly the correct number of primary key values
+		/// <param name="pkvalues">array holding the correct number of primary key values
 		/// or null if the pk scheme generates its own keys, e.g. GUID and native schemes.</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
+		/// <returns>the newly created object</returns>
 		public virtual IEntityObject CreateObject(Type objectType, object[] pkvalues)
 		{
 			IEntityMap		emap;
@@ -752,7 +815,7 @@ namespace Neo.Core
 
 		
 		/// <summary>
-		/// Takes a row and <c>null</c>s all non-PK values
+		/// Takes a row and <c>null</c>s all non-PK values.
 		/// </summary>
 		/// <param name="row">DataRow to be recycled</param>
 		protected virtual void RecycleRow(DataRow row)
@@ -780,10 +843,10 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Marks object as deleted. This will deletes row from persistent storage when the 
-		/// changes are saved.
+		/// Marks object as deleted. This will delete the corresponding row from persistent 
+		/// storage when the changes are saved.
 		/// </summary>
-		/// <param name="eo"><c>IEntityObject</c> to be removed</param>
+		/// <param name="eo"><c>IEntityObject</c> to be deleted</param>
 		public virtual void DeleteObject(IEntityObject eo)
 		{
 			if(eo.Context != this)
@@ -793,10 +856,11 @@ namespace Neo.Core
 		}
 
 		/// <summary>
-		/// Determines whether the change event is for a deletion, or rollback for an added row
+		/// Determines whether the change event is for a deletion, or rollback for an added row.
 		/// </summary>
 		/// <param name="e">DataRowChangeEventArgs giving row properties</param>
-		/// <returns><c>true</c> if the change event is for a deletion, or rollback for an added row</returns>
+		/// <returns><c>true</c> if the change event is for a deletion, or rollback for an added
+		/// row</returns>
 		protected virtual bool IsObjectDeleteEvent(DataRowChangeEventArgs e)
 		{
 			if(e.Action == DataRowAction.Delete)
@@ -812,7 +876,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Gets all rows registered in the internal dataset
+		/// Gets all non-deleted objects that the context manages.
 		/// </summary>
 		/// <returns>all rows registered in the internal dataset</returns>
 		public ICollection GetAllRegisteredObjects()
@@ -822,22 +886,34 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Looks up the supplied <c>IEntityObject</c> in the internal object table
+		/// Looks up the supplied <c>IEntityObject</c> in this context. Throws if the object is not
+		/// present in this context.
 		/// </summary>
-		/// <param name="eo"><c>IEntityObject</c> to find</param>
-		/// <returns>internal representation of supplied <c>IEntityObject</c>, if found</returns>
 		/// <remarks>
+		/// <para>
 		/// Use this when you have a set of objects in a parent context and need references
 		/// to them in a child context; or vice versa.
+		/// </para>
+		/// <para>
+		/// This method does not trigger the lazy-loading functionality.
+		/// </para>
 		/// </remarks>
+		/// <param name="eo"><c>IEntityObject</c> to find</param>
+		/// <returns>instance of supplied <c>IEntityObject</c> in this context</returns>
 		public IEntityObject GetLocalObject(IEntityObject eo)
+		{
+			return GetLocalObject(eo, true);
+		}
+
+
+		internal IEntityObject GetLocalObject(IEntityObject eo, bool throwOnNotFound)
 		{
 			IEntityMap emap = emapFactory.GetMap(eo.GetType());
 			DataRowVersion lookupVersion = DataRowVersion.Current;
 			if((eo.Row.RowState == DataRowState.Deleted) || (eo.Row.RowState == DataRowState.Detached))
 				lookupVersion = DataRowVersion.Original;
 			object[] pkvalues = GetPrimaryKeyValuesForRow(emap, eo.Row, lookupVersion);
-			if((eo = GetObjectFromTable(emap.TableName, pkvalues)) == null)
+			if(((eo = GetObjectFromTable(emap.TableName, pkvalues)) == null) && throwOnNotFound)
 				throw new ObjectNotFoundException("Object not available in this context.");
 			return eo;
 		}
@@ -845,7 +921,7 @@ namespace Neo.Core
 		
 		/// <summary>
 		/// Creates a new list of <c>EntityObject</c>s based upon the supplied list,
-		/// but using its internal representation of those objects
+		/// but using its internal representation of those objects.
 		/// </summary>
 		/// <param name="eoList"></param>
 		/// <returns></returns>
@@ -858,20 +934,25 @@ namespace Neo.Core
 			return localList;
 		}
  
+		/// <summary>
+		/// Gets all objects managed by this context that are marked for deletion.
+		/// </summary>
+		/// <returns>list of objects marked for deletion</returns>
 		public IList GetDeletedObjects()
 		{
 			return ObjectTable.GetDeletedObjects();
 		}
+
  		
 		//--------------------------------------------------------------------------------------
 		//	Getting objects (Will fetch from store if neccessary)
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Gets object from storage
+		/// Retrieves an object based on table name and primary key values.
 		/// </summary>
-		/// <param name="tableName">name of table holding object</param>
-		/// <param name="pkvalues">primary keys identifying object</param>
+		/// <param name="tableName">name of table</param>
+		/// <param name="pkvalues">primary keys identifying the object</param>
 		/// <returns>object matching primary keys, if found</returns>
 		/// <remarks>Any results are merged with this context. Tries to use cached version, if that is available</remarks>
 		public virtual IEntityObject GetObjectFromTable(string tableName, object[] pkvalues)
@@ -906,15 +987,12 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Finds all rows containing the supplied value in the named column
+		/// Retrieves objects based on table name and value for a given column.
 		/// </summary>
 		/// <param name="tableName">table name</param>
 		/// <param name="columnName">column containing values to test</param>
 		/// <param name="queryValue">value required for match</param>
-		/// <returns>all matching rows</returns>
-		/// <remarks>
-		/// return rows are merged with this context
-		/// </remarks>
+		/// <returns>all matching objects</returns>
 		internal protected virtual IList GetObjectsFromTable(string tableName, string columnName, object queryValue)
 		{
 			IEntityMap	emap;
@@ -943,10 +1021,13 @@ namespace Neo.Core
 
 		
 		/// <summary>
-		/// Returns all rows matching the supplied specification
+		/// Retrieves all objects matching the supplied specification
 		/// </summary>
-		/// <param name="fetchSpec"><c>IFetchSpecification</c> object detailing objects to find</param>
-		/// <returns>matching objects from table</returns>
+		/// <param name="fetchSpec"><c>IFetchSpecification</c> object describing the objects</param>
+		/// <returns>matching objects</returns>
+		/// <remarks>
+		/// This method merges results from the data store, if present, and internal objects.
+		/// </remarks>
 		public virtual IList GetObjects(IFetchSpecification fetchSpec)
 		{
 			IList	objects, result;
@@ -1005,11 +1086,11 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Gets all objects in other tables that have references to this object
+		/// Gets all objects in other entities that have references to the object passed in.
 		/// </summary>
-		/// <param name="theObject"></param>
+		/// <param name="theObject">the object to start from</param>
 		/// <param name="excludeCascades"><t>true</t> to ignore reference from tables into
-		/// which the objects table cascades deletes.</param>
+		/// which the object&apos;s table cascades deletes.</param>
 		/// <returns>related objects</returns>
 		/// <remarks>
 		/// This method is useful to find out whether a given object can be deleted in
@@ -1078,10 +1159,10 @@ namespace Neo.Core
 		/// <summary>
 		/// Gets rows from the data store according to the spefication
 		/// </summary>
-		/// <param name="fetchSpec">IFetchSpecification object stating what rows to fetch</param>
-		/// <returns>Nothing</returns>
+		/// <param name="fetchSpec">IFetchSpecification object describing what rows to fetch</param>
+		/// <returns>Always returns <c>null</c></returns>
 		/// <remarks>
-		/// This method will also return newly created objects that have not been persisted yet.
+		/// Do not use this method directly. It may be removed in future releases.
 		/// </remarks>
 		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
 		{
@@ -1112,7 +1193,7 @@ namespace Neo.Core
 			}
 			else
 			{
-				q = new QualifierConverter(fetchSpec.EntityMap).ConvertPropertyQualifiers(fetchSpec.Qualifier);	
+				q = new QualifierConverter(fetchSpec.EntityMap).ConvertToColumnQualifiersRecursively(fetchSpec.Qualifier);	
 				foreach(IEntityObject eo in objects)
 				{
 					if(q.EvaluateWithObject(eo))
@@ -1124,11 +1205,10 @@ namespace Neo.Core
 
 
 		/// <summary>
-		/// Saves changes in the child context in this context.
+		/// Saves changes in the child context into this context.
 		/// </summary>
 		/// <remarks>
-		/// This method should rarely ever be used in client code; use SaveChanges() in
-		/// the child context instead.
+		/// Do not use this method directly. It may be removed in future releases.
 		/// </remarks>
 		/// <param name="childContext">child context that is to be saved</param>
 		/// <returns>Always returns <c>null</c></returns>
@@ -1202,6 +1282,16 @@ namespace Neo.Core
 		}
 		
 
+		/// <summary>
+		/// Serializes this instance.
+		/// </summary>
+		/// <param name="info">the SerializationInfo into which the context will be written</param>
+		/// <param name="context">not used</param>
+		/// <remarks>
+		/// When serialising a connected context, i.e. a context that has a data store, care must be
+		/// taken that the data store is serialisable. By default many stores do not persist security
+		/// info, which means that connections attempts after deserialisation will fail.
+		/// </remarks>
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			if(rowPending != null)

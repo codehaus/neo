@@ -1,12 +1,10 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Reflection;
 using System.Text;
 using Neo.Core;
 using Neo.Core.Qualifiers;
 using Neo.Core.Util;
-using Neo.Framework;
 
 
 namespace Neo.Database
@@ -175,7 +173,7 @@ namespace Neo.Database
 
 		public object VisitPropertyQualifier(PropertyQualifier q)
 		{
-			ColumnQualifier	cq = new QualifierConverter(emap).ConvertPropertyQualifier(q);
+			ColumnQualifier	cq = new QualifierConverter(emap).ConvertToColumnQualifier(q);
 			cq.AcceptVisitor(this);
 			
 			return null;
@@ -226,37 +224,25 @@ namespace Neo.Database
 
 		private void WritePathQualifier(DataTable table, IEntityMap emap, PathQualifier q, int idx)
 		{
-			PropertyInfo	propInfo;
-			FieldInfo		fieldInfo;
-			Type			destType;
-			IEntityMap		leftEmap, rightEmap, newEmap;
-			DataRelation	rel;
-
-			if((propInfo = emap.ObjectType.GetProperty(q.PathElements[idx])) != null)
-				destType = propInfo.PropertyType;
-			else if((fieldInfo = emap.ObjectType.GetField(q.PathElements[idx])) != null)
-				destType = fieldInfo.FieldType;
-			else
-				throw new InvalidPropertyException(String.Format("{0} is not a valid property/field for class {1}", q.PathElements[idx], emap.ObjectType), null);
-
-			if(typeof(ObjectCollectionBase).IsAssignableFrom(destType))
+			RelationInfo	relInfo;
+			IEntityMap		newEmap;
+			bool			cameFromRight;
+			
+			relInfo = emap.GetRelationInfo(q.PathElements[idx]);
+			if(relInfo.ParentEntity == emap)
 			{
-				destType = destType.GetProperty("Item").PropertyType;
-				leftEmap = emap;
-				rightEmap = newEmap = emap.Factory.GetMap(destType);
+				newEmap = relInfo.ChildEntity;
+				cameFromRight = false;
 			}
 			else
 			{
-				leftEmap = newEmap = emap.Factory.GetMap(destType);
-				rightEmap = emap;
+				newEmap = relInfo.ParentEntity;
+				cameFromRight = true;
 			}
 
-			if((rel = table.DataSet.Relations[leftEmap.TableName + "." + rightEmap.TableName]) == null)
-				throw new NeoException("Can't to convert write PathQualifier; did not find relation " + leftEmap.TableName + "." + rightEmap.TableName);
-
-			WriteIdentifier((emap == rightEmap) ? rel.ChildColumns[0].ColumnName : rel.ParentColumns[0].ColumnName);
+			WriteIdentifier(cameFromRight ? relInfo.ChildKey : relInfo.ParentKey);
 			builder.Append(" IN ( SELECT ");
-			WriteIdentifier((emap == rightEmap) ? rel.ParentColumns[0].ColumnName : rel.ChildColumns[0].ColumnName);
+			WriteIdentifier(cameFromRight ? relInfo.ParentKey : relInfo.ChildKey);
 			builder.Append(" FROM ");
 			WriteIdentifier(newEmap.TableName);
 			builder.Append(" WHERE ");
@@ -310,19 +296,11 @@ namespace Neo.Database
 			WriteIdentifier(row.Table.TableName);
 			builder.Append(" SET");
 
-			WriteAllColumnsAndParameters("", ", ");
+			WriteAllColumnsAndParameters("", ", ", row);
 
 			builder.Append(" WHERE");
 
-			WriteOptimisticLockMatch();
-
-			foreach(DataColumn column in row.Table.Columns)
-			{
-				string pname = ConvertToParameterName(column.ColumnName);
-				parameters.Add(implFactory.CreateParameter(column, pname, row[column]));
-				pname = ConvertToParameterName(column.ColumnName + "_ORIG");
-				parameters.Add(implFactory.CreateParameter(column, pname, row[column, DataRowVersion.Original]));
-			}
+			WriteOptimisticLockMatch(row);
 		}
 
 		
@@ -336,14 +314,7 @@ namespace Neo.Database
 			WriteIdentifier(row.Table.TableName);
 			builder.Append(" WHERE");
 
-			WriteOptimisticLockMatch();
-
-			foreach(DataColumn column in row.Table.Columns)
-			{
-				string pname = ConvertToParameterName(column.ColumnName + "_ORIG");
-				parameters.Add(implFactory.CreateParameter(column, pname, row[column, DataRowVersion.Original]));
-			}
-
+			WriteOptimisticLockMatch(row);
 		}
 
 		
@@ -378,14 +349,17 @@ namespace Neo.Database
 		}
 
 		
-		protected void WriteAllColumnsAndParameters(string suffix, string separator)
+		protected void WriteAllColumnsAndParameters(string suffix, string separator, DataRow row)
 		{
 			bool firstColumn = true;
 
 			for(int i = 0; i < table.Columns.Count; i++)
 			{
+				DataColumn column = table.Columns[i];
+				string paramName = ConvertToParameterName(column.ColumnName + suffix);
+				
 				// Workaround for update with autoincrement bug
-				if(table.Columns[i].AutoIncrement)
+				if(column.AutoIncrement)
 					continue;
 
 				if(firstColumn == false)
@@ -393,36 +367,45 @@ namespace Neo.Database
 				firstColumn = false;
 
 				builder.Append(" ");
-				WriteIdentifier(table.Columns[i].ColumnName);
+				WriteIdentifier(column.ColumnName);
 				builder.Append(" = ");
-				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + suffix));
+				builder.Append(paramName);
+
+				parameters.Add(implFactory.CreateParameter(column, paramName, row[column]));
 			}
 		}
 
 
-		protected virtual void WriteOptimisticLockMatch()
+		protected virtual void WriteOptimisticLockMatch(DataRow row)
 		{
 			for(int i = 0; i < table.Columns.Count; i++)
 			{
 				DataColumn column = table.Columns[i];
+				string paramName = ConvertToParameterName(column.ColumnName + "_ORIG");
+
+				String lockStrategy = column.ExtendedProperties["LockStrategy"] as String;
+				if((lockStrategy != null) && (lockStrategy == "NONE"))
+					continue;
 
 				if(i > 0)
 					builder.Append(" AND");
 				builder.Append(" ((");
 				WriteIdentifier(column.ColumnName);
-				if(column.ExtendedProperties.ContainsKey("LockStrategy") == false)
+				if(lockStrategy == null)
 					builder.Append(" = ");
-				else if((String)column.ExtendedProperties["LockStrategy"] == "LIKE")
+				else if(lockStrategy == "LIKE")
 					builder.Append(" LIKE ");
 				else
 					throw new ArgumentException("Invalid locking strategy; found " + (String)column.ExtendedProperties["LockStrategy"]);
-				builder.Append(ConvertToParameterName(column.ColumnName + "_ORIG"));
+				builder.Append(paramName);
 				builder.Append(" ) OR (");
 				builder.Append("COALESCE(");
 				WriteIdentifier(column.ColumnName);
 				builder.Append(", ");
-				builder.Append(ConvertToParameterName(column.ColumnName + "_ORIG"));
+				builder.Append(paramName);
 				builder.Append(") IS NULL))");
+
+				parameters.Add(implFactory.CreateParameter(column, paramName, row[column, DataRowVersion.Original]));
 			}
 		}
 

@@ -8,7 +8,7 @@ namespace Neo.Core.Qualifiers
 	//	Equals
 	//--------------------------------------------------------------------------------------
 
-	public class EqualsPredicate : IPredicate
+	public class EqualsPredicate : IMutablePredicate
 	{
 		protected object predValue;
 
@@ -35,10 +35,16 @@ namespace Neo.Core.Qualifiers
 			return predValue.Equals(aValue);
 		}
 
+		public void SetPredicateValue(object aValue)
+		{
+			predValue = aValue;
+		}
+
 		public override string ToString()
 		{
 			return (predValue != null) ? ("= " + predValue.ToString()) : "null";
 		}
+
 	}
 
 	//--------------------------------------------------------------------------------------

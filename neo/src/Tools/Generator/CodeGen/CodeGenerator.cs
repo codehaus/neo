@@ -67,12 +67,14 @@ namespace Neo.Generator.CodeGen
 		//	generate files
 		//--------------------------------------------------------------------------------------
 	
-		public override void Generate(string inputFile, string outputPath)
+		public override IList Generate(string inputFile, string outputPath)
 		{
+			ArrayList files = new ArrayList();
 			if(generatesUserClasses)
-				GenerateClassFiles(inputFile, outputPath, true, forcesUserClassGen);
+				files.AddRange(GenerateClassFiles(inputFile, outputPath, true, forcesUserClassGen));
 			if(generatesSupportClasses)
-				GenerateClassFiles(inputFile, outputPath, false, true);
+				files.AddRange(GenerateClassFiles(inputFile, outputPath, false, true));
+			return files;
 		}
 
 	
@@ -95,7 +97,7 @@ namespace Neo.Generator.CodeGen
 			while((entity = modelReader.GetNextEntity()) != null)
 			{
 			    CodeGenerationContext ctx;
-				string			  subDir, outputFile;
+				string subDir, outputFile;
 
 				ctx = new CodeGenerationContext(entity);
 

@@ -203,7 +203,7 @@ namespace Neo.Tests.Fixtures
 			
 			pub = title.Publisher;
 			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
-			colQualifier = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertPropertyQualifier(propQualifier);
+			colQualifier = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertToColumnQualifier(propQualifier);
 
 			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
 			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
@@ -224,7 +224,7 @@ namespace Neo.Tests.Fixtures
 			pub = title.Publisher;
 			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
 			clauseQualifier = new AndQualifier(propQualifier);
-			convertedQualifer = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertPropertyQualifiers(clauseQualifier);
+			convertedQualifer = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertToColumnQualifiersRecursively(clauseQualifier);
 			
 			Assertion.AssertNotNull("Should return a qualifier.", convertedQualifer);
 			Assertion.AssertEquals("Should have top-level AND qualifier.", typeof(AndQualifier), convertedQualifer.GetType());

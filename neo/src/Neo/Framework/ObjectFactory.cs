@@ -27,12 +27,12 @@ namespace Neo.Framework
 		//	Generic create and find methods
 		//--------------------------------------------------------------------------------------
 
-		protected IEntityObject CreateObject(params object[] pkvalues)
+		protected IEntityObject CreateObject(object[] pkvalues)
 		{
 			return Context.CreateObject(EntityMap.ObjectType, pkvalues);
 		}
 
-		protected IEntityObject FindObject(params object[] pkvalues)
+		protected IEntityObject FindObject(object[] pkvalues)
 		{
 			return Context.GetObjectFromTable(EntityMap.TableName, pkvalues);
 		}

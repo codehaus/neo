@@ -119,13 +119,13 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "CompiledClassesTestsSchema.xml"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "ModelTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MultiTableSchema.xml"
-                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "NorqueReaderTests.cs"

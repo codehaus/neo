@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using Neo.MetaModel;
 using NVelocity;
@@ -53,7 +54,7 @@ namespace Neo.Generator.Core
 		//	generate files
 		//--------------------------------------------------------------------------------------
 	
-		public virtual void Generate(string inputPath, string outputFile)
+		public virtual IList Generate(string inputPath, string outputFile)
 		{
 			IModelReader modelReader;
 			TextWriter	 writer;
@@ -68,6 +69,8 @@ namespace Neo.Generator.Core
 			GenerationContext ctx = new GenerationContext(modelReader.Model);
 			Generate(template, ctx, writer);   		
 			writer.Close();
+
+			return new ArrayList(new object[] { outputFile });
 		}
 		
 

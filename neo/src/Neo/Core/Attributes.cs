@@ -4,9 +4,9 @@ using System;
 namespace Neo.Core
 {
 	/// <summary>
-	/// Marks a method used during <c>IEntityObject</c> creation
+	/// Marks a method to be called after the creation of an <c>IEntityObject</c>.
 	/// </summary>
-	[System.AttributeUsage(AttributeTargets.Method)]
+	[AttributeUsage(AttributeTargets.Method)]
 	public sealed class LifecycleCreateAttribute : Attribute
 	{
 		/// <summary>

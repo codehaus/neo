@@ -1,5 +1,8 @@
 namespace Neo.Core.Parser
 {
+	/// <summary>
+	/// Internal class used by <c>Tokenizer</c> and <c>QualifierParser</c>.
+	/// </summary>
 	public class TokenStack
 	{
 		//--------------------------------------------------------------------------------------

@@ -217,6 +217,59 @@ namespace Neo.Tests.Fixtures
 		}
 
 
+		[Test]
+		public void ChecksWetherOtherCollectionContainsSameObjects()
+		{
+			TitleList		list1, list2;
+			TitleFactory	factory;
+
+			factory = new TitleFactory(context);
+			list1 = new TitleList();
+			list1.Add(factory.FindObject("TC7777"));
+			list1.Add(factory.FindObject("MC3021"));
+			list1.Add(factory.FindObject("MC3026"));
+			list2 = new TitleList();
+			list2.Add(factory.FindObject("TC7777"));
+			list2.Add(factory.FindObject("MC3026"));
+			list2.Add(factory.FindObject("MC3021"));
+
+			Assert.IsTrue(list1.ContainsSameObjects(list2), "List contain same objects, should return true");
+		}
+
+
+		[Test]
+		public void ChecksWetherOtherCollectionContainsSameObjectsWithNoRepeats()
+		{
+			TitleList		list1, list2;
+			TitleFactory	factory;
+
+			factory = new TitleFactory(context);
+			list1 = new TitleList();
+			list1.Add(factory.FindObject("TC7777"));
+			list1.Add(factory.FindObject("MC3021"));
+			list2 = new TitleList();
+			list2.Add(factory.FindObject("MC3021"));
+			list2.Add(factory.FindObject("MC3021"));
+
+			Assert.IsFalse(list1.ContainsSameObjects(list2), "Second list does not contain all objects, should return false");
+		}
+
+
+		[Test]
+		public void GetsPropertyForObjectsInCollection()
+		{
+			TitleRelation	titles;
+			IList			publishers;
+
+			titles = new PublisherFactory(context).FindObject("0877").Titles;
+			publishers = titles.GetProperty("Publisher");
+			
+			Assert.AreEqual(titles.Count,  publishers.Count, "Should have same number of elements");
+            for(int i = 0; i < titles.Count; i++)
+				Assert.AreEqual(titles[i].Publisher, publishers[i], "Should have retrieved property");
+		}
+
+
 		#region Helper class: Event Recorder
 
 		private class EventRecorder

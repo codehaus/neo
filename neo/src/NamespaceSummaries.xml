@@ -1,0 +1,23 @@
+<namespaces>
+	<namespace name="Neo.Core">
+		The <b>Neo.Core</b> namespace contains the publically visible classes and interfaces that provide the essential functionality of Neo. As far as possible dependencies are expressed as interfaces that have concrete implementations in the <b>Neo.Framework</b> namespace. (This split makes it possible to create alternative frameworks on top of the Neo core.) The sub namespaces <b>Neo.Core.Parser</b>, <b>Neo.Core.Qualifier</b> and <b>Neo.Core.Util</b> provide functionality for the core classes and while some of the classes in these namespaces are public it is expected that typical applications do not depend on them.
+	</namespace>
+	<namespace name="Neo.Core.Parser">
+		The <b>Neo.Core.Parser</b> namespace contains classes that are used to parse the format strings from which <b>Qualifiers</b> are constructed. While some of the classes in this namespace are public it is expected that typical applications do not depend on them.
+	</namespace>
+	<namespace name="Neo.Core.Qualifiers">
+		The <b>Neo.Core.Qualifiers</b> namespace contains concrete implementations of the abstract <b>Qualifier</b> class and a predicate class hierarchy. While most of the classes in this namespace are public it is expected that typical applications do not depend on them and instead use <b>Qualifier.Format</b> to create instances of <b>Qualifier</b>.
+	</namespace>
+	<namespace name="Neo.Core.Util">
+		The <b>Neo.Core.Util</b> namespace contains classes that are used to implement the core Neo functionality. While some of the classes in this namespace are public it is expected that typical applications do not depend on them.
+	</namespace>
+	<namespace name="Neo.Database">
+		The <b>Neo.Database</b> namespace contains abstract classes and interfaces that can be used to implement an <b>IDataStore</b> for relational databases. All three database clients that ship with Neo, that is SQL Server, Oracle and Firebird, are implemented in terms of these classes.
+	</namespace>
+	<namespace name="Neo.Framework">
+		The <b>Neo.Framework</b> namespace contains classes that make up a default framework to use the functionality provided by the Neo core.
+	</namespace>
+	<namespace name="Neo.SqlClient">
+		The <b>Neo.SqlClient</b> namespace contains an implementation of the <b>IDataStore</b> interface for SQL Server, it is not a generic SQL datastore. (See the <b>Neo.Database</b> namespace for generic classes and the Neo.OracleClient and Neo.FirebirdClient DLLs for implementations for other databases.) Typical applications instantiate a data store, pass it to an <b>ObjectContext</b>, and then let the context handle all interactions with the store.
+	</namespace>
+</namespaces>

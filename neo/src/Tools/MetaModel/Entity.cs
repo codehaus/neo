@@ -20,7 +20,8 @@ namespace Neo.MetaModel
 		//--------------------------------------------------------------------------------------
 
 		private Model		model;
-		private Hashtable	attributes;
+		private ArrayList	attributes;
+		private Hashtable	attributeMap;
 		private ArrayList	relationships;
 
 		private String		subPackageName;
@@ -34,7 +35,8 @@ namespace Neo.MetaModel
 		public Entity(Model aModel)
 		{
 			model = aModel;
-			attributes = new Hashtable();
+			attributes = new ArrayList();
+			attributeMap = new Hashtable();
 			relationships = new ArrayList();
 		}
 
@@ -51,17 +53,19 @@ namespace Neo.MetaModel
 
 		public void AddAttribute(EntityAttribute anAttribute)
 		{
-			attributes.Add(anAttribute.ColumnName, anAttribute);
+			attributes.Add(anAttribute);
+			attributeMap.Add(anAttribute.ColumnName, anAttribute);
 		}
 
 		public void RemoveAttribute(EntityAttribute anAttribute)
 		{
-			attributes.Remove(anAttribute.ColumnName);
+			attributes.Remove(anAttribute);
+			attributeMap.Remove(anAttribute.ColumnName);
 		}
 
 		public ICollection Attributes
 		{
-			get { return attributes.Values; }
+			get { return attributes; }
 		}
 
 
@@ -149,7 +153,7 @@ namespace Neo.MetaModel
 			get
 			{
 				ArrayList columns = new ArrayList();
-				foreach(EntityAttribute a in attributes.Values)
+				foreach(EntityAttribute a in attributes)
 				{
 					if(a.IsPkColumn)
 						columns.Add(a);
@@ -270,9 +274,18 @@ namespace Neo.MetaModel
 		}
 
 		
+		public bool ColumnIsForeignKey(string columnname)
+		{
+			if(HasAttribute(columnname) == false)
+				throw new ArgumentException(String.Format("Table {0} has no column named {1}.", TableName, columnname));
+			EntityRelationship rel = RelationshipForAttribute((EntityAttribute)attributeMap[columnname]);
+			return ((rel != null) && (rel.Direction == RelDirection.Child));
+		}
+
+
 		public bool HasAttribute(string columnName)
 		{
-			return (attributes[columnName] != null);
+			return (attributeMap[columnName] != null);
 		}
 
 

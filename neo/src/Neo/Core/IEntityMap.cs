@@ -1,13 +1,21 @@
 using System;
 using System.Data;
+using Neo.Core.Util;
 
 
 namespace Neo.Core
 {
 	/// <summary>
-	/// Describes the mapping from ADO.NET concepts, such as DataTable, DataColumn, to
+	/// Describes the mapping from ADO.NET concepts, such as DataTable and DataColumn, to
 	/// the corresponding entity object concepts; and vice versa.
 	/// </summary>
+	/// <remarks>
+	/// EntityMaps should never be instantiated directly. Use the following code to
+	/// retrieve an <c>IEntityMap</c> for a given type:
+	/// <code>
+	/// IEntityMap map = context.EntityMapFactory.GetMap(typeof(TheType));
+	/// </code>
+	/// </remarks>
 
 	public interface IEntityMap
 	{	
@@ -51,6 +59,11 @@ namespace Neo.Core
 		string[] Attributes { get; }
 		
 		/// <summary>
+		/// All relations withing this type
+		/// </summary>
+		string[] Relations { get; }
+
+		/// <summary>
 		/// Gets an object to create primary keys
 		/// </summary>
 		/// <returns>An object to create primary keys for this entity</returns>
@@ -62,6 +75,13 @@ namespace Neo.Core
 		/// <param name="attribute">attribute name</param>
 		/// <returns>corresponding column name</returns>
 		string GetColumnForAttribute(string attribute);
+
+		/// <summary>
+		/// Translates between Relation name and relation info
+		/// </summary>
+		/// <param name="relation">relation name</param>
+		/// <returns>corresponding relation info</returns>
+		RelationInfo GetRelationInfo(string relation);
 
 		/// <summary>
 		/// Creates an instance for this entity, a blank entity object
@@ -89,12 +109,28 @@ namespace Neo.Core
 		void UpdateSchema(DataTable table, SchemaUpdate update);
 	}
 
+	/// <summary>
+	/// Flags for specifying how comprehensive the schema should be updated. Normally only 
+	/// used internally between <c>ObjectContext</c> and <c>EntityMap</c>.
+	/// </summary>
 	[Flags]
 	public enum SchemaUpdate
 	{
+		/// <summary>
+		/// Write the table definition
+		/// </summary>
 		Basic		= 0x01,
+		/// <summary>
+		/// Write the constraints
+		/// </summary>
 		Constraints = 0x02,
+		/// <summary>
+		/// Write all related table and the relations between this table and the others
+		/// </summary>
 		Relations	= 0x04,
+		/// <summary>
+		/// Write everything
+		/// </summary>
 		Full		= 0x07
 	}
 
