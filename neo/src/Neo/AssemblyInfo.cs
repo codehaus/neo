@@ -53,9 +53,3 @@
 [assembly: System.Reflection.AssemblyDelaySign(false)]
 [assembly: System.Reflection.AssemblyKeyFile("")]
 [assembly: System.Reflection.AssemblyKeyName("")]
-
-//
-// Log4Net configuration. This tells log4net that messages originating from Neo are
-// to be logged using the loggers setup by the main application's domain.
-//
-[assembly: log4net.Config.Domain(UseDefaultDomain=true)]
