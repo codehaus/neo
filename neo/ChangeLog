@@ -1,3 +1,8 @@
+2004-08-16 erik
+
+	* Fixes for bugs NEO-4 and NEO-7.
+
+
 2004-07-26 erik (proxy)
 
 	* Added Johannes's code for IBindingList support. Due to a conflict

@@ -83,11 +83,10 @@ namespace Neo.Framework
 	//--------------------------------------------------------------------------------------
 
 	// Currently uses 16 bytes as follows: seconds since 1-Jan-2000 (4 bytes), rolling 
-	// sequence (2 bytes), process id (2 bytes), lower half of ip address in network 
-	// order (2 bytes), mac address (6 bytes)
+	// sequence (2 bytes), process id (4 bytes), mac address (6 bytes)
 
 	//   0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-	//   T  T  T  T  S  S  P  P  I  I  M  M  M  M  M  M 
+	//   T  T  T  T  S  S  P  P  P  P  M  M  M  M  M  M 
  
 	public class GuidPkInitializer : IPkInitializer
 	{
@@ -123,12 +122,18 @@ namespace Neo.Framework
 
 		private static void writeGuidBase(byte[] bytes)
 		{
+			int idx = 6;
 			bool foundMacAddress = false;
+
+			int pid = Process.GetCurrentProcess().Id;
+			bytes[idx++] = (byte) (pid & 0x000000FF);
+			bytes[idx++] = (byte)((pid & 0x0000FF00) >> 8);
+			bytes[idx++] = (byte)((pid & 0x00FF0000) >> 16);
+			bytes[idx++] = (byte)((pid & 0xFF000000) >> 24);
 
 			string qstring = "SELECT * FROM Win32_NetworkAdapterConfiguration where IPEnabled = true";
 			foreach(ManagementObject mo in new ManagementObjectSearcher(qstring).Get())
 			{
-				int idx = 6; // first two bytes will be overwritten, that's intentional
 				string ipaddr = ((string[])mo["IPAddress"])[0];
 				if((ipaddr != null) && (ipaddr != String.Empty))
 				{
@@ -146,12 +151,6 @@ namespace Neo.Framework
 			}
 			if(foundMacAddress == false)
 				throw new InvalidOperationException("Failed to generate a GUID; cannot not find a Network Adapter with a valid MAC address.");
-
-			int pid = Process.GetCurrentProcess().Id;
-			if(pid > 0xFFFF)
-				throw new InvalidOperationException("Failed to generate a GUID; process id larger than 2^16.");
-			bytes[ 6] = (byte) (pid & 0x00FF);
-			bytes[ 7] = (byte)((pid & 0xFF00) >> 8);
 		}
 
 

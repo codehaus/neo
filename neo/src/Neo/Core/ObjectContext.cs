@@ -928,7 +928,7 @@ namespace Neo.Core
 			{
 				if((limit == -1) || (limit > objects.Count) || (fetchSpec.SortOrderings != null))
 				{
-					result = objects;
+					result = new ArrayList(objects);
 				}
 				else
 				{
