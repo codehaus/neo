@@ -61,12 +61,6 @@ namespace Neo.Tests.Fixtures
 		}
 
 
-		private void PrintJobs(JobList jobs)
-		{
-			foreach(Job j in jobs)
-				Console.WriteLine(j.ToStringAllProperties());
-		}
-
 	}
 
 }

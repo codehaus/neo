@@ -119,6 +119,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "integration.config"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "log4net.config"
                     BuildAction = "None"
                 />

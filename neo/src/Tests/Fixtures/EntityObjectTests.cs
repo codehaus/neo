@@ -35,8 +35,7 @@ namespace Neo.Tests.Fixtures
 		public void ReadValueTypeAttributeWithNull()
 		{
 			title.Row["royalty"] = DBNull.Value;
-			// Do something that will not be optimized away.
-			Console.WriteLine(title.Royalty);
+			title.Royalty++;
 		}
 
 
@@ -54,8 +53,8 @@ namespace Neo.Tests.Fixtures
 			 *		return base.HandleNullValueForProperty(propName);
 			 *	}
 			 */
-
-			Console.WriteLine(title.YtdSales);
+			title = new TitleFactory(context).FindObject("MC3026");
+			Assert.AreEqual(title.YtdSales, 0, "Should have converted NULL to zero.");
 		}
 
 
