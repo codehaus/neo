@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using Neo.Core;
 
@@ -71,6 +72,8 @@ namespace Neo.Framework
 		{
 			innerList = Owner.Context.GetObjectsFromTable(foreignTableName, foreignColumnName, Owner.Row[localColumnName]);
 
+			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+			
 			Owner.Context.RegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildTable.TableName, foreignColumnName);
 			Owner.Context.RegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildTable.TableName);
 		}
@@ -85,6 +88,76 @@ namespace Neo.Framework
 			return eo;
 		}
 
+		public void OnRowDeleting(object sender, DataRowChangeEventArgs e)
+		{
+			// Check whether our owner is deleted. In this case, of course, we don't
+			// need to do anything. (Actually, we can't...)
+			if((Owner.Row.RowState == DataRowState.Deleted) || (Owner.Row.RowState == DataRowState.Detached))
+				return;
+
+			// We assume this is a row we are related to, because this is checked by the event broker
+			innerList.Remove(ObjectForForeignRow(e.Row, true));
+		}
+
+		public void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
+		{
+			// Check whether our owner is deleted. In this case, of course, we don't
+			// need to do anything. (Actually, we can't...)
+			if((Owner.Row.RowState == DataRowState.Deleted) || (Owner.Row.RowState == DataRowState.Detached))
+				return;
+
+			// Early exits for cases where the FK is also the PK; most likely with
+			// a compound key in correlation tables. The PK is set, this event 
+			// fired, but the object is not known to the context yet. We just ignore
+			// the event and rely on the context resending the event later.
+			if(e.Row == Owner.Context.RowPending) 
+				return; 
+
+			object newValue = e.ProposedValue;
+			object oldValue = e.Row[foreignColumnName];
+			if((newValue != null) && (newValue.Equals(Owner.Row[localColumnName])))
+			{	
+				object eo = ObjectForForeignRow(e.Row, false);
+				// We add the object when (a) we get a change event or (b) we get
+				// a 'no-change' but the object is not in our list; and is not null.
+				if((newValue.Equals(oldValue) == false) || ((eo != null) && (innerList.Contains(eo) == false)))
+					AddToInnerList(eo);
+			}
+
+			if((oldValue != null) && (oldValue.Equals(Owner.Row[localColumnName])))
+			{
+				object eo = ObjectForForeignRow(e.Row, false);
+				// We remove the object when we get a change event
+				if(oldValue.Equals(newValue) == false)
+					RemoveFromInnerList(eo);
+
+			}
+
+			// For cases where an object has been added, but its related column has been changed before saving, we need
+			// to make sure the parent relation is deleted.
+			if((newValue != null) && (!newValue.Equals(Owner.Row[localColumnName])) && e.Row.RowState == DataRowState.Added)
+			{
+				object eo = ObjectForForeignRow(e.Row, false);
+				if (innerList.Contains(eo))
+					RemoveFromInnerList(eo);
+
+			}
+		}
+
+		protected virtual void AddToInnerList(object eo)
+		{
+			int index = innerList.Add(eo);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, index));
+		}
+
+		protected virtual void RemoveFromInnerList(object eo)
+		{
+			int index = innerList.IndexOf(eo);
+			innerList.Remove(eo);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, index));
+		}
+   
+		
 		//--------------------------------------------------------------------------------------
 		//	Untyped implementations to be called by subclasses
 		//--------------------------------------------------------------------------------------
@@ -135,62 +208,8 @@ namespace Neo.Framework
 			innerList = null;
 			Owner.Context.UnRegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildTable.TableName, foreignColumnName);
 			Owner.Context.UnRegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildTable.TableName);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 
-		public void OnRowDeleting(object sender, DataRowChangeEventArgs e)
-		{
-			// Check whether our owner is deleted. In this case, of course, we don't
-			// need to do anything. (Actually, we can't...)
-			if((Owner.Row.RowState == DataRowState.Deleted) || (Owner.Row.RowState == DataRowState.Detached))
-				return;
-
-			// We assume this is a row we are related to, because this is checked by the event broker
-			innerList.Remove(ObjectForForeignRow(e.Row, true));
-		}
-
-		public void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
-		{
-			// Check whether our owner is deleted. In this case, of course, we don't
-			// need to do anything. (Actually, we can't...)
-			if((Owner.Row.RowState == DataRowState.Deleted) || (Owner.Row.RowState == DataRowState.Detached))
-				return;
-
-			// Early exits for cases where the FK is also the PK; most likely with
-			// a compound key in correlation tables. The PK is set, this event 
-			// fired, but the object is not known to the context yet. We just ignore
-			// the event and rely on the context resending the event later.
-			if(e.Row == Owner.Context.RowPending) 
-				return; 
-
-			object newValue = e.ProposedValue;
-			object oldValue = e.Row[foreignColumnName];
-			if((newValue != null) && (newValue.Equals(Owner.Row[localColumnName])))
-			{	
-				object eo = ObjectForForeignRow(e.Row, false);
-				// We add the object when (a) we get a change event or (b) we get
-				// a 'no-change' but the object is not in our list; and is not null.
-				if((newValue.Equals(oldValue) == false) || ((eo != null) && (innerList.Contains(eo) == false)))
-					innerList.Add(eo);
-			}
-
-			if((oldValue != null) && (oldValue.Equals(Owner.Row[localColumnName])))
-			{
-				object eo = ObjectForForeignRow(e.Row, false);
-				// We remove the object when we get a change event
-				if(oldValue.Equals(newValue) == false)
-					innerList.Remove(eo);
-			}
-
-			// For cases where an object has been added, but its related column has been changed before saving, we need
-			// to make sure the parent relation is deleted.
-			if((newValue != null) && (!newValue.Equals(Owner.Row[localColumnName])) && e.Row.RowState == DataRowState.Added)
-			{
-				object eo = ObjectForForeignRow(e.Row, false);
-				if (innerList.Contains(eo))
-				{
-					innerList.Remove(eo);
-				}
-			}
-		}
 	}
 }

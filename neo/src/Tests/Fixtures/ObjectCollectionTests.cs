@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using Neo.Core;
+using Neo.Framework;
 using NUnit.Framework;
 using Pubs4.Model;
 
 
 namespace Neo.Tests.Fixtures
 {
-	[NUnit.Framework.TestFixture]
+	[TestFixture]
 	public class ObjectCollectionTests : TestBase
 	{
 		protected ObjectContext	context;
 
 
-		[NUnit.Framework.SetUp]
+		[SetUp]
 		public void LoadDataSet()
 		{
 			SetupLog4Net();
@@ -22,7 +24,7 @@ namespace Neo.Tests.Fixtures
 		}
 
 	
-		[NUnit.Framework.Test]
+		[Test]
 		public void FindingObjectsSimple()
 		{
 		    Publisher	publisher;
@@ -156,6 +158,88 @@ namespace Neo.Tests.Fixtures
 			((TitleList)titles).MakeReadOnly();
 			titles[0] = titles[1];
 		}
+
+
+
+		// We are testing the collection functionality through the list subclass, which
+		// does not add to the IBindingList implementation.
+
+		[Test]
+		public void SendsNotifcationOnClear()
+		{
+			TitleList		titleList;
+			EventRecorder	recorder;
+
+			titleList = new TitleList();
+			recorder = new EventRecorder(titleList);
+
+			titleList.Clear();
+			
+			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
+			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.Reset, recorder.receivedChangeType);
+		}
+
+
+		[Test]
+		public void SendsNotifcationOnAdd()
+		{
+			TitleList		titleList;
+			Title			title;
+			EventRecorder	recorder;
+
+			titleList = new TitleList();
+			title = new TitleFactory(context).CreateObject("XX9999");
+			recorder = new EventRecorder(titleList);
+			
+			titleList.Add(title);
+			
+			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
+			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemAdded, recorder.receivedChangeType);
+		}
+
+
+		[Test]
+		public void SendsNotifcationOnRemove()
+		{
+			TitleList		titleList;
+			Title			title;
+			EventRecorder	recorder;
+
+			titleList = new TitleList();
+			title = new TitleFactory(context).CreateObject("XX9999");
+			titleList.Add(title);
+			recorder = new EventRecorder(titleList);
+
+			titleList.Remove(title);
+
+			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
+			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemDeleted, recorder.receivedChangeType);
+		}
+
+
+		#region Helper class: Event Recorder
+
+		private class EventRecorder
+		{
+			public ListChangedType receivedChangeType;
+			public bool changeHandlerWasCalled = false;
+
+			public EventRecorder(ObjectCollectionBase collection)
+			{
+				IBindingList bindingList = collection;
+				Assertion.Assert("Collection must support notification", bindingList.SupportsChangeNotification);
+				collection.ListChanged += new ListChangedEventHandler(Titles_ListChanged);
+			}
+		
+			private void Titles_ListChanged(object sender, ListChangedEventArgs e)
+			{
+				changeHandlerWasCalled = true;
+				receivedChangeType = e.ListChangedType;
+			}
+
+		}
+
+		#endregion
 
 	}
 }

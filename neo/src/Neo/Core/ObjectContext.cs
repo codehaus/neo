@@ -404,11 +404,6 @@ namespace Neo.Core
 		//	Handling and distributing change events
 		//--------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// handler for row events
-		/// </summary>
-		/// <param name="sender">object raising event</param>
-		/// <param name="e">Arguments available to handle this event</param>
 		protected virtual void OnRowChanging(object sender, DataRowChangeEventArgs e)
 		{
 			if(e.Row == rowPending)

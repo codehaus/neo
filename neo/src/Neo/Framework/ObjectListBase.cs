@@ -1,5 +1,5 @@
-using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 using Neo.Core;
 
@@ -58,6 +58,7 @@ namespace Neo.Framework
 		{
 			AssertIsMutable();
 			((ArrayList)InnerList).Sort(comparer);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 
 
@@ -65,6 +66,7 @@ namespace Neo.Framework
 		{
 			AssertIsMutable();
 			((ArrayList)InnerList).Sort(new PropertyComparer(propName, dir, CultureInfo.CurrentCulture));
+			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 
 

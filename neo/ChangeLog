@@ -1,3 +1,11 @@
+2004-07-26 erik (proxy)
+
+	* Added Johannes's code for IBindingList support. Due to a conflict
+	with Jim's recent additions ObjectRelations currently do not send
+	change events for objects contained in them. (This never worked for
+	ObjectLists.) There is an ignored test.
+
+
 2004-07-20 erik (proxy)
 
 	* Added Jim's code to broker change events. This improves

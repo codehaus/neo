@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using Neo.Core;
 
 
@@ -8,7 +9,7 @@ namespace Neo.Framework
 	/// <summary>
 	/// Summary description for ObjectCollectionBase.
 	/// </summary>
-	public abstract class ObjectCollectionBase : ICollection, IList
+	public abstract class ObjectCollectionBase : ICollection, IList, IBindingList
 	{
 		//--------------------------------------------------------------------------------------
 		//	Fields and Constructor
@@ -126,6 +127,7 @@ namespace Neo.Framework
 			AssertIsMutable(); 
 			while(Count > 0)
 				Remove((IEntityObject)((IList)this)[Count - 1]);
+ 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 
 		public void RemoveAt(int index)
@@ -144,20 +146,25 @@ namespace Neo.Framework
 
 		protected virtual int Add(IEntityObject newObject)
 		{
-			AssertIsMutable(); 
-			return InnerList.Add(newObject);
+ 			AssertIsMutable();
+ 			int index = InnerList.Add(newObject);
+ 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, index));
+ 			return index; 		
 		}
 
 		protected virtual void Remove(IEntityObject existingObject)
 		{
 			AssertIsMutable(); 
+			int index = IndexOf(existingObject);
 			InnerList.Remove(existingObject);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, index));		
 		}
 
 		protected virtual void Insert(int index, IEntityObject eo)
 		{
 			AssertIsMutable(); 
 			InnerList.Insert(index, eo);
+ 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, index));		
 		}
 
 		protected virtual bool Contains(IEntityObject eo)
@@ -170,6 +177,123 @@ namespace Neo.Framework
 			return InnerList.IndexOf(eo);
 		}
 
+
+		//--------------------------------------------------------------------------------------
+		// Explicit IBindingList impl 
+		// Most members are explicit as they are probably only needed for controls that support 
+		// IBindingList.
+		//--------------------------------------------------------------------------------------
+		 
+		bool IBindingList.AllowEdit 
+									
+		{ 
+			get { return false ; }
+		}
+
+ 		bool IBindingList.AllowNew 
+ 		{ 
+ 			get { return false ; }
+ 		}
+ 
+ 		bool IBindingList.AllowRemove 
+ 		{ 
+ 			get { return false ; }
+ 		}
+ 
+ 		bool IBindingList.SupportsChangeNotification 
+ 		{ 
+ 			get { return true ; }
+ 		}
+     
+ 		bool IBindingList.SupportsSearching 
+ 		{ 
+ 			get { return false ; }
+ 		}
+ 
+ 		public virtual bool SupportsSorting 
+ 		{ 
+ 			get { return false ; }
+ 		}
+ 
+ 		// Methods.
+ 		object IBindingList.AddNew() 
+ 		{
+ 			throw new NotSupportedException();
+ 		}
+ 
+ 
+ 		// Unsupported properties.
+ 		bool IBindingList.IsSorted 
+ 		{ 
+ 			get { throw new NotSupportedException(); }
+ 		}
+ 
+ 		ListSortDirection IBindingList.SortDirection 
+ 		{ 
+ 			get { throw new NotSupportedException(); }
+ 		}
+ 
+ 
+ 		PropertyDescriptor IBindingList.SortProperty 
+ 		{ 
+ 			get { throw new NotSupportedException(); }
+ 		}
+ 
+ 
+ 		// Unsupported Methods.
+ 		void IBindingList.AddIndex(PropertyDescriptor property) 
+ 		{
+ 			throw new NotSupportedException(); 
+ 		}
+ 
+ 		void IBindingList.ApplySort(PropertyDescriptor property, ListSortDirection direction) 
+ 		{
+ 			throw new NotSupportedException(); 
+ 		}
+ 
+ 		int IBindingList.Find(PropertyDescriptor property, object key) 
+ 		{
+ 			throw new NotSupportedException(); 
+ 		}
+ 
+ 		void IBindingList.RemoveIndex(PropertyDescriptor property) 
+ 		{
+ 			throw new NotSupportedException(); 
+ 		}
+ 
+ 		void IBindingList.RemoveSort() 
+ 		{
+ 			throw new NotSupportedException(); 
+ 		}
+ 
+ 		private ListChangedEventHandler onListChanged;
+ 
+ 		public event ListChangedEventHandler ListChanged 
+ 		{
+ 			add 
+ 			{
+ 				onListChanged += value;
+ 			}
+ 			remove 
+ 			{
+ 				onListChanged -= value;
+ 			}
+ 		}
+ 
+ 		protected virtual void OnListChanged(ListChangedEventArgs ev) 
+ 		{
+ 			if (onListChanged != null) 
+ 			{
+ 				onListChanged(this, ev);
+ 			}
+ 		}
+ 
+ 		// Called by objects in the collection when they change.
+ 		protected void EntityObjectChanged(object eo) 
+ 		{
+ 			int index = InnerList.IndexOf(eo);
+ 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
+ 		}
 
 		//--------------------------------------------------------------------------------------
 		//	Finder methods
