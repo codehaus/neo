@@ -5,9 +5,12 @@
 	<!--  properties                                                -->
 	<!-- ========================================================== -->
 
-	<property name="buildconfig" value="Debug" />
-	<property name="builddir" value="Neo/bin/${buildconfig}" />
-	<property name="docdir" value="Neo/obj/Doc" />
+	<property name="neo.buildconfig" value="Release" />
+	<property name="neo.libbuild.dir" value="Neo/bin/${neo.buildconfig}" />
+	<property name="neo.docbuild.dir" value="Neo/obj/Doc" />
+	<property name="neo.dist.dir" value="${nant.project.basedir}/../dist" />
+	<property name="neo.doc.dir" value="${nant.project.basedir}/../docs" />
+
 	
 	<!-- ========================================================== -->
 	<!--  top-level targets                                         -->
@@ -43,23 +46,25 @@
 	</target>
 	
 	<target name="buildsln">
-		<solution configuration="${buildconfig}" solutionfile="Neo.sln" verbose="false" />
-		<copy file="Tests/Resources/fbembed.dll" todir="Tests/bin/${buildconfig}" />
-		<solution configuration="${buildconfig}" solutionfile="Tools/Neo.Tools.sln" verbose="false" />
+		<solution configuration="${neo.buildconfig}" solutionfile="Neo.sln" verbose="false" />
+		<copy file="Tests/Resources/fbembed.dll" todir="Tests/bin/${neo.buildconfig}" />
+		<solution configuration="${neo.buildconfig}" solutionfile="Tools/Neo.Tools.sln" verbose="false" />
 	</target>
 	
 	<target name="runtests">
-		<exec program="../tools/nunit/nunit-console.exe" commandline="Tests/bin/${buildconfig}/Neo.Tests.dll /xml:${nant.project.basedir}/../build/Neo-results.xml /nologo"/>
-		<exec program="../tools/nunit/nunit-console.exe" commandline="Tools/Tests/bin/${buildconfig}/Neo.Tools.Tests.dll /xml:${nant.project.basedir}/../build/Neo.Tools-results.xml /nologo"/>
+		<exec program="../tools/nunit/nunit-console.exe" commandline="Tests/bin/${neo.buildconfig}/Neo.Tests.dll /xml:${nant.project.basedir}/../build/Neo-results.xml /nologo"/>
+		<exec program="../tools/nunit/nunit-console.exe" commandline="Tools/Tests/bin/${neo.buildconfig}/Neo.Tools.Tests.dll /xml:${nant.project.basedir}/../build/Neo.Tools-results.xml /nologo"/>
 	</target>
 		
 	<!-- ========================================================== -->
-	<!--  additional targets (not used by top-level)                -->
+	<!--  dist targets (not used by top-level, require devenv)      -->
 	<!-- ========================================================== -->
+
+	<target name="dist" depends="ndoc,installer,sourcezip" />
 
 	<target name="ndoc" >
 		<ndoc verbose="false">
-	        <assemblies basedir="${builddir}">
+	        <assemblies basedir="${neo.libbuild.dir}">
 	              <includes name="Neo.dll" />
 	        </assemblies>
 			<namespaces>
@@ -71,7 +76,7 @@
 			</summaries>
 	      	<documenters>
 	      		<documenter name="MSDN">
-		            <property name="OutputDirectory" value="${docdir}" />
+		            <property name="OutputDirectory" value="${neo.docbuild.dir}" />
 		            <property name="HtmlHelpName" value="Neo API Documentation" />
 		            <property name="IncludeFavorites" value="False" />
 		            <property name="Title" value="The .NET Entity Objects framework" />
@@ -113,25 +118,30 @@
 	      		</documenter>
 			</documenters>
 		</ndoc>
-		<copy file="${docdir}/Neo API Documentation.chm" todir="../docs" />
+		<copy file="${neo.docbuild.dir}/Neo API Documentation.chm" todir="${neo.doc.dir}" />
 	</target>
 
-	<target name="dist">
-		<zip zipfile="..\dist\neo-source.zip">
-			<fileset>
-				<include name="**\*" />
-				<exclude name="build\**\*" />
-				<exclude name="dist\**\*" />
-				<exclude name="tools\**\*" />
-				<exclude name="**\bin\**\*" />
-				<exclude name="**\obj\**\*" />
-				<exclude name="**\CVS\**\*" />
+	<target name="sourcezip">
+		<zip zipfile="${neo.dist.dir}\Neo Source.zip">
+			<fileset basedir="${nant.project.basedir}/..">
+				<include name="src/**/*" />
+				<exclude name="build/**/*" />
+				<exclude name="dist/**/*" />
+				<exclude name="tools/**/*" />
+				<exclude name="**/bin/**/*" />
+				<exclude name="**/obj/**/*" />
+				<exclude name="**/CVS/**/*" />
 				<exclude name="*.suo" />
 				<exclude name="*.resharper*" />
-				<exclude name="**\*.csproj.user" />
-				<exclude name="_Resharper.*\**\*" />
+				<exclude name="**/*.csproj.user" />
+				<exclude name="_Resharper.*/**/*" />
 			</fileset>
 		</zip>
+	</target>
+		
+	<target name="installer">
+		<exec workingdir="Installer" program="devenv.com" commandline="/rebuild ${neo.buildconfig} Neo.Installer.sln" verbose="true" failonerror="true"/>
+		<copy file="Installer/Release/Neo.msi" todir="${neo.dist.dir}" />
 	</target>
 		
 </project>

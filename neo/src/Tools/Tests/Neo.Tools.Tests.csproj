@@ -90,14 +90,14 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "Neo"
-                    AssemblyName = "Neo"
-                    HintPath = "..\..\Neo\bin\Debug\Neo.dll"
-                />
-                <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\..\lib\nunit.framework.dll"
+                />
+                <Reference
+                    Name = "Neo"
+                    Project = "{30A92E93-A729-4BDF-BBF5-8D6D45EF6A5F}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
