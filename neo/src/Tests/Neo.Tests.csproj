@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "IF NOT EXIST $(ProjectDir)$(OutDir)fbembed.dll COPY $(ProjectDir)Resources\fbembed.dll $(ProjectDir)$(OutDir)"
+                PostBuildEvent = 'IF NOT EXIST "$(ProjectDir)$(OutDir)fbembed.dll" COPY "$(ProjectDir)Resources\fbembed.dll" "$(ProjectDir)$(OutDir)"'
                 RootNamespace = "Neo.Tests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
