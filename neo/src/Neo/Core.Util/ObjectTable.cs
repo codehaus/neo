@@ -44,6 +44,12 @@ namespace Neo.Core.Util
 		}
 
 
+		public void RemoveObject(IEntityObject eo)
+		{
+			RemoveObject(ObjectId.GetObjectIdForObject(eo), eo);
+		}
+
+
 		public IList GetAllObjects()
 		{
 			return new ArrayList(objectTable.Values);	

@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Text;
 
 
@@ -10,6 +11,18 @@ namespace Neo.Core.Util
 	/// </summary>
 	public class ObjectId
 	{
+		//--------------------------------------------------------------------------------------
+		// Static methods
+		//--------------------------------------------------------------------------------------
+
+		public static ObjectId GetObjectIdForObject(IEntityObject eo)
+		{
+			IEntityMap emap = eo.Context.EntityMapFactory.GetMap(eo.Row.Table.TableName);
+			object[] pkvalues = eo.Context.GetPrimaryKeyValuesForRow(emap, eo.Row, DataRowVersion.Current);
+			return new ObjectId(emap.TableName, pkvalues);
+		}
+
+
 		//--------------------------------------------------------------------------------------
 		// Fields and constructor
 		//--------------------------------------------------------------------------------------
