@@ -121,6 +121,25 @@ namespace Neo.Tests
 			Assertion.AssertEquals(cq.Value, 10);
 		}
 
+
+		[Test]
+		public void TestNotEqualComparison()
+		{
+			QualifierParser		parser;
+			Qualifier			q;
+			PropertyQualifier	cq;
+
+			parser = new QualifierParser("Royalties != 10");
+			q = parser.GetQualifier();
+
+			Assertion.AssertNotNull("Parser failed.", q);
+			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
+			cq = q as PropertyQualifier;
+			Assertion.AssertEquals(cq.Property, "Royalties");
+			Assertion.AssertEquals(cq.Operator, QualifierOperator.NotEqual);
+			Assertion.AssertEquals(cq.Value, 10);
+		}
+
 		
 		[Test]
 		public void TestBoolComparison()

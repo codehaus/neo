@@ -301,6 +301,8 @@ namespace Neo.Core.Util
 				op = QualifierOperator.LessThan;
 			else if(c == '>')
 				op = QualifierOperator.GreaterThan;
+			else if((c == '!') && (GetCurrentChar() == '=') && MoveNextChar())
+				op = QualifierOperator.NotEqual;
 			else
 				throw new QualifierParserException("Unknown operator.", input, position);
 			return new Token(TokenType.Operator, op);

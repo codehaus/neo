@@ -50,7 +50,7 @@ namespace Neo.Core.Util
 				switch(Operator)
 				{
 				case QualifierOperator.Equal:		return "=";
-				case QualifierOperator.NotEqual:	return "<>";
+				case QualifierOperator.NotEqual:	return "!=";
 				case QualifierOperator.LessThan:	return "<";
 				case QualifierOperator.GreaterThan: return ">";
 				default:							return Operator.ToString();
