@@ -236,41 +236,30 @@ namespace Neo.SqlClient
 		{
 			builder.Append(q.Column);
 
-			if(q.Value == null)
+			if(q.Predicate.Value == DBNull.Value)
 			{
-				switch(q.Operator)
-				{
-					case QualifierOperator.Equal:
-						builder.Append(" IS NULL ");
-						break;
-					case QualifierOperator.NotEqual:
-						builder.Append(" IS NOT NULL ");
-						break;
-					default:
-						throw new ArgumentException("Invalid operator in qualifier with null value.");
-				}
+				if(q.Predicate is EqualsPredicate)
+					builder.Append(" IS NULL ");
+				else if(q.Predicate is NotEqualPredicate)
+					builder.Append(" IS NOT NULL ");
+				else
+					throw new ArgumentException("Invalid predicate with null value; found " + q.Predicate.GetType().FullName);
 			}
 			else
 			{
-				switch(q.Operator)
-				{
-					case QualifierOperator.Equal:
-						builder.Append("=");
-						break;
-					case QualifierOperator.NotEqual:
-						builder.Append("<>");
-						break;
-					case QualifierOperator.GreaterThan:
-						builder.Append(">");
-						break;
-					case QualifierOperator.LessThan:
-						builder.Append("<");
-						break;
-					default:
-						throw new ArgumentException("Invalid operator in qualifier.");
-				}
+				if(q.Predicate is EqualsPredicate)
+					builder.Append("=");
+				else if(q.Predicate is NotEqualPredicate)
+					builder.Append("<>");
+				else if(q.Predicate is LessThanPredicate)
+					builder.Append("<");
+				else if(q.Predicate is GreaterThanPredicate)
+					builder.Append(">");
+				else
+					throw new ArgumentException("Invalid predicate in qualifier; found " + q.Predicate.GetType().FullName);
+				
 				// add the current parameter count as suffix to ensure names are unique
-				SqlParameter param = GetParameter(table.Columns[q.Column], parameters.Count.ToString(), q.Value);
+				SqlParameter param = GetParameter(table.Columns[q.Column], parameters.Count.ToString(), q.Predicate.Value);
 				builder.Append(param.ParameterName);
 				parameters.Add(param);
 			}

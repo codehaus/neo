@@ -4,6 +4,11 @@
 	determine the type (and/or), it now has two subclasses that
 	do the same, i.e. replace conditional with polymorphism.
 	
+	* Refactored PropertyQualifier and ColumnQualifier. Rather
+	than using an enum to specify the operator, it now uses a
+	new class hierarchy to express predicates. This should make
+	it much easier to add new predicates such as 'like'.
+	
 
 2004-05-06 erik (proxy)
 

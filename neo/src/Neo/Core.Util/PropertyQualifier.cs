@@ -5,24 +5,21 @@ using System.Reflection;
 namespace Neo.Core.Util
 {
 
-	public sealed class PropertyQualifier : ComparisonQualifier, IObjectQualifier
+	public sealed class PropertyQualifier : Qualifier, IObjectQualifier
 	{
 		//--------------------------------------------------------------------------------------
 		//	Fields and Constructor
 		//--------------------------------------------------------------------------------------
 
 		private string			prop;
-		private Type			lastType;
-		private PropertyInfo	propInfo;
+		private IPredicate		predicate;
+		private Type			lastType;	// cache
+		private PropertyInfo	propInfo;	// cache
 
-		public PropertyQualifier(string propName, QualifierOperator theOp, object aValue) : base()
+		public PropertyQualifier(string propName, IPredicate aPredicate) : base()
 		{
-			if((op != QualifierOperator.Equal) && (op != QualifierOperator.NotEqual) && (aValue is IComparable == false))
-				throw new ArgumentException("Comparison value must implement IComparable to be used with relational operators such as less than and greater than.");
-	
 			prop = propName;
-			op = theOp;
-			compVal = aValue;
+			predicate = aPredicate;
 		}
 
 
@@ -35,6 +32,11 @@ namespace Neo.Core.Util
 			get { return prop; }
 		}
 
+		public IPredicate Predicate
+		{
+			get { return predicate; }
+		}
+
 
 		//--------------------------------------------------------------------------------------
 		//	ToString() override
@@ -42,7 +44,7 @@ namespace Neo.Core.Util
 
 		public override string ToString()
 		{
-			return String.Format("{0} {1} {2}", Property, OperatorForToString, Value);
+			return String.Format("{0} {1}", Property, predicate.ToString());
 		}
 
 		
@@ -58,8 +60,8 @@ namespace Neo.Core.Util
 
 		public bool EvaluateWithObject(object anObject)
 		{
-			object objVal = ObjectHelper.GetProperty(anObject, prop, ref lastType, ref propInfo);
-			return Compare(objVal, null);
+			object objValue = ObjectHelper.GetProperty(anObject, prop, ref lastType, ref propInfo);
+			return predicate.IsTrueForValue(objValue, null);
 		}
 
 	}

@@ -33,19 +33,19 @@ namespace Neo.Tests
 		{
 			PropertyQualifier	q;
 			
-			q = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
+			q = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
 			Assertion.Assert("Should match (String).", q.EvaluateWithObject(title));
 
-			q = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
+			q = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			Assertion.Assert("Should not match.", q.EvaluateWithObject(title) == false);
 
-			q = new PropertyQualifier("TitleId", QualifierOperator.NotEqual, "XX2222");
+			q = new PropertyQualifier("TitleId", new NotEqualPredicate("XX2222"));
 			Assertion.Assert("Should match.", q.EvaluateWithObject(title));
 
-			q = new PropertyQualifier("Royalty", QualifierOperator.Equal, 10);
+			q = new PropertyQualifier("Royalty", new EqualsPredicate(10));
 			Assertion.Assert("Should match (Integer).", q.EvaluateWithObject(title));
 
-			q = new PropertyQualifier("Publisher", QualifierOperator.Equal, title.Publisher);
+			q = new PropertyQualifier("Publisher", new EqualsPredicate(title.Publisher));
 			Assertion.Assert("Should match (Object).", q.EvaluateWithObject(title));
 		}
 
@@ -55,16 +55,16 @@ namespace Neo.Tests
 		{
 			PropertyQualifier	q;
 			
-			q = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
+			q = new PropertyQualifier("Royalty", new LessThanPredicate(15));
 			Assertion.Assert("10 is not less than 15.", q.EvaluateWithObject(title));
 
-			q = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 9);
+			q = new PropertyQualifier("Royalty", new LessThanPredicate(9));
 			Assertion.Assert("10 is less than 9.", q.EvaluateWithObject(title) == false);
 
-			q = new PropertyQualifier("Royalty", QualifierOperator.GreaterThan, 9);
+			q = new PropertyQualifier("Royalty", new GreaterThanPredicate(9));
 			Assertion.Assert("10 is not greater than 9.", q.EvaluateWithObject(title));
 
-			q = new PropertyQualifier("Royalty", QualifierOperator.GreaterThan, 15);
+			q = new PropertyQualifier("Royalty", new GreaterThanPredicate(15));
 			Assertion.Assert("10 is greater than 15.", q.EvaluateWithObject(title) == false);
 		}
 
@@ -74,7 +74,7 @@ namespace Neo.Tests
 		{
 			ColumnQualifier	q;
 			
-			q = new ColumnQualifier("pub_id", QualifierOperator.Equal, title.Publisher.PubId);
+			q = new ColumnQualifier("pub_id", new EqualsPredicate(title.Publisher.PubId));
 			Assertion.Assert("Should match.", q.EvaluateWithObject(title));
 		}
 
@@ -85,13 +85,13 @@ namespace Neo.Tests
 			PropertyQualifier	q1, q2;
 			ClauseQualifier		q;
 			
-			q1 = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
-			q2 = new PropertyQualifier("Royalty", QualifierOperator.GreaterThan, 9);
+			q1 = new PropertyQualifier("Royalty", new LessThanPredicate(15));
+			q2 = new PropertyQualifier("Royalty", new GreaterThanPredicate(9));
 			q = new AndQualifier(q1, q2);
 			Assertion.Assert("10 not inbetween 9 and 15.", q.EvaluateWithObject(title));
 
-			q1 = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
-			q2 = new PropertyQualifier("Royalty", QualifierOperator.GreaterThan, 11);
+			q1 = new PropertyQualifier("Royalty", new LessThanPredicate(15));
+			q2 = new PropertyQualifier("Royalty", new GreaterThanPredicate(11));
 			q = new AndQualifier(q1, q2);
 			Assertion.Assert("10 is inbetween 11 and 15.", q.EvaluateWithObject(title) == false);
 		}
@@ -103,13 +103,13 @@ namespace Neo.Tests
 			PropertyQualifier	q1, q2;
 			ClauseQualifier		q;
 			
-			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
-			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
+			q1 = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
+			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			q = new OrQualifier(q1, q2);
 			Assertion.Assert("Did not match either title id.", q.EvaluateWithObject(title));
 
-			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX1111");
-			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
+			q1 = new PropertyQualifier("TitleId", new EqualsPredicate("XX1111"));
+			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			q = new OrQualifier(q1, q2);
 			Assertion.Assert("Did not match a title id.", q.EvaluateWithObject(title) == false);
 		}
@@ -121,10 +121,10 @@ namespace Neo.Tests
 			PropertyQualifier	q1, q2, qb;
 			ClauseQualifier		q, qa;
 			
-			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
-			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
+			q1 = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
+			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			qa = new OrQualifier(q1, q2);
-			qb = new PropertyQualifier("Royalty", QualifierOperator.LessThan, 15);
+			qb = new PropertyQualifier("Royalty", new LessThanPredicate(15));
 			q = new AndQualifier(qa, qb);
 
 			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
@@ -137,9 +137,9 @@ namespace Neo.Tests
 			Qualifier		q1, q2;
 			ClauseQualifier	q;
 			
-			q1 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "XX2222");
+			q1 = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			q = new OrQualifier(q1);
-			q2 = new PropertyQualifier("TitleId", QualifierOperator.Equal, "TC7777");
+			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
 			q.AddToQualifiers(q2);
 
 			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
@@ -152,7 +152,7 @@ namespace Neo.Tests
 			Qualifier		q1;
 			PathQualifier	q;
 
-			q1 = new PropertyQualifier("Name", QualifierOperator.Equal, title.Publisher.Name);
+			q1 = new PropertyQualifier("Name", new EqualsPredicate(title.Publisher.Name));
 			q = new PathQualifier("Publisher", q1);
 
 			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
@@ -165,7 +165,7 @@ namespace Neo.Tests
 			Qualifier		q1;
 			PathQualifier	q;
 
-			q1 = new PropertyQualifier("Name", QualifierOperator.Equal, title.Publisher.Name);
+			q1 = new PropertyQualifier("Name", new EqualsPredicate(title.Publisher.Name));
 			q = new PathQualifier("Title.Publisher", q1);
 
 			Assertion.Assert("Did not match.", q.EvaluateWithObject(title.TitleAuthors[0]));
@@ -217,12 +217,12 @@ namespace Neo.Tests
 			ColumnQualifier		colQualifier;
 			
 			pub = title.Publisher;
-			propQualifier = new PropertyQualifier("Publisher", QualifierOperator.Equal, pub);
+			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
 			colQualifier = new ColumnQualifier(propQualifier, title.Context.EntityMapFactory.GetMap(typeof(Title)));
 
 			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
-			Assertion.AssertEquals("Wrong operator.", QualifierOperator.Equal, colQualifier.Operator);
-			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Value);
+			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
+			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Predicate.Value);
 		}
 
 
@@ -235,15 +235,15 @@ namespace Neo.Tests
 			ColumnQualifier		colQualifier;
 			
 			pub = title.Publisher;
-			propQualifier = new PropertyQualifier("Publisher", QualifierOperator.Equal, pub);
+			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
 			clauseQualifier = new AndQualifier(propQualifier);
 			convertedQualifer = clauseQualifier.GetWithColumnQualifiers(title.Context.EntityMapFactory.GetMap(typeof(Title)));
 			
 			Assertion.AssertEquals("Wrong number of qualifiers", 1, convertedQualifer.Qualifiers.Length);
 			colQualifier = (ColumnQualifier)convertedQualifer.Qualifiers[0];
 			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
-			Assertion.AssertEquals("Wrong operator.", QualifierOperator.Equal, colQualifier.Operator);
-			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Value);
+			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
+			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Predicate.Value);
 		}
 
 

@@ -835,7 +835,7 @@ namespace Neo.Core
 			emap = emapFactory.GetMap(tableName);
 			if(CanLoadFromStore)
 			{
-				Qualifier q = new ColumnQualifier(columnName, QualifierOperator.Equal, queryValue);
+				Qualifier q = new ColumnQualifier(columnName, new EqualsPredicate(queryValue));
 				FetchSpecification fetchSpec = new FetchSpecification(emap, q);
 				FetchObjectsFromStore(fetchSpec);
 			}
@@ -947,13 +947,13 @@ namespace Neo.Core
 			string[] pkcolumns = emap.PrimaryKeyColumns;				
 			if(pkcolumns.Length == 1)
 			{
-				mainQualifier = new ColumnQualifier(pkcolumns[0], QualifierOperator.Equal, pkvalues[0]);
+				mainQualifier = new ColumnQualifier(pkcolumns[0], new EqualsPredicate(pkvalues[0]));
 			}
 			else
 			{
 				ArrayList qualifiers = new ArrayList(pkcolumns.Length);
 				for(int i = 0; i < pkcolumns.Length; i++)
-					qualifiers.Add(new ColumnQualifier(pkcolumns[i], QualifierOperator.Equal, pkvalues[i]));
+					qualifiers.Add(new ColumnQualifier(pkcolumns[i], new EqualsPredicate(pkvalues[i])));
 				mainQualifier = new AndQualifier(qualifiers);
 			}
 

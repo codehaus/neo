@@ -22,7 +22,7 @@ namespace Neo.Tests
 			Assertion.AssertEquals("royalties", t.Value);
 			t = parser.GetNextToken();
 			Assertion.AssertEquals(QualifierParser.TokenType.Operator, t.Type);
-			Assertion.AssertEquals(QualifierOperator.Equal, t.Value);
+			Assertion.AssertEquals(typeof(EqualsPredicate), t.Value);
 			t = parser.GetNextToken();
 			Assertion.AssertEquals(QualifierParser.TokenType.Number, t.Type);
 			Assertion.AssertEquals(20, t.Value);
@@ -42,7 +42,7 @@ namespace Neo.Tests
 			Assertion.AssertEquals("name", t.Value);
 			t = parser.GetNextToken();
 			Assertion.AssertEquals(QualifierParser.TokenType.Operator, t.Type);
-			Assertion.AssertEquals(QualifierOperator.Equal, t.Value);
+			Assertion.AssertEquals(typeof(EqualsPredicate), t.Value);
 			t = parser.GetNextToken();
 			Assertion.AssertEquals(QualifierParser.TokenType.QuotedString, t.Type);
 			Assertion.AssertEquals("foo", t.Value);
@@ -53,7 +53,7 @@ namespace Neo.Tests
 			Assertion.AssertEquals("royalties", t.Value);
 			t = parser.GetNextToken();
 			Assertion.AssertEquals(QualifierParser.TokenType.Operator, t.Type);
-			Assertion.AssertEquals(QualifierOperator.GreaterThan, t.Value);
+			Assertion.AssertEquals(typeof(GreaterThanPredicate), t.Value);
 			t = parser.GetNextToken();
 			Assertion.AssertEquals(QualifierParser.TokenType.ParamRef, t.Type);
 			Assertion.AssertEquals(15, t.Value);
@@ -97,9 +97,9 @@ namespace Neo.Tests
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
 			cq = q as PropertyQualifier;
-			Assertion.AssertEquals(cq.Property, "TitleId");
-			Assertion.AssertEquals(cq.Operator, QualifierOperator.Equal);
-			Assertion.AssertEquals(cq.Value, "TC7777");
+			Assertion.AssertEquals("TitleId", cq.Property);
+			Assertion.AssertEquals(typeof(EqualsPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals("TC7777", cq.Predicate.Value);
 		}
 
 
@@ -116,9 +116,9 @@ namespace Neo.Tests
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
 			cq = q as PropertyQualifier;
-			Assertion.AssertEquals(cq.Property, "Royalties");
-			Assertion.AssertEquals(cq.Operator, QualifierOperator.GreaterThan);
-			Assertion.AssertEquals(cq.Value, 10);
+			Assertion.AssertEquals("Royalties", cq.Property);
+			Assertion.AssertEquals(typeof(GreaterThanPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals(10, cq.Predicate.Value);
 		}
 
 
@@ -135,9 +135,9 @@ namespace Neo.Tests
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
 			cq = q as PropertyQualifier;
-			Assertion.AssertEquals(cq.Property, "Royalties");
-			Assertion.AssertEquals(cq.Operator, QualifierOperator.NotEqual);
-			Assertion.AssertEquals(cq.Value, 10);
+			Assertion.AssertEquals("Royalties", cq.Property);
+			Assertion.AssertEquals(typeof(NotEqualPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals(10, cq.Predicate.Value);
 		}
 
 		
@@ -154,9 +154,9 @@ namespace Neo.Tests
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
 			cq = q as PropertyQualifier;
-			Assertion.AssertEquals(cq.Property, "IsEditable");
-			Assertion.AssertEquals(cq.Operator, QualifierOperator.Equal);
-			Assertion.AssertEquals(cq.Value, true);
+			Assertion.AssertEquals("IsEditable", cq.Property);
+			Assertion.AssertEquals(typeof(EqualsPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals(true, cq.Predicate.Value);
 		}
 
 
@@ -173,9 +173,9 @@ namespace Neo.Tests
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
 			cq = q as PropertyQualifier;
-			Assertion.AssertEquals(cq.Property, "TitleId");
-			Assertion.AssertEquals(cq.Operator, QualifierOperator.Equal);
-			Assertion.AssertEquals(cq.Value, "TC7777");
+			Assertion.AssertEquals("TitleId", cq.Property);
+			Assertion.AssertEquals(typeof(EqualsPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals("TC7777", cq.Predicate.Value);
 		}
 
 
@@ -206,7 +206,7 @@ namespace Neo.Tests
 			Assertion.AssertEquals("Wrong qualifier.", typeof(AndQualifier), q.GetType());
 			aq = q as AndQualifier;
 			Assertion.AssertEquals(2, aq.Qualifiers.Length);
-			Assertion.AssertEquals("TC7777", ((PropertyQualifier)aq.Qualifiers[1]).Value);
+			Assertion.AssertEquals("TC7777", ((PropertyQualifier)aq.Qualifiers[1]).Predicate.Value);
 		}
 
 
@@ -224,7 +224,7 @@ namespace Neo.Tests
 			Assertion.AssertEquals("Wrong qualifier.", typeof(OrQualifier), q.GetType());
 			oq = q as ClauseQualifier;
 			Assertion.AssertEquals(3, oq.Qualifiers.Length);
-			Assertion.AssertEquals(7, ((PropertyQualifier)oq.Qualifiers[1]).Value);
+			Assertion.AssertEquals(7, ((PropertyQualifier)oq.Qualifiers[1]).Predicate.Value);
 		}
 
 		
@@ -241,9 +241,9 @@ namespace Neo.Tests
 			Assertion.AssertNotNull("Parser failed.", q);
 			Assertion.AssertEquals("Wrong qualifier.", typeof(PropertyQualifier), q.GetType());
 			cq = q as PropertyQualifier;
-			Assertion.AssertEquals(cq.Property, "TitleId");
-			Assertion.AssertEquals(cq.Operator, QualifierOperator.Equal);
-			Assertion.AssertEquals(cq.Value, "TC7777");
+			Assertion.AssertEquals("TitleId", cq.Property);
+			Assertion.AssertEquals(typeof(EqualsPredicate), cq.Predicate.GetType());
+			Assertion.AssertEquals("TC7777", cq.Predicate.Value);
 
 		}
 

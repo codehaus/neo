@@ -1,25 +1,27 @@
 using System;
+using System.Reflection;
 using System.Data;
 
 
 namespace Neo.Core.Util
 {
 
-	public sealed class ColumnQualifier : ComparisonQualifier
+	public sealed class ColumnQualifier : Qualifier
 	{
 
 		//--------------------------------------------------------------------------------------
 		//	Fields and Constructor
 		//--------------------------------------------------------------------------------------
 
-		private string column;
+		private string		column;
+		private IPredicate	predicate;
 
 
-		public ColumnQualifier(string aColumn, QualifierOperator theOp, object aValue) : base()
+		public ColumnQualifier(string aColumn, IPredicate aPredicate) : base()
 		{
 			column = aColumn;
-			op = theOp;
-			compVal = (aValue == null) ? DBNull.Value : aValue;
+			predicate = aPredicate;
+			//predicate = (aValue == null) ? DBNull.Value : aValue;
 		}
 
 
@@ -28,22 +30,24 @@ namespace Neo.Core.Util
 			IEntityObject	eo;
 			IEntityMap		otherEmap;
 			DataRelation	rel;
+			object			compVal;
 
-			if((eo = propQualifier.Value as IEntityObject) != null)
+			if((eo = propQualifier.Predicate.Value as IEntityObject) != null)
 			{
 				otherEmap = eo.Context.EntityMapFactory.GetMap(eo.GetType());
 				if((rel = eo.Context.DataSet.Relations[otherEmap.TableName + "." + emap.TableName]) == null)
 					throw new NeoException("Can't to convert PropertyQualifier to ColumnQualifier; did not find relation " + otherEmap.TableName + "." + emap.TableName);
 				column = rel.ChildColumns[0].ColumnName;
 				compVal = eo.Row[rel.ParentColumns[0]];
-				op = propQualifier.Operator;
 			}
 			else
 			{
 				column = emap.GetColumnForAttribute(propQualifier.Property);
-				compVal = propQualifier.Value;
-				op = propQualifier.Operator;
+				compVal = propQualifier.Predicate.Value;
 			}
+			if(compVal == null)
+				compVal = DBNull.Value;
+			predicate = (IPredicate)Activator.CreateInstance(propQualifier.Predicate.GetType(), new object[] { compVal });
 		}
 
 
@@ -56,6 +60,11 @@ namespace Neo.Core.Util
 			get { return column; }
 		}
 
+		public IPredicate Predicate
+		{
+			get { return predicate; }
+		}
+
 
 		//--------------------------------------------------------------------------------------
 		//	ToString() override
@@ -63,7 +72,7 @@ namespace Neo.Core.Util
 
 		public override string ToString()
 		{
-			return String.Format("row[{0}] {1} {2}", Column, OperatorForToString, Value);
+			return String.Format("row[{0}] {1}", Column, predicate.ToString());
 		}
 
 		
@@ -73,8 +82,7 @@ namespace Neo.Core.Util
 
 		public override bool EvaluateWithObject(IEntityObject anObject)
 		{
-			object	objVal = anObject.Row[column];
-			return Compare(objVal, DBNull.Value);
+			return predicate.IsTrueForValue(anObject.Row[column], DBNull.Value);
 		}
 	}
 

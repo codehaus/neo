@@ -91,7 +91,7 @@ namespace Neo.Core.Util
 			{
 				if(stack[0].Type != TokenType.String)
 					throw new QualifierParserException("Syntax error.", input, position);
-				qualifier = new PropertyQualifier((string)stack[0].Value, QualifierOperator.Equal, parameters[0]);
+				qualifier = new PropertyQualifier((string)stack[0].Value, new EqualsPredicate(parameters[0]));
 			}
 
 			return qualifier;
@@ -126,30 +126,30 @@ namespace Neo.Core.Util
 			else if(LhsMatch(TokenType.String, TokenType.Operator, TokenType.QuotedString))
 			{
 				string val = (string)stack[sp--].Value;
-				QualifierOperator op = (QualifierOperator)stack[sp--].Value;
+				Type pt = (Type)stack[sp--].Value;
 				string attr = (string)stack[sp--].Value;
 
-				PropertyQualifier q = new PropertyQualifier(attr, op, val);
+				PropertyQualifier q = new PropertyQualifier(attr, CreatePredicate(pt, val));
 				token = new Token(TokenType.Qualifier, q);
 			}
 			// Rule: String, Operator, Number -> Qualfier
 			else if(LhsMatch(TokenType.String, TokenType.Operator, TokenType.Number))
 			{
 				int val = (int)stack[sp--].Value;
-				QualifierOperator op = (QualifierOperator)stack[sp--].Value;
+				Type pt = (Type)stack[sp--].Value;
 				string prop = (string)stack[sp--].Value;
 
-				PropertyQualifier q = new PropertyQualifier(prop, op, val);
+				PropertyQualifier q = new PropertyQualifier(prop, CreatePredicate(pt, val));
 				token = new Token(TokenType.Qualifier, q);
 			}
 			// Rule: String, Operator, ParamRef -> Qualfier
 			else if(LhsMatch(TokenType.String, TokenType.Operator, TokenType.ParamRef))
 			{
 				int idx = (int)stack[sp--].Value;
-				QualifierOperator op = (QualifierOperator)stack[sp--].Value;
+				Type pt = (Type)stack[sp--].Value;
 				string attr = (string)stack[sp--].Value;
 
-				PropertyQualifier q = new PropertyQualifier(attr, op, parameters[idx]);
+				PropertyQualifier q = new PropertyQualifier(attr, CreatePredicate(pt, parameters[idx]));
 				token = new Token(TokenType.Qualifier, q);
 			}
 			// Rule: String, Operator, String -> Qualfier
@@ -157,13 +157,13 @@ namespace Neo.Core.Util
 			else if(LhsMatch(TokenType.String, TokenType.Operator, TokenType.String))
 			{
 				string str = ((string)stack[sp--].Value).ToLower(CultureInfo.InvariantCulture);
-				QualifierOperator op = (QualifierOperator)stack[sp--].Value;
+				Type pt = (Type)stack[sp--].Value;
 				string attr = (string)stack[sp--].Value;
 
 				if((str != "true") && (str != "false"))
 					throw new QualifierParserException("Invalid right hand side for comparison; found " + str, input, position);
 
-				PropertyQualifier q = new PropertyQualifier(attr, op, (str == "true"));
+				PropertyQualifier q = new PropertyQualifier(attr, CreatePredicate(pt, (str == "true")));
 				token = new Token(TokenType.Qualifier, q);
 			}
 			// Rule: Path, Qualifier -> PathQualifier
@@ -213,6 +213,11 @@ namespace Neo.Core.Util
 					return false;
 			}
 			return true;
+		}
+
+		protected IPredicate CreatePredicate(Type pt, object val)
+		{
+			return (IPredicate)Activator.CreateInstance(pt, new object[] { val } );
 		}
 
 
@@ -293,19 +298,19 @@ namespace Neo.Core.Util
 
 		protected Token ReadOpToken(char c)
 		{
-			QualifierOperator op;
+			Type pt;
 			MoveNextChar();
 			if(c == '=')
-				op = QualifierOperator.Equal;
+				pt = typeof(EqualsPredicate);
 			else if(c == '<')
-				op = QualifierOperator.LessThan;
+				pt = typeof(LessThanPredicate);
 			else if(c == '>')
-				op = QualifierOperator.GreaterThan;
+				pt = typeof(GreaterThanPredicate);
 			else if((c == '!') && (GetCurrentChar() == '=') && MoveNextChar())
-				op = QualifierOperator.NotEqual;
+				pt = typeof(NotEqualPredicate);
 			else
 				throw new QualifierParserException("Unknown operator.", input, position);
-			return new Token(TokenType.Operator, op);
+			return new Token(TokenType.Operator, pt);
 		}
 
 		protected Token ReadQuotedStringToken(char c)

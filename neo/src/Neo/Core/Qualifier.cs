@@ -65,13 +65,13 @@ namespace Neo.Core
 				IDictionaryEnumerator enumerator = queryValues.GetEnumerator();
 				enumerator.MoveNext();
 				DictionaryEntry e = enumerator.Entry;
-				return new PropertyQualifier((string)e.Key, QualifierOperator.Equal, e.Value);
+				return new PropertyQualifier((string)e.Key, new EqualsPredicate(e.Value));
 			}
 			else
 			{
 				qualifiers = new ArrayList(queryValues.Count);
 				foreach(DictionaryEntry e in queryValues)
-					qualifiers.Add(new PropertyQualifier((string)e.Key, QualifierOperator.Equal, e.Value));
+					qualifiers.Add(new PropertyQualifier((string)e.Key, new EqualsPredicate(e.Value)));
 				return new AndQualifier(qualifiers);
 			}
 		}

@@ -184,11 +184,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\ComparisonQualifier.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Core.Util\DefaultEntityMapFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -225,6 +220,11 @@
                 />
                 <File
                     RelPath = "Core.Util\QualifierParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core.Util\QualifierPredicates.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
