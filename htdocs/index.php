@@ -30,25 +30,30 @@
 	<title>Neo (.NET Entity Objects)</title>
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" title="Standard" type="text/css" href="std.css" media="screen" />
-	<!-- <link rel="stylesheet" title="Fancy" type="text/css" href="fancy.css" />-->
 </head>
 
 <body>
 
 <div id="header">
-    <div id="logobox">
-	    <img src="neo-94x59.png" width="94" height="59" alt="Neo Logo" style="vertical-align:middle" />
-    </div>
-	<div id="metanav">
-        <a href="http://codehaus.org"><img src="http://codehaus.org/codehaus-small.gif" width="209" height="40" alt="codehaus.org" style="border:0px" /></a><br />
-	    <a class="mn" href="http://docs.codehaus.org/display/NEO">Wiki</a>
-	    &nbsp;&middot;&nbsp;
-	    <a class="mn" href="http://jira.codehaus.org/secure/BrowseProject.jspa?id=10377">Bugs</a>
-        &nbsp;&middot;&nbsp;
-        <a class="mn" href="http://archive.neo.codehaus.org/">Lists</a>
-	    &nbsp;&middot;&nbsp;
-	    <a class="mn" href="http://cvs.neo.codehaus.org/">CVS</a>
-    </div>
+    <table width="100%">
+        <tr>
+            <td valign="middle" align="left">
+                   <a href="news.html"> 
+	               <img src="neo-94x59.png" width="94" height="59" alt="Neo Logo" style="border:0px" />
+	               </a>
+            </td>
+            <td valign="middle" align="right">
+                <a href="http://codehaus.org"><img src="http://codehaus.org/codehaus-small.gif" width="209" height="40" alt="codehaus.org" style="border:0px" /></a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="metanav">
+    <a class="mn" href="http://docs.codehaus.org/display/NEO">Wiki</a> &middot; 
+    <a class="mn" href="http://jira.codehaus.org/secure/BrowseProject.jspa?id=10377">Bugs</a> &middot
+    <a class="mn" href="http://archive.neo.codehaus.org/">Lists</a> &middot
+    <a class="mn" href="http://cvs.neo.codehaus.org/">CVS</a>
 </div>
 
 <div id="menubox">
