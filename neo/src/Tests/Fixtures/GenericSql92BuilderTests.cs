@@ -89,5 +89,27 @@ namespace Neo.Tests.Fixtures
 			Assertion.AssertEquals("Should have created correct statement.", "SELECT name, count FROM foo WHERE count<>count0", builder.Command);
 		}
 
+
+		[Test]
+		public void CreatesOptimisticLockMatchWithLike()
+		{
+			GenericSql92Builder	builder;
+			DataRow				row;
+
+			table.Columns["name"].ExtendedProperties.Add("LockStrategy", "LIKE");
+			row = table.NewRow();
+			table.Rows.Add(row);
+			row["count"] = 5;
+			row["name"] = "foobar";
+			row.AcceptChanges();
+			row.Delete();
+
+			// Using the SqlImplFactory introduces a dependency on how it names its 
+			// parameters but that's not what we are testing.
+			builder = new GenericSql92Builder(table, new SqlImplFactory());
+			builder.WriteDelete(row);
+			Assertion.Assert("Should have created correct statement.", builder.Command.IndexOf("name LIKE name_ORIG") != -1);
+		}
+	
 	}
 }

@@ -398,22 +398,28 @@ namespace Neo.Database
 		}
 
 
-		protected void WriteOptimisticLockMatch()
+		protected virtual void WriteOptimisticLockMatch()
 		{
-			// This is not really correct, we should exclude BLOBs. Then again, we don't do BLOBs yet.
 			for(int i = 0; i < table.Columns.Count; i++)
 			{
+				DataColumn column = table.Columns[i];
+
 				if(i > 0)
 					builder.Append(" AND");
 				builder.Append(" ((");
-				WriteIdentifier(table.Columns[i].ColumnName);
-				builder.Append(" = ");
-				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + "_ORIG"));
+				WriteIdentifier(column.ColumnName);
+				if(column.ExtendedProperties.ContainsKey("LockStrategy") == false)
+					builder.Append(" = ");
+				else if((String)column.ExtendedProperties["LockStrategy"] == "LIKE")
+					builder.Append(" LIKE ");
+				else
+					throw new ArgumentException("Invalid locking strategy; found " + (String)column.ExtendedProperties["LockStrategy"]);
+				builder.Append(ConvertToParameterName(column.ColumnName + "_ORIG"));
 				builder.Append(" ) OR (");
 				builder.Append("COALESCE(");
-				WriteIdentifier(table.Columns[i].ColumnName);
+				WriteIdentifier(column.ColumnName);
 				builder.Append(", ");
-				builder.Append(ConvertToParameterName(table.Columns[i].ColumnName + "_ORIG"));
+				builder.Append(ConvertToParameterName(column.ColumnName + "_ORIG"));
 				builder.Append(") IS NULL))");
 			}
 		}

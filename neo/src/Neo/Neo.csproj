@@ -289,6 +289,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Core.Util\OrderedTableCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Core.Util\QualifierConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -320,11 +325,6 @@
                 />
                 <File
                     RelPath = "Database\IDbImplementationFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Database\OrderTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

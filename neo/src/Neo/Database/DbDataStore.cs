@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
 using Neo.Core;
+using Neo.Core.Util;
 
 
 namespace Neo.Database
@@ -197,22 +198,11 @@ namespace Neo.Database
 
 			try
 			{
-				ArrayList parentFirstTables = new ArrayList();
+				OrderedTableCollection tables = new OrderedTableCollection(context.DataSet);
 
-				foreach(DataTable t in context.DataSet.Tables)
-				{
-					parentFirstTables.Add(new OrderTable(t));
-				}
-				
-				AssignOrderToInsertTables(parentFirstTables);
-				SortOrderOfInsertTables(parentFirstTables);
-
-				ProcessInserts(parentFirstTables, pkChangeTableList);
-				ProcessUpdates(parentFirstTables);
-
-				ArrayList childFirstTables = new ArrayList(parentFirstTables);
-				childFirstTables.Reverse();
-				ProcessDeletes(childFirstTables);
+				ProcessInserts(tables, pkChangeTableList);
+				ProcessUpdates(tables);
+				ProcessDeletes(tables);
 
 				StringBuilder errorString = new StringBuilder();
 				foreach(DataTable t in context.DataSet.Tables)
@@ -245,102 +235,69 @@ namespace Neo.Database
 
 		}
 
-		public virtual void ProcessInserts(ArrayList tables, ArrayList pkChangeTables)
+		public virtual void ProcessInserts(OrderedTableCollection tables, ArrayList pkChangeTables)
 		{
 			for(int ix = 0; ix < tables.Count; ix++)
 			{
-				PkChangeTable	pkChangeTable;
-				DataRow[]		modrows;
-				DataTable table = ((OrderTable) tables[ix]).Table;
-
-				pkChangeTable = new PkChangeTable(table.TableName);
-				modrows = table.Select("", "", DataViewRowState.Added);
-				foreach(DataRow row in modrows)
-				{
-					InsertRow(row, pkChangeTable);
-				}
-				if (pkChangeTable.Count > 0) 
-				{
-					pkChangeTables.Add(pkChangeTable);
-				}
+				ProcessInserts(tables[ix], pkChangeTables);
 			}
 		}
 
-		public virtual void ProcessDeletes(ArrayList tables)
+		public virtual void ProcessInserts(DataTable table, ArrayList pkChangeTables)
+		{
+			PkChangeTable	pkChangeTable;
+			DataRow[]		modrows;
+	
+			pkChangeTable = new PkChangeTable(table.TableName);
+			modrows = table.Select("", "", DataViewRowState.Added);
+			foreach(DataRow row in modrows)
+			{
+				InsertRow(row, pkChangeTable);
+			}
+			if (pkChangeTable.Count > 0) 
+			{
+				pkChangeTables.Add(pkChangeTable);
+			}
+		}
+
+		public virtual void ProcessDeletes(OrderedTableCollection tables)
+		{
+			for(int ix = tables.Count - 1; ix >= 0; ix--)
+			{
+				ProcessDeletes(tables[ix]);
+			}
+		}
+
+		public virtual void ProcessDeletes(DataTable table)
+		{
+			DataRow[]		modrows;
+	
+			modrows = table.Select("", "", DataViewRowState.Deleted);
+			foreach(DataRow row in modrows)
+			{
+				DeleteRow(row);
+			}
+		}
+
+		public virtual void ProcessUpdates(OrderedTableCollection tables)
 		{
 			for(int ix = 0; ix < tables.Count; ix++)
 			{
-				DataRow[]		modrows;
-				DataTable table = ((OrderTable) tables[ix]).Table;
-
-				modrows = table.Select("", "", DataViewRowState.Deleted);
-				foreach(DataRow row in modrows)
-				{
-					DeleteRow(row);
-				}
+				ProcessUpdates(tables[ix]);
 			}
 		}
 
-		public virtual void ProcessUpdates(ArrayList tables)
+		public virtual void ProcessUpdates(DataTable table)
 		{
-			for(int ix = 0; ix < tables.Count; ix++)
+			DataRow[]		modrows;
+	
+			modrows = table.Select("", "", DataViewRowState.ModifiedCurrent);
+			foreach(DataRow row in modrows)
 			{
-				DataRow[]		modrows;
-				DataTable table = ((OrderTable) tables[ix]).Table;
-
-				modrows = table.Select("", "", DataViewRowState.ModifiedCurrent);
-				foreach(DataRow row in modrows)
-				{
-					UpdateRow(row);
-				}
+				UpdateRow(row);
 			}
 		}
 
-		public virtual void SortOrderOfInsertTables(ArrayList tables)
-		{
-			bool changesToOrder;
-			// sort of order
-			changesToOrder = true;
-			
-			while(changesToOrder) 
-			{
-				changesToOrder = false;
-				for(int ix = 0; ix < tables.Count; ix++)
-				{
-					if (ix < tables.Count -1) 
-					{
-						OrderTable t1 = (OrderTable) tables[ix];
-						OrderTable t2 = (OrderTable) tables[ix +1];
-						if (t1.Order < t2.Order)
-						{
-							tables[ix] = t2;
-							tables[ix+1] = t1;
-							changesToOrder = true;
-						}
-					}
-				}
-			}
-		}
-
-		public virtual void AssignOrderToInsertTables(ArrayList tables)
-		{
-			bool changesToOrder = true;
-			while (changesToOrder) 
-			{
-				changesToOrder = false;
-				foreach(OrderTable t in tables)
-				{
-					foreach(OrderTable t2 in tables)
-					{
-						if (t.IsChildOf(t2) && t2.Order <= t.Order && t.Table.TableName != t2.Table.TableName) 
-						{
-							t2.Order++;
-							changesToOrder = true;
-						}
-					}
-				}
-			}
-		}
 
 		//--------------------------------------------------------------------------------------
 

@@ -71,9 +71,7 @@ namespace Neo.Tests.Fixtures
 			newPrice = getDifferentPrice((Decimal)titleTable.Rows[0]["price"]);
 			titleTable.Rows[0]["price"] = newPrice;
 			store.BeginTransaction();
-		    ArrayList tables = new ArrayList();
-			tables.Add(new OrderTable(titleTable));
-			store.ProcessUpdates(tables);
+			store.ProcessUpdates(titleTable);
 			store.CommitTransaction();
 			Assertion.AssertEquals("Wrong row state.", DataRowState.Unchanged, titleTable.Rows[0].RowState);
 
@@ -94,9 +92,7 @@ namespace Neo.Tests.Fixtures
 			newPrice = getDifferentPrice(oldPrice);
 			titleTable.Rows[0]["price"] = newPrice;
 			store.BeginTransaction();
-			ArrayList tables = new ArrayList();
-			tables.Add(new OrderTable(dataset.Tables["titles"]));
-			store.ProcessUpdates(tables);
+			store.ProcessUpdates(dataset.Tables["titles"]);
 			store.RollbackTransaction();
 			Assertion.AssertEquals("Wrong row state.", DataRowState.Modified, titleTable.Rows[0].RowState);
 
@@ -122,19 +118,14 @@ namespace Neo.Tests.Fixtures
 			newPrice1 = getDifferentPrice((Decimal)titleRow["price"]);
 			titleRow["price"] = newPrice1;
 			store.BeginTransaction();
-			ArrayList tables = new ArrayList();
-			tables.Add(new OrderTable(dataset.Tables["titles"]));
-			store.ProcessUpdates(tables);
-
+			store.ProcessUpdates(dataset.Tables["titles"]);
 			store.CommitTransaction();
 
 			titleRow = dataset2.Tables["titles"].Rows[0];
 			newPrice2 = getDifferentPrice((Decimal)titleRow["price"], newPrice1);
 			titleRow["price"] = newPrice2;
 			store.BeginTransaction();
-			ArrayList tables2 = new ArrayList();
-			tables2.Add(new OrderTable(dataset2.Tables["titles"]));
-			store.ProcessUpdates(tables2);
+			store.ProcessUpdates(dataset2.Tables["titles"]);
 			hadErrors = dataset2.Tables["titles"].HasErrors;
 			store.RollbackTransaction();
 			Assertion.Assert("No error for conflicting concurrent updates.", hadErrors);
@@ -148,13 +139,7 @@ namespace Neo.Tests.Fixtures
 			loadTitle("MC3026"); // this doesn't have any authors and can be deleted
 			dataset.Tables["titles"].Rows.Find("MC3026").Delete();
 			store.BeginTransaction();
-
-			ArrayList tables = new ArrayList();
-			foreach(DataTable t in dataset.Tables)
-			{
-				tables.Add(new OrderTable(t));
-			}
-			store.ProcessDeletes(tables);
+			store.ProcessDeletes(new OrderedTableCollection(dataset));
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "MC3026")));
 			store.RollbackTransaction();
 			Assertion.Assert("Row not deleted from database.", fetchedTable.Rows.Count == 0);
@@ -180,12 +165,7 @@ namespace Neo.Tests.Fixtures
 
 			store.BeginTransaction();
 			ArrayList changeTables = new ArrayList();
-			ArrayList tables = new ArrayList();
-			foreach(DataTable t in jobOnlyDataSet.Tables)
-			{
-				tables.Add(new OrderTable(t));
-			}
-			store.ProcessInserts(tables, changeTables);
+			store.ProcessInserts(new OrderedTableCollection(jobOnlyDataSet), changeTables);
 			changeTable = (PkChangeTable) changeTables[0];
 			finalId = (Int16)newRow["job_id"];
 			store.RollbackTransaction();
@@ -230,9 +210,7 @@ namespace Neo.Tests.Fixtures
 			jobRefTable.Rows.Add(newJobRefRow);
 
 			store.BeginTransaction();
-			ArrayList tables = new ArrayList();
-			tables.Add(new OrderTable(jobTable));
-			store.ProcessInserts(tables, new ArrayList());
+			store.ProcessInserts(jobTable, new ArrayList());
 			finalId = (Int16)newJobRow["job_id"];
 			finalForeignId = (Int16)newJobRefRow["job_id"];
 			store.RollbackTransaction();
@@ -260,58 +238,9 @@ namespace Neo.Tests.Fixtures
 			publisherNewRow["pub_name"] = "Publisher";
 	
 			ArrayList changeTables = new ArrayList();		
-			ArrayList tables = new ArrayList();
-			foreach(DataTable t in dataset.Tables)
-			{
-				tables.Add(new OrderTable(t));
-			}
-
-			store.ProcessInserts(tables, changeTables);
+			store.ProcessInserts(new OrderedTableCollection(dataset), changeTables);
 
 			Assertion.AssertEquals("Should not have created change tables", 0, changeTables.Count);
-		}
-
-		[Test] 
-		public void AssignedOrderToInsertTablesIsCorrect() 
-		{
-			emapFactory.GetMap(typeof(Publisher)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
-			OrderTable titleTable = new OrderTable(dataset.Tables["titles"]);
-			
-			OrderTable publisherTable = new OrderTable(dataset.Tables["publishers"]);
-			titleTable.Table.ParentRelations.Add(publisherTable.Table.Columns["pub_id"],titleTable.Table.Columns["pub_id"]);
-	
-			ArrayList insertTables = new ArrayList();		
-			insertTables.Add(titleTable);
-			insertTables.Add(publisherTable);
-
-			store.AssignOrderToInsertTables(insertTables);
-
-			Assertion.AssertEquals("publisher should has wrong order number", 1, publisherTable.Order );
-			Assertion.AssertEquals("title should has wrong order number", 0, titleTable.Order );
-			// not sorted yet :-)
-			Assertion.AssertEquals("The first item should have order of 0", 0, ((OrderTable)insertTables[0]).Order);
-			Assertion.AssertEquals("The first item should have order of 1", 1, ((OrderTable)insertTables[1]).Order);
-
-		}
-
-		[Test]
-		public void SortedOrderOfInsertTablesIsCorrect()
-		{
-			emapFactory.GetMap(typeof(Publisher)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
-			OrderTable titleTable = new OrderTable(dataset.Tables["titles"]);
-			
-			OrderTable publisherTable = new OrderTable(dataset.Tables["publishers"]);
-			titleTable.Table.ParentRelations.Add(publisherTable.Table.Columns["pub_id"],titleTable.Table.Columns["pub_id"]);
-	
-			ArrayList insertTables = new ArrayList();		
-			insertTables.Add(titleTable);
-			insertTables.Add(publisherTable);
-
-			store.AssignOrderToInsertTables(insertTables);
-			store.SortOrderOfInsertTables(insertTables);
-
-			Assertion.AssertEquals("The first item should have order of 1", 1, ((OrderTable)insertTables[0]).Order);
-			Assertion.AssertEquals("The first item should have order of 0", 0, ((OrderTable)insertTables[1]).Order);
 		}
 
 		
@@ -352,9 +281,7 @@ namespace Neo.Tests.Fixtures
 			Assertion.AssertEquals("Wrong number of rows.", 1, fetchedTable.Rows.Count);
 			fetchedTable.Rows[0]["max_lvl"] = 20;
 			store.BeginTransaction();
-			ArrayList tables = new ArrayList();
-			tables.Add(new OrderTable(fetchedTable));
-			store.ProcessUpdates(tables);
+			store.ProcessUpdates(fetchedTable);
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
 			store.RollbackTransaction();
 

@@ -176,6 +176,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Fixtures\OrderedTableCollectionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Fixtures\PkInitializerTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
