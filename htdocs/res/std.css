@@ -43,6 +43,10 @@ p.code {
 	line-height:1.7em; 
 }
 
+code {
+	font-family: Courier New, Courier;
+}
+
 p.footer { 
 	margin:0px;
 	margin-top:6ex;

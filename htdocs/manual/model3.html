@@ -1,0 +1,111 @@
+
+            <p class="heading1">
+                Support classes</p>
+
+            <p class="body">
+                Besides <code>TitleBase</code>, the <code>_Title.cs</code> file contains five 
+                more classes:
+            </p>
+            <ul>
+                <li>
+                    <code>TitleTemplate</code>, which is used by the <code>TitleFactory</code> for 
+                    searching for titles,</li>
+                <li>
+                    <code>TitleList</code>, which is an <code>IList</code> implementation that 
+                    contains titles,</li>
+                <li>
+                    <code>TitleRelation</code>, which is used by the publisher entity as the target 
+                    of a "one-to-many" relationship</li>
+                <li>
+                    <code>TitleFactory</code>, which is used to create new, and find existing 
+                    titles, and</li>
+                <li>
+                    <code>TitleMap</code>, which is used by the Neo framework to map entity classes 
+                    to database tables.</li>
+            </ul>
+            <p class="body">
+                Of these five, the <code>TitleFactory</code> is most important:
+            </p>
+            <pre>
+public class TitleFactory : Neo.Framework.ObjectFactory {
+    public TitleFactory(ObjectContext context) : base(context, typeof(Title)) {}
+
+    public Title CreateObject(System.String pkvalue) {
+        return (Title)base.CreateObject(new object[] { pkvalue });
+    }
+
+    public Title FindObject(System.String pkvalue) {
+        return (Title)base.FindObject(new object[] { pkvalue });
+    }
+
+    public new TitleList FindAllObjects() {
+        TitleList c = new TitleList();
+        foreach(Title eo in base.FindAllObjects())
+            c.Add(eo);
+        return c;
+    }
+    
+    public TitleTemplate GetQueryTemplate() {
+        return new TitleTemplate(EntityMap);
+    }
+
+    public TitleList Find(TitleTemplate template) {
+        TitleList c = new TitleList();
+        foreach(Title eo in base.Find(template))
+            c.Add(eo);
+        return c;
+    }
+
+    public TitleList Find(FetchSpecification fetchSpecification) {
+        TitleList c = new TitleList();
+        foreach(Title eo in base.Find(fetchSpecification))
+            c.Add(eo);
+        return c;
+    }
+    
+    public new TitleList Find(string qualifierFormat, params object[] parameters) {
+        TitleList c = new TitleList();
+        foreach(Title eo in base.Find(qualifierFormat, parameters))
+            c.Add(eo);
+        return c;
+    }
+
+    public new TitleList FindWithLimit(int limit, string qualifierFormat, params object[] parameters) {
+        TitleList c = new TitleList();
+        foreach(Title eo in base.Find(qualifierFormat, parameters))
+            c.Add(eo);
+        return c;
+    }
+    
+    public new Title FindFirst(string qualifierFormat, params object[] parameters) {
+        return (Title)base.FindFirst(qualifierFormat, parameters);
+    }
+
+    public new Title FindUnique(string qualifierFormat, params object[] parameters) {
+        return (Title)base.FindUnique(qualifierFormat, parameters);
+    }    
+}
+</pre>
+            <p class="body">
+                The factory's <code>CreateObject</code> creates a new title entity, given a 
+                primary key value. <code>FindObject</code> returns an existing title for a 
+                primary key. <code>FindAllObjects</code> returns all existing titles. Most 
+                other find methods use a string query to find titles. The query format is based 
+                on the attributes of the entities, and is quite versatile. For instance, you 
+                can use <code>titleFactory.Find("Price &lt; {0}", 10.0);</code> to find all 
+                titles with a price of less than 10.0, and:
+            </p>
+            <pre>
+Publisher pub = // obtain a publisher from somewhere
+titleFactory.Find("Publisher = {0}", pub);
+</pre>
+            <p class="body">
+                will find all titles that have the publisher '<code>pub</code>'.
+            </p>
+            <hr>
+            <p class="body">
+                Related: the <a href="framework1.html">Object Context</a>.
+            </p>
+        </div>
+    </body>
+</html>

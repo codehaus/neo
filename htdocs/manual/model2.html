@@ -1,0 +1,142 @@
+
+            <p class="heading1">
+                Entity classes</p>
+           <p class="heading2">The title entity</p>
+           <p class="body">
+                The file <code>Title.cs</code> does not contain much:
+            </p>
+            <pre>
+namespace pubs.Model {
+
+public class Title : TitleBase {
+    protected Title(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
+               base(aRow, aContext) {}
+                
+    }
+}</pre>
+            <p class="body">
+                This is intentional as this class is meant to hold custom business logic. It
+                is only created after an entity was added to model so that your modifications
+                to this file are not overwritten when the schema changes.
+            </p>
+             <p class="body">
+                <code>Title</code>'s base class <code>TitleBase</code> on the other hand contains
+                the generated code for data access and will be overwritten whenever the schema
+                changes. This class can be found at the top of the file <code>_Title.cs</code> 
+                or, if you used the Visual Studio plug-in, in the hidden file.
+            </p>
+            <pre>
+public class TitleBase : EntityObject {
+       
+    protected TitleBase(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : base(aRow, aContext) {}
+    
+    public virtual System.String Type {
+        get { return Row["type"] as System.String; }
+        set { Row["type"] = (value != null) ? (object)value : (object)DBNull.Value; }
+    }    
+
+    public virtual System.Int32 Royalty {
+        get { object v = Row["royalty"]; return (System.Int32)((v != DBNull.Value) ? v : HandleNullValueForProperty("Royalty")); }
+        set { Row["royalty"] = value; }
+    }    
+
+    public virtual System.Decimal Price    {
+        get { object v = Row["price"]; return (System.Decimal)((v != DBNull.Value) ? v : HandleNullValueForProperty("Price")); }
+        set { Row["price"] = value; }
+    }    
+
+    public virtual System.String TitleId {
+        get { return Row["title_id"] as System.String; }
+        set { Row["title_id"] = (value != null) ? (object)value : (object)DBNull.Value; }
+    }    
+
+    public virtual System.String Notes {
+        get { return Row["notes"] as System.String; }
+        set { Row["notes"] = (value != null) ? (object)value : (object)DBNull.Value; }
+    }    
+
+    public virtual System.Decimal Advance {
+        get { object v = Row["advance"]; return (System.Decimal)((v != DBNull.Value) ? v : HandleNullValueForProperty("Advance")); }
+        set { Row["advance"] = value; }
+    }    
+
+    public virtual System.DateTime PublicationDate {
+        get { object v = Row["pubdate"]; return (System.DateTime)((v != DBNull.Value) ? v : HandleNullValueForProperty("PublicationDate")); }
+        set { Row["pubdate"] = value; }
+    }    
+
+    public virtual System.String TheTitle {
+        get { return Row["title"] as System.String; }
+        set { Row["title"] = (value != null) ? (object)value : (object)DBNull.Value; }
+    }    
+
+    public virtual System.Int32 YtdSales {
+        get { object v = Row["ytd_sales"]; return (System.Int32)((v != DBNull.Value) ? v : HandleNullValueForProperty("YtdSales")); }
+        set { Row["ytd_sales"] = value; }
+    }    
+
+    public virtual Publisher Publisher {
+        get { object v = Row["pub_id"]; return (v == DBNull.Value) ? null : (Publisher)Context.GetObjectFromTable("publishers", new object[] { v }); }
+        set { Row["pub_id"] = (value != null) ? value.Row["pub_id"] : DBNull.Value; }
+    }
+}</pre>
+            <p class="body">
+                <code>TitleBase</code> is based on the <code>EntityObject</code> class, which 
+                is part of the Neo framework, and basically is a wrapper around an ADO.NET <code>DataRow</code>. 
+                For each of the columns in the row, the base class provides an overridable 
+                property to access it. Finally, the relation with the publisher entity (which 
+                is based on the <code>pub_id</code>) is used for a property that gets or sets 
+                the publisher of a title.
+            </p>
+            
+            <p class="heading2">The Publisher entity</p>
+            <p class="body">
+                The publisher entity is quite similar to title: the class <code>Publisher</code>
+                contains almost no code, but it extends <code>PublisherBase</code>, which looks 
+                like this:
+            </p>
+            <pre>
+public class PublisherBase : EntityObject {
+	public readonly TitleRelation Titles;
+       
+	protected PublisherBase(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : base(aRow, aContext) {
+		Titles = new TitleRelation(this, aRow.Table.DataSet.Relations["publishers.titles"]);
+	}
+	
+	public virtual System.String Name {
+		get { return Row["pub_name"] as System.String; }
+		set { Row["pub_name"] = (value != null) ? (object)value : (object)DBNull.Value; }
+	}    
+
+	public virtual System.String State {
+		get { return Row["state"] as System.String; }
+		set { Row["state"] = (value != null) ? (object)value : (object)DBNull.Value; }
+	}    
+
+	public virtual System.String Country {
+		get { return Row["country"] as System.String; }
+		set { Row["country"] = (value != null) ? (object)value : (object)DBNull.Value; }
+	}    
+
+	public virtual System.String City {
+		get { return Row["city"] as System.String; }
+		set { Row["city"] = (value != null) ? (object)value : (object)DBNull.Value; }
+	}    
+}</pre>
+            <p class="body">
+                Except for the row-based properties, the publisher entity contains a <code>TitleRelation</code>. 
+                Relation classes implement the <code>IList</code> interface, which means that 
+                you use it like any other list:
+            </p>
+            <pre>
+Title programmingAspNet = titleFactory.FindObject("progaspnet");
+Publisher oreilly = publisherFactory.FindObject("oreilly");
+publisher.Titles.Add(programmingAspNet);
+</pre>
+            <p class="body">
+                which adds the title "Progamming with ASP.NET" to the publisher "O'Reilly".
+            </p>            
+            <hr>
+            <p class="body">
+                Next: the <a href="model3.html">Entity support classes</a>.
+            </p>

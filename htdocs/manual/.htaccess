@@ -1,0 +1,12 @@
+
+# You might need the following config in the main config
+# so that our options in this file are allowed.
+#   AllowOverride FileInfo
+
+# This is normally added by mod_php config, if not do it
+# here.
+#   DirectoryIndex index.html index.php
+
+RewriteEngine On
+RewriteRule ^[a-z0-9]*\.html$ index.php
+
