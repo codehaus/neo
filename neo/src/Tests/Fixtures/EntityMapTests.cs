@@ -24,8 +24,8 @@ namespace Neo.Tests
 		[Test]
 		public void EntityMapRegistry()
 		{
-			Assertion.AssertEquals("Wrong number of maps types.", 5, EmapFactory.GetRegisteredTypes().Count);
-			Assertion.AssertEquals("Wrong number of maps.", 5, EmapFactory.GetAllMaps().Count);
+			Assertion.AssertEquals("Wrong number of maps types.", 7, EmapFactory.GetRegisteredTypes().Count);
+			Assertion.AssertEquals("Wrong number of maps.", 7, EmapFactory.GetAllMaps().Count);
 		}
 
 

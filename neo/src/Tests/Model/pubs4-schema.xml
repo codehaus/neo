@@ -84,5 +84,30 @@
 	
   </table>
   
+   
+  <table name="stores" javaName="Store" idMethod="none">
+	
+	<column name="stor_id"	primaryKey="true" hidden="true"		required="true"		type="CHAR" size="4" />
+	<column	name="stor_name" javaName="Name"										type="VARCHAR" size="40" />
+	<column	name="stor_address" javaName="Address"									type="VARCHAR" size="40" />
+	<column	name="city"																type="VARCHAR" size="20" />
+	<column	name="state"															type="CHAR" size="2" />
+	<column	name="zip"																type="CHAR" size="5" />
+	
+  </table>
+
+
+  <table name="discounts" javaName="Discount" idMethod="none">
+	
+	<column name="discounttype" javaName="DiscountType" primaryKey="true" required="true" type="VARCHAR" size="40" />
+	<column	name="stor_id"  hidden="true"											type="CHAR" size="4" />
+	<column	name="discount" javaName="Value"										type="DECIMAL" />
+
+    <foreign-key foreignTable="stores" name="Store">
+      <reference local="stor_id" foreign="stor_id"/>
+    </foreign-key>
+	
+  </table>
+
   
 </database>

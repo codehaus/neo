@@ -206,6 +206,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Model\Discount.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Model\Job.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -228,6 +233,11 @@
                     BuildAction = "Compile"
                     DesignTime = "True"
                     AutoGen = "True"
+                />
+                <File
+                    RelPath = "Model\Store.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Model\Title.cs"
