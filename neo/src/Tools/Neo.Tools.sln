@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo", "..\Neo\Neo.csproj", 
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.NAntTasks", "NAntTask\Neo.NAntTasks.csproj", "{E0EDE800-E911-45B2-B845-D1A4E05CF975}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -53,6 +57,10 @@ Global
 		{30A92E93-A729-4BDF-BBF5-8D6D45EF6A5F}.Debug.Build.0 = Debug|.NET
 		{30A92E93-A729-4BDF-BBF5-8D6D45EF6A5F}.Release.ActiveCfg = Release|.NET
 		{30A92E93-A729-4BDF-BBF5-8D6D45EF6A5F}.Release.Build.0 = Release|.NET
+		{E0EDE800-E911-45B2-B845-D1A4E05CF975}.Debug.ActiveCfg = Debug|.NET
+		{E0EDE800-E911-45B2-B845-D1A4E05CF975}.Debug.Build.0 = Debug|.NET
+		{E0EDE800-E911-45B2-B845-D1A4E05CF975}.Release.ActiveCfg = Release|.NET
+		{E0EDE800-E911-45B2-B845-D1A4E05CF975}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -1,10 +1,8 @@
 using System;
-using System.IO;
 
 using Neo.Generator.CodeGen;
 using Neo.Generator.Core;
 using Neo.MetaModel.Reader;
-
 
 namespace Neo.CmdLineTool
 {
@@ -14,7 +12,7 @@ namespace Neo.CmdLineTool
 		static void Main(string[] args)
 		{
             CmdLineOptions      options;
-			VelocityGenerator	generator;
+		    VelocityGenerator	generator;
 
 		    options = new CmdLineOptions();
 		    options.ProcessArgs(args);
@@ -33,7 +31,7 @@ namespace Neo.CmdLineTool
 					if(options.Template != null)
 						throw new ApplicationException("Cannot use template and code generator at the same time.");
 
-					CodeGenerator codeGenerator = new CodeGenerator();
+				    CodeGenerator codeGenerator = new CodeGenerator();
 					codeGenerator.ForcesUserClassGen = options.Force;
 					codeGenerator.GeneratesSupportClasses = options.GenerateSupport;
 					codeGenerator.GeneratesUserClasses = options.GenerateUser;

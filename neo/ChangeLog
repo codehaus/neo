@@ -1,3 +1,8 @@
+2005-03-17 arjen
+	* Added Neo NAnt task that replicates the behavior of the commandline 
+	tool. To use it, simply place the Neo.NAntTasks.dll in your NAnt bin
+	directory.
+
 2005-03-16 arjen
 	* Added GlobalAssemblyInfo.cs file, which is used throughout all 
 	projects. Assembly-specific attributes are still supported through 
