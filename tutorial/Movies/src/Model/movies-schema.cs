@@ -804,7 +804,7 @@ internal class MovieMap : EntityMap
 			r = table.DataSet.Relations.Add("persons*movies.director_id", 
 					table.DataSet.Tables["persons"].Columns["person_id"],
 					table.DataSet.Tables["movies"].Columns["director_id"]);
-			r.ChildKeyConstraint.UpdateRule = Rule.None;
+			r.ChildKeyConstraint.UpdateRule = Rule.Cascade;
 			r.ChildKeyConstraint.DeleteRule = Rule.None;
 		}
  		if(table.DataSet.Relations["movies*movie_actor.movie_id"] == null)

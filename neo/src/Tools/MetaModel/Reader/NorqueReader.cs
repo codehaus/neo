@@ -268,9 +268,6 @@ namespace Neo.MetaModel.Reader
 
 		protected Rule GetDotNetRuleForStringValue(string stringval, Rule defaultRule)
 		{
-			if(stringval == null) 
-				return defaultRule;
-		
 			if(stringval == "setnull")
 				return Rule.SetNull;
 			else if(stringval == "cascade")

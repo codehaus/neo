@@ -1,6 +1,6 @@
 <!--
     Torque XML database schema DTD
-    $Id: norque.dtd,v 1.2 2004-11-01 11:41:36 erik Exp $
+    $Id: norque.dtd,v 1.3 2005-04-02 18:42:35 erik Exp $
 -->
 
 <!--
@@ -103,7 +103,7 @@ Java class or method name.
 <!ATTLIST foreign-key
   foreignTable CDATA #REQUIRED
   name CDATA #IMPLIED
-  onUpdate (cascade|setnull|restrict|none) "none"
+  onUpdate (cascade|setnull|restrict|none) "cascade"
   onDelete (cascade|setnull|restrict|none) "none"
 >
 

@@ -1,3 +1,9 @@
+2005-04-02 erik
+
+   * Fixed NEO-6. Updates for DB generated primary keys now propagate
+   as expected.
+
+
 2005-03-21 erik
 
     * Added Johannes's extension that allows observers to register for
