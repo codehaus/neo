@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Neo.Tests
 {
 	[TestFixture]
-	public class FindWithStoreTests : FindTests
+	public class FindTestsWithStore : FindTests
 	{
 
 		protected override ObjectContext GetContext()

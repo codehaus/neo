@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<!DOCTYPE database SYSTEM "file:norque.dtd">
-<?neo path="../../Tools/CodeGen/Resources"?>
+<!DOCTYPE database SYSTEM "norque.dtd">
+<?neo path="."?>
 
 <database
   name="pubs" 
@@ -109,5 +109,4 @@
 	
   </table>
 
-  
 </database>

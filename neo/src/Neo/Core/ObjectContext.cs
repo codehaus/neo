@@ -12,8 +12,17 @@ using log4net;
 namespace Neo.Core
 {
 	/// <summary>
-	/// Summary description for ObjectContext.
+	/// ObjectContext provides a wrapper around core ADO.Net functionality.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// ObjectContext uses a data store to retrieve objects and save changes.
+	/// A special data store could act as a façade for other data stores. 
+	/// I could select an appropriate store for a request and forward the request.
+	/// The context relies on its internal DataSet to track changes (creates, updates and deletes.)
+	/// It provides methods to save or reject the changes.
+	/// </para>
+	/// </remarks>
 	public class ObjectContext : IDataStore
 	{
 
@@ -21,6 +30,9 @@ namespace Neo.Core
 		//	Static fields and methods
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Static reference to a logging facility
+		/// </summary>
 		private static ILog logger;
 
 
@@ -38,6 +50,9 @@ namespace Neo.Core
 		private Hashtable			eventHandlers;
 
 
+		/// <summary>
+		/// Default constructor. Sets up logger and default map factory
+		/// </summary>
 		public ObjectContext()
 		{
 			if(logger == null)
@@ -55,12 +70,23 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Constructor. Takes data from the supplied data set into this context
+		/// </summary>
+		/// <param name="aDataStore">data to be imported</param>
 		public ObjectContext(DataSet aDataSet) : this()
 		{
 			MergeData(aDataSet, false);
 		}
 
 		
+		/// <summary>
+		/// Constructor. Takes data from the supplied data store into this context
+		/// </summary>
+		/// <remarks>
+		/// Data from the store is usually loaded on demand.
+		/// </remarks>
+		/// <param name="aDataStore">data to be imported</param>
 		public ObjectContext(IDataStore aDataStore) : this()
 		{
 			dataStore = aDataStore;
@@ -77,18 +103,27 @@ namespace Neo.Core
 		//	Public properties
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// The DataSet containing this ObjectContext&apos;s data
+		/// </summary>
 		public DataSet DataSet
 		{
 			get { return mainDataSet; }
 		}
 
 
+		/// <summary>
+		/// The DataStore used to persist the DataSet&apos;s data
+		/// </summary>
 		public IDataStore DataStore
 		{
 			get { return dataStore; }
 		}
 
 
+		/// <summary>
+		/// The EntityMapFactory used to map entity attributes
+		/// </summary>
 		public IEntityMapFactory EntityMapFactory
 		{
 			set { emapFactory = value; }
@@ -96,6 +131,15 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// A property collection instance that can be used to store application specific
+		/// information in the context
+		/// </summary>
+		/// <remarks>
+		/// The context completely ignores the contents of the property collection. It is
+		/// meant as convenience to avoid having to subclass ObjectContext just because some
+		/// extra properties are needed.
+		/// </remarks>
 		public PropertyCollection ExtendedProperties
 		{
 			get 
@@ -117,6 +161,12 @@ namespace Neo.Core
 		}
 
 		
+		/// <summary>
+		/// Marks row as being processed and to be ignored
+		/// </summary>
+		/// <remarks>
+		/// Internal framework usage only.
+		/// </remarks>
 		protected internal DataRow RowPending
 		{
 			get { return rowPending; }
@@ -139,6 +189,12 @@ namespace Neo.Core
 		//	Dealing with change
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Clears and resets the internal objects in this Context
+		/// </summary>
+		/// <remarks>
+		/// This makes the context effectively forget all object and their changes.
+		/// </remarks>
 		public virtual void Clear()
 		{
 			objectTable = new ObjectTable();
@@ -148,18 +204,33 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Gets all changes made to the main DataSet
+		/// </summary>
+		/// <returns>all changes made to the main DataSet</returns>
 		public virtual DataSet GetChanges()
 		{
 			return mainDataSet.GetChanges();
 		}
 
 
+		/// <summary>
+		/// Determines whether there are any data changes in this context
+		/// </summary>
+		/// <returns><c>true</c> if changes have been made</returns>
 		public virtual bool HasChanges()
 		{
 			return mainDataSet.HasChanges();
 		}
 		
 
+		/// <summary>
+		/// Marks all changes as having been persisted
+		/// </summary>
+		/// <remarks>
+		/// Use this in conjunction with GetChanges() to implement alternative
+		/// persistence operations, in client/server scenarios for example.
+		/// </remarks>
 		public virtual void AcceptChanges()
 		{
 			mainDataSet.AcceptChanges();
@@ -167,6 +238,11 @@ namespace Neo.Core
 		}
 
 	
+		/// <summary>
+		/// Persists data changes in this context to the data store
+		/// </summary>
+		/// <returns>list of primary keys that were changed during the operation (only for 
+		/// native scheme)</returns>
 		public virtual ICollection SaveChanges()
 		{
 			ICollection pkChangeTableList;
@@ -199,6 +275,11 @@ namespace Neo.Core
 		//	Helper methods
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Sets up event handlers for the supplied DataTable
+		/// </summary>
+		/// <param name="table">DataTable object to which event handlers should be added</param>
+		/// <remarks>Adds event handlers for RowDeleting event and RowChanging event</remarks>
 		protected virtual void RegisterForTableEvents(DataTable table)
 		{
 			if(eventHandlers[table.TableName] != null)
@@ -210,6 +291,11 @@ namespace Neo.Core
 		}
 
 		
+		/// <summary>
+		/// Raises an OnColumnChanging event for the supplied DataTable object
+		/// </summary>
+		/// <param name="table">DataTable object for which this event should be raised</param>
+		/// <param name="eventArg">Event args for this event</param>
 		protected internal virtual void SendColumnChangingEvents(DataTable table, DataColumnChangeEventArgs eventArg)
 		{
 			object[] args;
@@ -220,6 +306,10 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Raises events for primary key column changes
+		/// </summary>
+		/// <param name="row">row containing primary key</param>
 		protected internal virtual void SendPkColumnChangingEvents(DataRow row)
 		{
 			foreach(DataColumn c in row.Table.PrimaryKey)
@@ -230,6 +320,13 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Gets all values for primary key columns of the supplied row
+		/// </summary>
+		/// <param name="emap">IEntityMap object holding entity definition</param>
+		/// <param name="row">row holding primary key values</param>
+		/// <param name="ver">DataRowVersion to use for lookup</param>
+		/// <returns>Array of primary key values</returns>
 		protected internal object[] GetPrimaryKeyValuesForRow(IEntityMap emap, DataRow row, DataRowVersion ver)
 		{
 			string[] columns;
@@ -244,6 +341,12 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Finds row in the existing DataSet and either returns the IEntityObject
+		/// representation of it, or creates the representation
+		/// </summary>
+		/// <param name="aRow">row containing data to be found</param>
+		/// <returns>IEntityObject instance representing the supplied row</returns>
 		protected virtual IEntityObject GetObjectForRow(DataRow aRow)
 		{
 			IEntityMap	  emap;
@@ -271,7 +374,7 @@ namespace Neo.Core
 			{
 				BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 				object[] args = { aRow, this };
-				eo = (IEntityObject)Activator.CreateInstance(emap.ObjectType, bflags, null, args, null);
+				eo = (IEntityObject)Activator.CreateInstance(emap.ConcreteObjectType, bflags, null, args, null);
 				objectTable.AddObject(oid, eo);
 			}
 			else
@@ -312,6 +415,10 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Adds all rows for a table to the underlying DataSet
+		/// </summary>
+		/// <param name="newTable">DataTable to be added</param>
 		protected virtual void ImportRowsFromTable(DataTable newTable)
 		{
 			IEntityMap	emap;
@@ -336,6 +443,12 @@ namespace Neo.Core
 			}
 		}
 
+
+		/// <summary>
+		/// Merges the supplied DataSet with the underlying DataSet
+		/// </summary>
+		/// <param name="aDataSet">DataSet object to be merged</param>
+		/// <returns>List of added <c>IEntityObject</c>s</returns>
 		public IList MergeData(DataSet aDataSet)
 		{
 			return MergeData(aDataSet, true);
@@ -409,12 +522,20 @@ namespace Neo.Core
 		//	Updating Primary Keys
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="changeTables"></param>
 		public virtual void UpdatePrimaryKeys(ICollection changeTables)
 		{
 			foreach(PkChangeTable t in changeTables)
 				UpdatePrimaryKeys(t); 
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="changeTable">changeTable holding keys to be updated</param>
 		public virtual void UpdatePrimaryKeys(PkChangeTable changeTable)
 		{
 			IEntityMap	  emap;
@@ -445,6 +566,14 @@ namespace Neo.Core
 		//	Creating objects
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Creates a new <c>IEntityObject</c> with all of the required primary key values
+		/// </summary>
+		/// <param name="objectType"><c>IEntityObject</c> type to be created</param>
+		/// <param name="pkvalues">array holding exactly the correct number of primary key values
+		/// or null if the pk scheme generates its own keys, e.g. GUID and native schemes.</param>
+		/// <returns></returns>
+		/// <remarks></remarks>
 		public virtual IEntityObject CreateObject(Type objectType, object[] pkvalues)
 		{
 			IEntityMap		emap;
@@ -515,6 +644,10 @@ namespace Neo.Core
 		}
 
 		
+		/// <summary>
+		/// Takes a row and <c>null</c>s all non-PK values
+		/// </summary>
+		/// <param name="row">DataRow to be recycled</param>
 		protected virtual void RecycleRow(DataRow row)
 		{
 			ArrayList	pkcolumns;
@@ -539,6 +672,11 @@ namespace Neo.Core
 		//	Deleting objects
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Marks object as deleted. This will deletes row from persistent storage when the 
+		/// changes are saved.
+		/// </summary>
+		/// <param name="eo"><c>IEntityObject</c> to be removed</param>
 		public virtual void DeleteObject(IEntityObject eo)
 		{
 			if(eo.Context != this)
@@ -548,6 +686,11 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// handler for row events??
+		/// </summary>
+		/// <param name="sender">object raising event</param>
+		/// <param name="e">Arguments available to handle this event</param>
 		protected virtual void RowEvent(object sender, DataRowChangeEventArgs e)
 		{
 			if(e.Row == rowPending)
@@ -570,6 +713,11 @@ namespace Neo.Core
 		}
 
 	
+		/// <summary>
+		/// Determines whether the change event is for a deletion, or rollback for an added row
+		/// </summary>
+		/// <param name="e">DataRowChangeEventArgs giving row properties</param>
+		/// <returns><c>true</c> if the change event is for a deletion, or rollback for an added row</returns>
 		protected virtual bool IsObjectDeleteEvent(DataRowChangeEventArgs e)
 		{
 			if(e.Action == DataRowAction.Delete)
@@ -584,12 +732,25 @@ namespace Neo.Core
 		//	Getting objects (In-memory lookup)
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Gets all rows registered in the internal dataset
+		/// </summary>
+		/// <returns>all rows registered in the internal dataset</returns>
 		public ICollection GetAllRegisteredObjects()
 		{
 			return objectTable.GetAllObjects();
 		}
 
 
+		/// <summary>
+		/// Looks up the supplied <c>IEntityObject</c> in the internal object table
+		/// </summary>
+		/// <param name="eo"><c>IEntityObject</c> to find</param>
+		/// <returns>internal representation of supplied <c>IEntityObject</c>, if found</returns>
+		/// <remarks>
+		/// Use this when you have a set of objects in a parent context and need references
+		/// to them in a child context; or vice versa.
+		/// </remarks>
 		public IEntityObject GetLocalObject(IEntityObject eo)
 		{
 			IEntityMap emap = emapFactory.GetMap(eo.GetType());
@@ -603,6 +764,12 @@ namespace Neo.Core
 		}
 
 		
+		/// <summary>
+		/// Creates a new list of <c>EntityObject</c>s based upon the supplied list,
+		/// but using its internal representation of those objects
+		/// </summary>
+		/// <param name="eoList"></param>
+		/// <returns></returns>
 		public IList GetLocalObjects(IList eoList)
 		{
 			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -617,6 +784,13 @@ namespace Neo.Core
 		//	Getting objects (Will fetch from store if neccessary)
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Gets object from storage
+		/// </summary>
+		/// <param name="tableName">name of table holding object</param>
+		/// <param name="pkvalues">primary keys identifying object</param>
+		/// <returns>object matching primary keys, if found</returns>
+		/// <remarks>Any results are merged with this context. Tries to use cached version, if that is available</remarks>
 		public virtual IEntityObject GetObjectFromTable(string tableName, object[] pkvalues)
 		{
 			IEntityObject	obj;
@@ -643,6 +817,16 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Finds all rows containing the supplied value in the named column
+		/// </summary>
+		/// <param name="tableName">table name</param>
+		/// <param name="columnName">column containing values to test</param>
+		/// <param name="queryValue">value required for match</param>
+		/// <returns>all matching rows</returns>
+		/// <remarks>
+		/// return rows are merged with this context
+		/// </remarks>
 		internal protected virtual IList GetObjectsFromTable(string tableName, string columnName, object queryValue)
 		{
 			IEntityMap	emap;
@@ -670,6 +854,11 @@ namespace Neo.Core
 		}
 
 		
+		/// <summary>
+		/// Returns all rows matching the supplied specification
+		/// </summary>
+		/// <param name="fetchSpec"><c>IFetchSpecification</c> object detailing objects to find</param>
+		/// <returns>matching objects from table</returns>
 		public virtual IList GetObjects(IFetchSpecification fetchSpec)
 		{
 			IList	objects, result;
@@ -718,6 +907,17 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Gets all objects in other tables that have references to this object
+		/// </summary>
+		/// <param name="theObject"></param>
+		/// <param name="excludeCascades"><t>true</t> to ignore reference from tables into
+		/// which the objects table cascades deletes.</param>
+		/// <returns>related objects</returns>
+		/// <remarks>
+		/// This method is useful to find out whether a given object can be deleted in
+		/// the data store.
+		/// </remarks>
 		public IList GetReferencingObjects(IEntityObject theObject, bool excludeCascades)
 		{
 			ArrayList	referencingObjects;
@@ -783,6 +983,14 @@ namespace Neo.Core
 		//	IDataStore Impl
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Gets rows from the data store according to the spefication
+		/// </summary>
+		/// <param name="fetchSpec">IFetchSpecification object stating what rows to fetch</param>
+		/// <returns>Nothing</returns>
+		/// <remarks>
+		/// This method will also return newly created objects that have not been persisted yet.
+		/// </remarks>
 		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
 		{
 			Qualifier	q;
@@ -818,6 +1026,15 @@ namespace Neo.Core
 		}
 
 
+		/// <summary>
+		/// Saves changes in the child context in this context.
+		/// </summary>
+		/// <remarks>
+		/// This method should rarely ever be used in client code; use SaveChanges() in
+		/// the child context instead.
+		/// </remarks>
+		/// <param name="childContext">child context that is to be saved</param>
+		/// <returns>Always returns <c>null</c></returns>
 		public virtual ICollection SaveChangesInObjectContext(ObjectContext childContext)
 		{
 			IEntityObject eo;

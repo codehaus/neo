@@ -35,6 +35,12 @@ namespace Neo.Framework
 			get;
 		}
 
+		public virtual Type ConcreteObjectType
+		{
+			get { return ObjectType; }
+			set { throw new InvalidOperationException("Cannot set concrete object type. (You have to override this property using a custom template.)"); }
+		}
+
 		public abstract string TableName
 		{
 			get;

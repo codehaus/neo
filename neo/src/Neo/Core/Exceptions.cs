@@ -4,6 +4,13 @@ using System.Runtime.Serialization ;
 
 namespace Neo.Core
 {
+	/// <summary>
+	/// General Neo exception
+	/// </summary>
+	/// <remarks>
+	/// All exception that are thrown as a part of the normal operation of Neo are subclasses
+	/// of this type. In case of internal errors, other exceptions might be thrown.
+	/// </remarks>
 	[Serializable]
 	public class NeoException : ApplicationException
 	{
@@ -15,6 +22,11 @@ namespace Neo.Core
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the NeoException class with serialized data.
+		/// </summary>
+		/// <param name="si">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
 		protected NeoException(SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}
@@ -22,6 +34,9 @@ namespace Neo.Core
 	}
 
 
+	/// <summary>
+	/// General DataStore exception, thrown when saves fail
+	/// </summary>
 	[Serializable]
 	public class DataStoreSaveException : NeoException
 	{
@@ -33,6 +48,11 @@ namespace Neo.Core
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the DataStoreSaveException class with serialized data.
+		/// </summary>
+		/// <param name="si">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
 		protected DataStoreSaveException(SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}
@@ -40,6 +60,9 @@ namespace Neo.Core
 	}
 
 
+	/// <summary>
+	/// Thrown when a unique value is expected but none or more than one is found
+	/// </summary>
 	[Serializable]
 	public class NotUniqueException : NeoException
 	{
@@ -48,6 +71,11 @@ namespace Neo.Core
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the NotUniqueException class with serialized data.
+		/// </summary>
+		/// <param name="si">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
 		protected NotUniqueException(SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}
@@ -76,6 +104,13 @@ namespace Neo.Core
 	}
 
 
+	/// <summary>
+	/// Thrown when a database null is not valid for a given attribute or column
+	/// </summary>
+	/// <remarks>
+	/// You can implement HandleNullValue on your entity objects to deal with null values 
+	/// arriving from the database, e.g. convert null into zero for an int.
+	/// </remarks>
 	[Serializable]
 	public class InvalidDbNullException : NeoException
 	{
@@ -83,6 +118,11 @@ namespace Neo.Core
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the InvalidDbNullException class with serialized data.
+		/// </summary>
+		/// <param name="si">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
 		protected InvalidDbNullException(SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}
@@ -90,6 +130,9 @@ namespace Neo.Core
 	}
 
 
+	/// <summary>
+	/// Thrown when an object is not found
+	/// </summary>
 	[Serializable]
 	public class ObjectNotFoundException : NeoException
 	{
@@ -97,6 +140,11 @@ namespace Neo.Core
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the ObjectNotFoundException class with serialized data.
+		/// </summary>
+		/// <param name="si">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
 		protected ObjectNotFoundException(SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 		}

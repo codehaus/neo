@@ -1,5 +1,13 @@
 2004-02-17 erik
 
+	* Added support to specify the class that will be instantiated
+	for a given entity. This can be done at runtime and is 
+	intended to be used to mock entity classes. (Note that this
+	feature is experimental and not part of the 1.1.1 release.)
+
+
+2004-02-17 erik
+
 	* Fixed bug which prevented reads of optional (nullable) to-one
 	relations. This required adding two more entities to the model.
 	

@@ -9,8 +9,14 @@ using Neo.Core;
 namespace Neo.Core.Util
 {
 	/// <summary>
-	/// Summary description for EntityMapFactory.
+	/// Default concrete implementation of IEntityMapFactory
 	/// </summary>
+	/// <remarks>
+	/// Uses the singleton pattern to hold maps in memory once they have been processed.
+	/// As a side effect it brings all assemblies that the current app depends on into memory.
+	/// To avoid loading certain assemblies that are known not to contain entity maps use
+	/// the AddAssemblyFilters method.
+	/// </remarks>
 	public class DefaultEntityMapFactory : IEntityMapFactory
 	{
 		//--------------------------------------------------------------------------------------
@@ -25,6 +31,12 @@ namespace Neo.Core.Util
 		//	Singleton
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Gets shared and only instance of this class
+		/// </summary>
+		/// <remarks>
+		/// Uses the <c>singleton</c> pattern to ensure only one instance ever exists.
+		/// </remarks>
 		public static DefaultEntityMapFactory SharedInstance
 		{
 			get
@@ -46,6 +58,9 @@ namespace Neo.Core.Util
 		private Hashtable mapByTableNameTable;
 		
 
+		/// <summary>
+		/// Default, and non-public constructor since this class uses the singleton pattern.
+		/// </summary>
 		protected DefaultEntityMapFactory()
 		{
 			if(logger == null)
@@ -80,6 +95,10 @@ namespace Neo.Core.Util
 		//	Registration
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Checks whether Maps are registered. If not, processes assemblies in the current 
+		/// domain.
+		/// </summary>
 		protected virtual void EnsureMapsAreRegistered()
 		{
 			if(registeredTypes != null)
@@ -128,6 +147,15 @@ namespace Neo.Core.Util
 		}
 
 
+		/// <summary>
+		/// Runs through all concrete classes in the assembly and adds all <c>IEntityMap</c> 
+		/// classes to the list of registered types, if they are not already registered.
+		/// </summary>
+		/// <param name="assembly">Assembly to be examined</param>
+		/// <remarks>
+		/// When registered, an instance of each <c>IEntityMap</c> class is added to the 
+		/// internal maps for rapid lookup as required.
+		/// </remarks>
 		protected virtual void RegisterEntityMapsInAssembly(Assembly assembly)
 		{
 			TypeFilter filter = new TypeFilter(IsIEntityMap);
@@ -146,12 +174,22 @@ namespace Neo.Core.Util
 		}
 
 
+		/// <summary>
+		/// Determines whether the supplied type is a concrete subclass of <c>IEntityMap</c>
+		/// </summary>
+		/// <param name="typeObj">Class to be checked</param>
+		/// <param name="criteriaObj">Not used</param>
+		/// <returns><c>true</c> if this is a concrete class and a subclass of <c>IEntityMap</c></returns>
 		public bool IsIEntityMap(Type typeObj, Object criteriaObj)
 		{
 			return (typeObj.IsInterface) && (typeObj == typeof(IEntityMap));
 		}
 
 
+		/// <summary>
+		/// Gets all registered types, forcing a mapping check if necessary
+		/// </summary>
+		/// <returns>All registered types</returns>
 		public virtual ICollection GetRegisteredTypes()
 		{
 			EnsureMapsAreRegistered();
@@ -163,14 +201,28 @@ namespace Neo.Core.Util
 		//	IEntityMapFactory impl
 		//--------------------------------------------------------------------------------------
 	
-		#region IEntityMapFactory Members
+		public virtual void AddCustomType(Type objType, IEntityMap map)
+		{
+			mapByObjectTypeTable[objType] = map;
+		}
 
+
+		/// <summary>
+		/// Gets a collection of all Object Type Maps
+		/// </summary>
+		/// <returns>A collection of all Object Type Maps</returns>
 		public virtual ICollection GetAllMaps()
 		{
 			EnsureMapsAreRegistered();
 			return mapByObjectTypeTable.Values;
 		}
 
+
+		/// <summary>
+		/// Gets the corresponding map for a type 
+		/// </summary>
+		/// <param name="type">Type to map</param>
+		/// <returns>IEntityMap object matching the supplied Type</returns>
 		public virtual IEntityMap GetMap(Type type)
 		{
 			EnsureMapsAreRegistered();
@@ -180,6 +232,11 @@ namespace Neo.Core.Util
 			return m;
 		}
 
+		/// <summary>
+		/// Gets the corresponding map for a table name 
+		/// </summary>
+		/// <param name="tablename">Table Name to map</param>
+		/// <returns>IEntityMap object matching the supplied table name</returns>
 		public virtual IEntityMap GetMap(string tablename)
 		{
 			EnsureMapsAreRegistered();
@@ -189,7 +246,5 @@ namespace Neo.Core.Util
 			return m;
 		}
 
-		#endregion
-
-		}
+	}
 }

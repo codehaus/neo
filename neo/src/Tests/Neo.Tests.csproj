@@ -181,6 +181,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Fixtures\ScenarioTestsWithMocks.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Fixtures\ScenarioTestsWithStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -214,6 +219,14 @@
                     RelPath = "Model\Job.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Model\NeoClass.vtl"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Model\NeoSupport.vtl"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "Model\Publisher.cs"
