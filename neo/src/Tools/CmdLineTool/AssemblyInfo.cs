@@ -8,4 +8,4 @@ using System.Reflection;
 [assembly: Mono.UsageComplement("<schema file>")]
 
 [assembly: Mono.Author("Arjen Poutsma")]
-[assembly: Mono.Author("Erik Dörnenburg")]
+[assembly: Mono.Author("Erik Doernenburg")]

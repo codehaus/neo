@@ -11,6 +11,10 @@ using Neo.Core.Util;
 
 namespace Neo.Core
 {
+	//--------------------------------------------------------------------------------------
+	//  Delegates and event args
+	//--------------------------------------------------------------------------------------
+
 	/// <summary>
 	/// Delegate method used by <c>ObjectContext</c> to notify column change observers.
 	/// </summary>
@@ -20,6 +24,66 @@ namespace Neo.Core
 	/// </summary>
 	public delegate void RowChangeHandler(object sender, DataRowChangeEventArgs e);
 	
+	/// <summary>
+	/// Represents the method that will handle the <see cref="ObjectContext.EntityObjectChanged"/> event.
+	/// </summary>
+	public delegate void EntityObjectChangedHandler(object sender, EntityObjectChangeEventArgs e);
+	
+	/// <summary>
+	/// Provides data for the <see cref="EntityObjectChangedHandler"/>.
+	/// </summary>
+	public class EntityObjectChangeEventArgs : EventArgs
+	{
+		private IEntityObject entityObject;
+		private EntityObjectAction action; 
+		
+		public EntityObjectChangeEventArgs(IEntityObject entityObject, EntityObjectAction action)
+		{
+			this.entityObject = entityObject;
+			this.action = action;
+		}
+
+		/// <summary>
+		/// Gets the object upon which an action has occurred.
+		/// </summary>
+		public IEntityObject EntityObject
+		{
+			get { return entityObject; }
+		}
+
+		/// <summary>
+		/// Gets the action that has occurred on a <see cref="IEntityObject"/>.		
+		/// </summary>
+		public EntityObjectAction Action
+		{
+			get { return action; }
+		}
+	}
+
+	/// <summary>
+	/// Describes an action performed on an <see cref="IEntityObject"/>.
+	/// </summary>
+	/// <remarks>A <see cref="EntityObjectAction"/> is returned as part of the 
+	/// <see cref="EntityObjectChangeEventArgs"/> to indicate the action that was 
+	/// taken on a <see cref="IEntityObject"/> to raise the event.
+	/// <para>Use the members of this enumeration to determine the action that has 
+	/// occurred on a <see cref="IEntityObject"/> with respect to the 
+	/// <see cref="ObjectContext"/> to which it belongs.</para>
+	/// </remarks>
+	[Flags]
+	public enum EntityObjectAction
+	{
+		Add = 16,
+		Change = 2,
+		Commit = 8,
+		Delete = 1,
+		Nothing = 0,
+		Rollback = 4
+	}
+
+
+
+
 	/// <summary>
 	/// Central class in the Neo core which manages <c>IEntityObject</c>s.
 	/// </summary>
@@ -37,6 +101,10 @@ namespace Neo.Core
 	[Serializable]
 	public class ObjectContext : IDataStore, ISerializable
 	{
+		/// <summary>
+		/// Occurs when a <see cref="IEntityObject"/> has changed successfully.
+		/// </summary>
+		public event EntityObjectChangedHandler EntityObjectChanged;
 
 		//--------------------------------------------------------------------------------------
 		//	Static fields and methods
@@ -432,6 +500,7 @@ namespace Neo.Core
 			{
 				eo = emap.CreateInstance(aRow, this);
 				objectTable.AddObject(oid, eo);
+				OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, EntityObjectAction.Add));
 			}
 			else
 			{
@@ -465,11 +534,6 @@ namespace Neo.Core
 			}
 		}
 
-		protected virtual void OnRowChanged(object sender, DataRowChangeEventArgs e)
-		{
-			if(e.Action == DataRowAction.Delete)
-				rowChangeBroker.OnRowDeleting(sender, e);
-		}
 
 		protected virtual void OnRowDeleting(object sender, DataRowChangeEventArgs e)
 		{
@@ -481,6 +545,9 @@ namespace Neo.Core
 			objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
 
 			rowChangeBroker.OnRowDeleting(sender, e);
+
+			IEntityObject eo = objectTable.GetDeletedObject(e.Row.Table.TableName, pkvalues);
+			OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, EntityObjectAction.Delete));
 		}
 	
 		protected virtual void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
@@ -488,6 +555,33 @@ namespace Neo.Core
 			columnChangeBroker.OnColumnChanging(sender, e);
 		}
 
+		protected void OnRowChanged(object sender, DataRowChangeEventArgs e)
+		{
+			if(e.Action == DataRowAction.Delete)
+				rowChangeBroker.OnRowDeleting(sender, e);
+	
+			if (e.Row.RowState != DataRowState.Detached 
+				&& e.Action != DataRowAction.Add) // adding is handled in GetObjectFromRow as the object for the added row doesn't exist yet
+			{
+				IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
+				object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
+				IEntityObject eo = objectTable.GetObject(emap.TableName, pkvalues);
+				EntityObjectAction action = (EntityObjectAction)EntityObjectAction.Parse(typeof(EntityObjectAction), e.Action.ToString()); 
+				OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, action));
+			}
+		}
+
+		/// <summary>
+		/// Raises the <see cref="EntityObjectChanged"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="EntityObjectChangeEventArgs"/> that contains the event data.</param>
+		protected virtual void OnEntityObjectChanged(EntityObjectChangeEventArgs e)
+		{
+			if(EntityObjectChanged != null)
+			{
+				EntityObjectChanged(this, e);
+			}
+		}
 
 		/// <summary>
 		/// Registers an observer for column change events.

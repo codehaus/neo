@@ -75,6 +75,8 @@ namespace Neo.Framework
 			
 			Owner.Context.RegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildEntity.TableName, foreignColumnName);
 			Owner.Context.RegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildEntity.TableName);
+
+			Owner.Context.EntityObjectChanged += new EntityObjectChangedHandler(context_EntityObjectChanged);
 		}
 
 		private object ObjectForForeignRow(DataRow row, bool tryDeleted)
@@ -141,6 +143,16 @@ namespace Neo.Framework
 				if(innerList.Contains(eo))
 					RemoveFromInnerList(eo);
 
+			}
+		}
+
+		protected void context_EntityObjectChanged(object sender, EntityObjectChangeEventArgs e)
+		{
+			if (e.Action == EntityObjectAction.Change)
+			{
+				int index;
+				if ((index = innerList.IndexOf(e.EntityObject)) > -1)
+                  OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index ));
 			}
 		}
 

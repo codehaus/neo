@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel;
 using Neo.Core;
 using Neo.Framework;
@@ -68,8 +69,8 @@ namespace Neo.Tests.Fixtures
 	
 			publisher.Titles.Touch();
 			
-			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
-			Assert.AreEqual(ListChangedType.Reset, recorder.receivedChangeType, "Event of correct type should have been fired.");
+			Assert.AreEqual(1, recorder.ChangeHandlerCallCount, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.Reset, recorder.LastReceivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -87,10 +88,13 @@ namespace Neo.Tests.Fixtures
 			// Now the real operation...
 			recorder = new EventRecorder(publisher.Titles);
 			
+			// The list changed event is fired two times: first time for adding
+			// , second time for changing the foreign key column
 			publisher.Titles.Add(title);
 			
-			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
-			Assert.AreEqual(ListChangedType.ItemAdded, recorder.receivedChangeType, "Event of correct type should have been fired.");
+			Assert.AreEqual(2, recorder.ChangeHandlerCallCount, "Event should have been fired two times");
+			Assert.AreEqual(ListChangedType.ItemAdded, recorder.ReceivedChangeTypes[0], "Event of correct type should have been fired.");
+			Assert.AreEqual(publisher.Titles.IndexOf(title), recorder.ReceivedNewIndexes[0], "Wrong NewIndex reported.");
 		}
 
 
@@ -101,17 +105,25 @@ namespace Neo.Tests.Fixtures
 			EventRecorder	recorder;
 
 			publisher = new PublisherFactory(context).FindObject("0877");
+			publisher.Titles.Touch(); // this causes an reset event, we don't want to record
+			
+			
 			recorder = new EventRecorder(publisher.Titles);
 			
-			publisher.Titles.Remove(publisher.Titles[0]);
+			int removedTitleIndex = publisher.Titles.IndexOf(publisher.Titles[2]);
+			// The list change event fires just one time for removing, because first the object
+			// is removed from the list and afterwards the objectContext notifies of the change
+			// of the foreign key (the ObjectRelationBase doesn't care about this last notification 
+			// anymore, because the object isn't contained in the list anymore)
+			publisher.Titles.Remove(publisher.Titles[2]);
 			
-			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
-			Assert.AreEqual(ListChangedType.ItemDeleted, recorder.receivedChangeType, "Event of correct type should have been fired.");
+			Assert.AreEqual(1, recorder.ChangeHandlerCallCount, "Event should have been fired one time.");
+			Assert.AreEqual(ListChangedType.ItemDeleted, recorder.LastReceivedChangeType, "Event of correct type should have been fired.");
+			Assert.AreEqual(removedTitleIndex, recorder.ReceivedNewIndexes[0], "Wrong NewIndex reported.");
 		}
 
 
 		[Test]
-		[Ignore("Change notifications do not work yet.")]
 		public void SendsNotifcationOnObjectChange()
 		{
 			Publisher		publisher;
@@ -123,10 +135,11 @@ namespace Neo.Tests.Fixtures
 			// Now the real operation...
 			recorder = new EventRecorder(publisher.Titles);
 			
-			publisher.Titles[0].Advance += 1;
+			publisher.Titles[2].Advance += 1;
 			
-			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
-			Assert.AreEqual(ListChangedType.ItemChanged, recorder.receivedChangeType, "Event of correct type should have been fired.");
+			Assert.AreEqual(1, recorder.ChangeHandlerCallCount, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.ItemChanged, recorder.LastReceivedChangeType, "Event of correct type should have been fired.");
+			Assert.AreEqual(2, recorder.ReceivedNewIndexes[0], "Wrong NewIndex reported.");
 		}
 
 
@@ -134,8 +147,14 @@ namespace Neo.Tests.Fixtures
 
 		private class EventRecorder
 		{
-			public ListChangedType receivedChangeType;
-			public bool changeHandlerWasCalled = false;
+			public ListChangedType LastReceivedChangeType
+			{
+				get	{ return (ListChangedType)ReceivedChangeTypes[ReceivedChangeTypes.Count-1]; }
+			}
+			public int ChangeHandlerCallCount = 0;
+			public ArrayList ReceivedChangeTypes = new ArrayList();
+			public ArrayList ReceivedNewIndexes = new ArrayList();
+			
 
 			public EventRecorder(ObjectRelationBase collection)
 			{
@@ -146,8 +165,9 @@ namespace Neo.Tests.Fixtures
 		
 			private void Titles_ListChanged(object sender, ListChangedEventArgs e)
 			{
-				changeHandlerWasCalled = true;
-				receivedChangeType = e.ListChangedType;
+				ChangeHandlerCallCount += 1;
+				ReceivedChangeTypes.Add(e.ListChangedType);
+				ReceivedNewIndexes.Add(e.NewIndex);
 			}
 
 		}

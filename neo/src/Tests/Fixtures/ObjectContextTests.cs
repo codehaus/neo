@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Data;
 using Neo.Core;
@@ -519,6 +520,77 @@ namespace Neo.Tests.Fixtures
 
 			Assert.AreEqual(typeof(CustomEntityMapFactory), context.EntityMapFactory.GetType(), "Should recreate custom emap factory");
 		}
+
+		[Test]
+		public void SendsNotificationOnCreateEntityObject()
+		{
+			JobFactory	factory;
+			
+			EventRecorder recorder = new EventRecorder(this.context);
+			factory = new JobFactory(context);
+			Job job = factory.CreateObject();
+
+			Assert.AreEqual(1, recorder.ChangeHandlerCallCount);
+			Assert.AreSame(job, recorder.ReceivedEntityObject);
+			Assert.AreEqual(EntityObjectAction.Add, recorder.ReceivedAction);
+		}
+
+		[Test]
+		public void SendsNotificationOnChangeAttributeOfEntityObject()
+		{
+			JobFactory	factory;
+			factory = new JobFactory(context);
+			Job job = factory.CreateObject();
+			
+			EventRecorder recorder = new EventRecorder(this.context);
+			job.Description = "A good job.";
+
+			Assert.AreEqual(1, recorder.ChangeHandlerCallCount);
+			Assert.AreSame(job, recorder.ReceivedEntityObject);
+			Assert.AreEqual(EntityObjectAction.Change, recorder.ReceivedAction);
+		}
+
+		[Test]
+		public void SendsNotificationOnDeleteEntityObject()
+		{
+			JobFactory	factory;
+			factory = new JobFactory(context);
+			Job job = factory.CreateObject();
+			
+			context.AcceptChanges();
+			EventRecorder recorder = new EventRecorder(this.context);
+			
+			job.Delete();
+			
+
+			Assert.AreEqual(1, recorder.ChangeHandlerCallCount);
+			Assert.AreSame(job, recorder.ReceivedEntityObject);
+			Assert.AreEqual(EntityObjectAction.Delete, recorder.ReceivedAction);
+		}
+
+		#region Helper class: Event Recorder
+
+		private class EventRecorder
+		{
+			public EntityObjectAction ReceivedAction;
+			public int ChangeHandlerCallCount = 0;
+			public IEntityObject ReceivedEntityObject;
+
+			public EventRecorder(ObjectContext context)
+			{
+				context.EntityObjectChanged += new EntityObjectChangedHandler(context_EntityObjectChanged);
+			}
+		
+			private void context_EntityObjectChanged(object sender, EntityObjectChangeEventArgs e)
+			{
+				ChangeHandlerCallCount += 1;
+				Console.WriteLine(e.Action);
+				ReceivedEntityObject = e.EntityObject;
+				ReceivedAction = e.Action;
+			}
+		}
+
+		#endregion
 
 		#region Helper class
 
