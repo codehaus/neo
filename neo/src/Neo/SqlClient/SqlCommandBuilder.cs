@@ -37,7 +37,7 @@ namespace Neo.SqlClient
 			WriteColumns(table.Columns);
 
 			builder.Append(" FROM ");
-			builder.Append(table.TableName);
+			WriteIdentifier(table.TableName);
 
 			if(fetchSpec.Qualifier != null)
 			{
