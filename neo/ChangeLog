@@ -1,3 +1,8 @@
+2004-05-06 erik (proxy)
+
+	* Added Arjen's fix for querying for NULL values.
+	
+
 2004-03-30 erik (proxy)
 
 	* Added Jim's code to order insert and delete operations so that

@@ -57,6 +57,19 @@ namespace Neo.Tests
 
 
 		[Test]
+		public void SearchForNull() 
+		{
+			TitleList		titles;
+			Title			otherTitle;
+
+			otherTitle = new TitleFactory(context).FindObject("MC3026");
+			titles = new TitleFactory(context).Find("Royalty = {0}", null);
+			Assertion.Assert("Should return some titles.", titles.Count > 0);
+			Assertion.Assert("Should return title MC3026 which has NULL royalty.", titles.Contains(otherTitle));							 
+		}
+
+
+		[Test]
 		public void ClauseQualifierWithRepeatedColumn()
 		{
 			TitleList result;
