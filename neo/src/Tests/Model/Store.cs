@@ -13,14 +13,14 @@ using Neo.Core;
 namespace Pubs4.Model
 {
 
-public class Store : StoreBase
-{
-	protected Store(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
-		       base(aRow, aContext)
+	public class Store : StoreBase
 	{
+		protected Store(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
+				base(aRow, aContext)
+		{
+		}
+			        
 	}
-		        
-}
 
 }
 

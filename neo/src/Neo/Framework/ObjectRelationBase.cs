@@ -157,13 +157,13 @@ namespace Neo.Framework
 
 		protected override int Add(IEntityObject newObject)
 		{
-			((IEntityObject)newObject).Row[foreignColumnName] = Owner.Row[localColumnName];
+			newObject.Row[foreignColumnName] = Owner.Row[localColumnName];
 			return IndexOf(newObject);
 		}
 
 		protected override void Remove(IEntityObject existingObject)
 		{
-			((IEntityObject)existingObject).Row[foreignColumnName] = DBNull.Value;
+			existingObject.Row[foreignColumnName] = DBNull.Value;
 		}
 
 		protected virtual void CopyToListAndMakeReadOnly(ObjectListBase list)

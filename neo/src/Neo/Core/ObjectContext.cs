@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
 using log4net;
 using Neo.Core.Qualifiers;
 using Neo.Core.Util;
@@ -22,7 +24,8 @@ namespace Neo.Core
 	/// It provides methods to save or reject the changes.
 	/// </para>
 	/// </remarks>
-	public class ObjectContext : IDataStore
+	[Serializable]
+	public class ObjectContext : IDataStore, ISerializable
 	{
 
 		//--------------------------------------------------------------------------------------
@@ -1112,6 +1115,50 @@ namespace Neo.Core
 		}
 
 	
+		//--------------------------------------------------------------------------------------
+		//	ISerializable Impl
+		//--------------------------------------------------------------------------------------
+
+		protected ObjectContext(SerializationInfo info, StreamingContext context) : this()
+		{
+			StringReader reader = new StringReader(info.GetString("xmlData"));
+			DataSet ds = new DataSet();
+			ds.ReadXml(reader, System.Data.XmlReadMode.ReadSchema);
+			MergeData(ds, false);
+
+			dataStore = (IDataStore)info.GetValue("dataStore", typeof(IDataStore));
+			copiedParent = info.GetBoolean("copiedParent");
+			
+			Type emapFactoryType = (Type)info.GetValue("emapFactory", typeof(Type));
+			if(emapFactoryType != null)
+				emapFactory = (IEntityMapFactory)Activator.CreateInstance(emapFactoryType);
+			
+			extendedProperties = (PropertyCollection)info.GetValue("extendedProperties", typeof(PropertyCollection));
+			
+			logger.Debug("Deserialized object context.");
+		}
+		
+
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if(rowPending != null)
+				throw new InvalidOperationException("Cannot serialise a context while a row is changing.");
+
+		    StringWriter writer = new StringWriter();
+			mainDataSet.WriteXml(writer, XmlWriteMode.WriteSchema);
+			info.AddValue("xmlData", writer.ToString());
+	
+			info.AddValue("dataStore", dataStore);
+			info.AddValue("copiedParent", copiedParent);
+
+			if(emapFactory.Equals(DefaultEntityMapFactory.SharedInstance))
+				info.AddValue("emapFactory", null);
+			else
+				info.AddValue("emapFactory", emapFactory.GetType());
+			
+			info.AddValue("extendedProperties", extendedProperties);
+		}
+
 	}
 
 

@@ -1,6 +1,8 @@
 using System;
 using System.Data;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using log4net.Config;
 using Neo.Core;
@@ -51,6 +53,25 @@ namespace Neo.Tests.Fixtures
 
 			return (IDataStore)Activator.CreateInstance(Type.GetType(storeClassName + ",Neo"), new object[] { connString });
 		}
+
+
+		protected object RunThroughSerialization(object original)
+		{
+		    IFormatter	formatter;
+			Stream		stream;
+			object		deserialised;
+			
+			stream = new MemoryStream();
+			formatter = new BinaryFormatter();
+			formatter.Serialize(stream, original);
+			stream.Seek(0, SeekOrigin.Begin);
+			formatter = new BinaryFormatter();
+			deserialised = formatter.Deserialize(stream);
+			stream.Close();
+
+			return deserialised;
+		}
+
 
 	}
 }

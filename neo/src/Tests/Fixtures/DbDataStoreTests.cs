@@ -363,6 +363,20 @@ namespace Neo.Tests.Fixtures
 		}
 
 
+		[Test]
+		public void ShouldSerialize()
+		{
+			// If this test fails and you use username/password authentication make sure 
+			// that you have 'Persist Security Info=true' in you connection string. 
+			// The first loadTitle forces the connection to open and if you do not have 
+			// the persist setting the connection will "forget" the password component 
+			// of the connection string, which makes it impossible to re-use the string.
+
+			loadTitle("TC7777"); 
+			store = (DbDataStore)RunThroughSerialization(store);
+			loadTitle("TC7777");
+		}
+
 		
 		private void loadTitle(string title_id)
 		{

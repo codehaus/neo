@@ -13,28 +13,28 @@ using Neo.Core;
 namespace Pubs4.Model
 {
 
-public class Title : TitleBase
-{
-	protected Title(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
-		       base(aRow, aContext)
+	public class Title : TitleBase
 	{
+		protected Title(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
+				base(aRow, aContext)
+		{
+		}
+
+
+		[LifecycleCreate]
+		protected void SetupAfterCreate()
+		{
+			Type = "UNDECIDED";
+		}
+
+
+		protected override object HandleNullValueForProperty(string propName)
+		{
+			if(propName == "YtdSales")
+				return 0;
+			return base.HandleNullValueForProperty(propName);
+		}
 	}
-
-
-	[LifecycleCreate]
-	protected void SetupAfterCreate()
-	{
-		Type = "UNDECIDED";
-	}
-
-
-	protected override object HandleNullValueForProperty(string propName)
-	{
-        if(propName == "YtdSales")
-			return 0;
-		return base.HandleNullValueForProperty(propName);
-	}
-}
 
 }
 

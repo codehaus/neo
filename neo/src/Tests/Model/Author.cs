@@ -13,14 +13,14 @@ using Neo.Core;
 namespace Pubs4.Model
 {
 
-public class Author : AuthorBase
-{
-	protected Author(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
-		       base(aRow, aContext)
+	public class Author : AuthorBase
 	{
+		protected Author(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
+				base(aRow, aContext)
+		{
+		}
+			        
 	}
-		        
-}
 
 }
 

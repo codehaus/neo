@@ -2,14 +2,14 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
-using System.Reflection;
-using log4net;
+using System.Runtime.Serialization;
 using Neo.Core;
 using Neo.Database;
 
 
 namespace Neo.OracleClient
 {
+	[Serializable]
 	public class OracleDataStore : DbDataStore
 	{
 
@@ -17,25 +17,32 @@ namespace Neo.OracleClient
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
-		public OracleDataStore() : this(null)
+		public OracleDataStore() : base()
 		{
-		}
-
-		public OracleDataStore(string connectionString)
-		{
-			if(logger == null)
-				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
-
-			logger.Debug("Created new OracleDataStore.");
-
+		    NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.oracleclient");
+			if(config == null)
+				throw new ConfigurationException("Did not find neo.oracleclient config section.");
+			String connectionString = config["connectionstring"];
 			if(connectionString == null)
-			{
-			    NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.oracleclient");
-				if(config != null)
-					connectionString = config["connectionstring"];
-			}
+				throw new ConfigurationException("Did not find connectionstring in neo.oracleclient config section.");
+				
 			implFactory = new OracleImplFactory();
 			connection = implFactory.CreateConnection(connectionString);
+		
+			logger.Debug("Created new OracleDataStore.");
+		}
+
+		public OracleDataStore(string connectionString) : base()
+		{
+			implFactory = new OracleImplFactory();
+			connection = implFactory.CreateConnection(connectionString);
+
+			logger.Debug("Created new OracleDataStore.");
+		}
+
+		protected OracleDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+			logger.Debug("Deserialized OracleDataStore.");
 		}
 
 

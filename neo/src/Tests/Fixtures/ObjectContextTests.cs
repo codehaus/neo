@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Data;
 using Neo.Core;
+using Neo.Core.Util;
 using NUnit.Framework;
 using Pubs4.Model;
 
 
 namespace Neo.Tests.Fixtures
 {
-	[NUnit.Framework.TestFixture]
+	[TestFixture]
 	public class ObjectContextTests : TestBase
 	{
 		private ObjectContext	context;
 
-		[NUnit.Framework.SetUp]
+		[SetUp]
 		public void CreateContext()
 		{
 			SetupLog4Net();
@@ -23,7 +24,7 @@ namespace Neo.Tests.Fixtures
 		}
 
 
-		[NUnit.Framework.Test]
+		[Test]
 		public void ObjectRegistration()
 		{
 		    Title	title;
@@ -434,6 +435,49 @@ namespace Neo.Tests.Fixtures
 
 			Assertion.AssertEquals("Wrong row state.", DataRowState.Detached, newTitleInParent.Row.RowState);
 		}
+
+
+		[Test]
+		public void ShouldKeepObjectsAndStateWhenSerializing()
+		{
+			TitleFactory	factory;
+			ObjectContext	newContext;
+
+			factory = new TitleFactory(context);
+			factory.FindObject("TC7777").Advance -= 1;
+			factory.FindObject("MC3021").Delete();
+			factory.CreateObject("XX9999");
+
+			newContext = (ObjectContext)RunThroughSerialization(context);
+
+			Assertion.AssertEquals("Number of objects should be the same.", context.GetAllRegisteredObjects().Count, newContext.GetAllRegisteredObjects().Count);
+			factory = new TitleFactory(newContext);
+			Assertion.Assert("Title TC7777 should have changes.", factory.FindObject("TC7777").HasChanges());
+			Assertion.Assert("Title MC3021 should be deleted.", factory.FindObject("MC3021") == null);
+			Assertion.Assert("Title XX9999 should be new.", factory.FindObject("XX9999").Row.RowState == DataRowState.Added);
+		}
+
+
+		[Test]
+		public void ShouldKeepCustomerEmapFactoryWhenSerializing()
+		{
+			context = new ObjectContext();
+			context.EntityMapFactory = new CustomEntityMapFactory();
+
+			context = (ObjectContext)RunThroughSerialization(context);
+
+			Assertion.AssertEquals("Should recreate custom emap factory", typeof(CustomEntityMapFactory), context.EntityMapFactory.GetType());
+		}
+
+		#region Helper class
+
+		public class CustomEntityMapFactory : DefaultEntityMapFactory
+		{
+		}
+
+
+		#endregion
+
 
 	}
 }

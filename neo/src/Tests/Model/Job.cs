@@ -13,14 +13,14 @@ using Neo.Core;
 namespace Pubs4.Model
 {
 
-public class Job : JobBase
-{
-	protected Job(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
-		       base(aRow, aContext)
+	public class Job : JobBase
 	{
+		protected Job(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
+				base(aRow, aContext)
+		{
+		}
+			        
 	}
-		        
-}
 
 }
 

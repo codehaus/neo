@@ -157,7 +157,7 @@ namespace Neo.Framework
 		protected virtual void Insert(int index, IEntityObject eo)
 		{
 			AssertIsMutable(); 
-			InnerList.Insert(index, (IEntityObject)eo);
+			InnerList.Insert(index, eo);
 		}
 
 		protected virtual bool Contains(IEntityObject eo)

@@ -2,14 +2,14 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
-using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
-using log4net;
 using Neo.Database;
 
 
 namespace Neo.SqlClient
 {
+	[Serializable]
 	public class SqlDataStore : DbDataStore
 	{
 
@@ -17,25 +17,32 @@ namespace Neo.SqlClient
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
-		public SqlDataStore() : this(null)
+		public SqlDataStore() : base()
 		{
-		}
-
-		public SqlDataStore(string connectionString)
-		{
-			if(logger == null)
-				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
-
-			logger.Debug("Created new SqlDataStore.");
-
+			NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.sqlclient");
+			if(config == null)
+				throw new ConfigurationException("Did not find neo.sqlclient config section.");
+			String connectionString = config["connectionstring"];
 			if(connectionString == null)
-			{
-			    NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.sqlclient");
-				if(config != null)
-					connectionString = config["connectionstring"];
-			}
+				throw new ConfigurationException("Did not find connectionstring in neo.sqlclient config section.");
+			
 			implFactory = new SqlImplFactory();
 			connection = implFactory.CreateConnection(connectionString);
+	
+			logger.Debug("Created new SqlDataStore.");
+		}
+
+		public SqlDataStore(string connectionString) : base()
+		{
+			implFactory = new SqlImplFactory();
+			connection = implFactory.CreateConnection(connectionString);
+
+			logger.Debug("Created new SqlDataStore.");
+		}
+
+		protected SqlDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+			logger.Debug("Deserialized SqlDataStore.");
 		}
 
 
@@ -46,7 +53,7 @@ namespace Neo.SqlClient
 		protected override object GetFinalPk(DataRow row, IDbCommandBuilder builder)
 		{
 			object result;
-		    Type   pkType;
+			Type   pkType;
 			
 			// SELECT _SCOPE_IDENTITY AS NEW_ID in SQL8 ...
 			result = ExecuteScalar("SELECT @@IDENTITY AS NEW_ID", null);
@@ -65,7 +72,7 @@ namespace Neo.SqlClient
 
 		public virtual void ClearTable(string tableName)
 		{
-		    StringBuilder	builder;
+			StringBuilder	builder;
 
 			builder = new StringBuilder();
 			builder.Append("DELETE FROM ");

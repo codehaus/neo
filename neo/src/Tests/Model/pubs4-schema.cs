@@ -18,6 +18,7 @@ namespace Pubs4.Model
 			
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class TitleBase : EntityObject
 {
 	public readonly TitleAuthorRelation TitleAuthors;
@@ -195,6 +196,7 @@ public class TitleTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class TitleList : ObjectListBase
 {
 	public TitleList()
@@ -252,6 +254,7 @@ public class TitleList : ObjectListBase
 }
 
 
+[Serializable]
 public class TitleRelation : ObjectRelationBase
 {
 	public TitleRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -516,6 +519,7 @@ namespace Pubs4.Model
 			
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class DiscountBase : EntityObject
 {
        
@@ -607,6 +611,7 @@ public class DiscountTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class DiscountList : ObjectListBase
 {
 	public DiscountList()
@@ -664,6 +669,7 @@ public class DiscountList : ObjectListBase
 }
 
 
+[Serializable]
 public class DiscountRelation : ObjectRelationBase
 {
 	public DiscountRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -909,6 +915,7 @@ namespace Pubs4.Model
 	
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class JobBase : EntityObject
 {
        
@@ -1012,6 +1019,7 @@ public class JobTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class JobList : ObjectListBase
 {
 	public JobList()
@@ -1069,6 +1077,7 @@ public class JobList : ObjectListBase
 }
 
 
+[Serializable]
 public class JobRelation : ObjectRelationBase
 {
 	public JobRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -1301,6 +1310,7 @@ namespace Pubs4.Model
 			
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class PublisherBase : EntityObject
 {
 	public readonly TitleRelation Titles;
@@ -1418,6 +1428,7 @@ public class PublisherTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class PublisherList : ObjectListBase
 {
 	public PublisherList()
@@ -1475,6 +1486,7 @@ public class PublisherList : ObjectListBase
 }
 
 
+[Serializable]
 public class PublisherRelation : ObjectRelationBase
 {
 	public PublisherRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -1724,6 +1736,7 @@ namespace Pubs4.Model
 	
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class StoreBase : EntityObject
 {
        
@@ -1839,6 +1852,7 @@ public class StoreTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class StoreList : ObjectListBase
 {
 	public StoreList()
@@ -1896,6 +1910,7 @@ public class StoreList : ObjectListBase
 }
 
 
+[Serializable]
 public class StoreRelation : ObjectRelationBase
 {
 	public StoreRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -2134,6 +2149,7 @@ namespace Pubs4.Model
 			
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class TitleAuthorBase : EntityObject
 {
        
@@ -2213,6 +2229,7 @@ public class TitleAuthorTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class TitleAuthorList : ObjectListBase
 {
 	public TitleAuthorList()
@@ -2270,6 +2287,7 @@ public class TitleAuthorList : ObjectListBase
 }
 
 
+[Serializable]
 public class TitleAuthorRelation : ObjectRelationBase
 {
 	public TitleAuthorRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -2519,6 +2537,7 @@ namespace Pubs4.Model
 			
 //-------- Base Class ----------------------------------------------------
 
+[Serializable]
 public class AuthorBase : EntityObject
 {
 	public readonly TitleAuthorRelation TitleAuthors;
@@ -2624,6 +2643,7 @@ public class AuthorTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
+[Serializable]
 public class AuthorList : ObjectListBase
 {
 	public AuthorList()
@@ -2681,6 +2701,7 @@ public class AuthorList : ObjectListBase
 }
 
 
+[Serializable]
 public class AuthorRelation : ObjectRelationBase
 {
 	public AuthorRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)

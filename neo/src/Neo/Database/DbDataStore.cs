@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
@@ -10,7 +13,8 @@ using Neo.Core;
 
 namespace Neo.Database
 {
-	public abstract class DbDataStore : IDataStore
+	[Serializable]
+	public abstract class DbDataStore : IDataStore, ISerializable
 	{
 		//--------------------------------------------------------------------------------------
 		//	Static fields and constructor
@@ -28,7 +32,31 @@ namespace Neo.Database
 		protected IDbTransaction			transaction;
 		protected ArrayList					processedRows;
 
+		public DbDataStore()
+		{
+			if(logger == null)
+				logger = LogManager.GetLogger(this.GetType().FullName);
+		}
 
+
+		//--------------------------------------------------------------------------------------
+		//	Serialisation support
+		//--------------------------------------------------------------------------------------
+
+		protected DbDataStore(SerializationInfo info, StreamingContext context) : this()
+		{
+			Type fType = (Type)info.GetValue("implFactoryType", typeof(Type));
+			implFactory = (IDbImplementationFactory)Activator.CreateInstance(fType);
+			connection = implFactory.CreateConnection(info.GetString("connectionString"));
+		}
+
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("connectionString", connection.ConnectionString);
+			info.AddValue("implFactoryType", implFactory.GetType());
+		}
+
+	
 		//--------------------------------------------------------------------------------------
 		//	Opening and closing the connection
 		//--------------------------------------------------------------------------------------
