@@ -29,12 +29,16 @@ namespace Neo.Model.Reader
 
 		public void LoadModel(string path)
 		{
-			LoadModel(new XmlTextReader(path));
+			XmlTextReader reader = new XmlTextReader(path);
+			LoadModel(reader);
+			reader.Close();
 		}
 
 		public void LoadModel(TextReader textReader)
 		{
-			LoadModel(new XmlTextReader(textReader));
+			XmlTextReader reader = new XmlTextReader(textReader);
+			LoadModel(reader);
+			reader.Close();
 		}
 
 		protected void LoadModel(XmlTextReader xmlReader)
@@ -143,6 +147,14 @@ namespace Neo.Model.Reader
 			r.DeleteRule = GetDotNetRuleForStringValue(ValueForAttribute(el, "onDelete"), Rule.SetNull);
 
 			r.VarName = ValueForAttribute(el, "name");
+
+			foreach(IAttribute attribute in entity.Attributes)
+			{
+				if(attribute.ColumnName == r.LocalKey)
+				{
+					r.RelationshipAttributes = attribute.PropertyAttributes;
+				}
+			}
 
 			return r;
 		}
