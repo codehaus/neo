@@ -1,3 +1,21 @@
+2004-10-25 erik
+
+    * Added Arjen's PK initialiser for Guids as strings.
+    
+
+2004-10-22 erik
+
+    * Added Johannes's Firebird data store. This is now implemented 
+    in a separate project which is part of the new overall solution. 
+    
+    * The Oracle data store has also been moved from the main 
+    assembly.
+    
+    * Tests now by default run against an embedded version of 
+    Firebird which means that no external database is required in
+    order to run all the tests.
+    
+
 2004-10-18 erik
 
     * Added a new feature to ObjectContext. It now does not go to

@@ -51,7 +51,7 @@ namespace Neo.Tests.Fixtures
 			String storeClassName = GetConfigValue("store");
 			String connString = GetConfigValue("sqlconnstring");
 
-			return (IDataStore)Activator.CreateInstance(Type.GetType(storeClassName + ",Neo"), new object[] { connString });
+			return (IDataStore)Activator.CreateInstance(Type.GetType(storeClassName), new object[] { connString });
 		}
 
 

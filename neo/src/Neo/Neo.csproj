@@ -89,11 +89,6 @@
                     AssemblyName = "System.Management"
                     HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Management.dll"
                 />
-                <Reference
-                    Name = "System.Data.OracleClient"
-                    AssemblyName = "System.Data.OracleClient"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.OracleClient.dll"
-                />
             </References>
         </Build>
         <Files>
@@ -360,21 +355,6 @@
                 />
                 <File
                     RelPath = "Framework\PkInitializer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "OracleClient\OracleCommandBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "OracleClient\OracleDataStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "OracleClient\OracleImplFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

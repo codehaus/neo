@@ -79,6 +79,25 @@ namespace Neo.Framework
 
 
 	//--------------------------------------------------------------------------------------
+	//	Globally Unique Primary Keys as Strings (created by client, .NET version)
+	//--------------------------------------------------------------------------------------
+	
+	public class GuidStringPkInitializer : IPkInitializer 
+	{
+		public void InitializeRow(DataRow row, object argument) 
+		{
+			DataColumn[] pkcolumns;
+			
+			pkcolumns = row.Table.PrimaryKey;
+			if((pkcolumns.Length != 1) || (pkcolumns[0].DataType != typeof(String)))
+				throw new InvalidOperationException("Invalid PK for GuidString type.");
+			row[pkcolumns[0]] = Guid.NewGuid().ToString("N").ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+		}
+	
+	}
+	
+	
+	//--------------------------------------------------------------------------------------
 	//	Globally Unique Primary Keys (created by the client, custom version)
 	//--------------------------------------------------------------------------------------
 
@@ -163,5 +182,6 @@ namespace Neo.Framework
 		}
 
 	}
+
 
 }
