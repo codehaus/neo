@@ -9,8 +9,8 @@
 	<target name="clean">
 	 	<delete>
 			<fileset>
-				<includes name="src/**/bin"/>
-				<includes name="src/**/obj"/>
+				<includes name="**/bin"/>
+				<includes name="**/obj"/>
 			</fileset>
 		</delete>
 	</target>
@@ -18,7 +18,7 @@
 	<target name="reallyclean" depends="clean">
 	 	<delete>
 			<fileset>
-				<includes name="src/**/_Resharper*"/>
+				<includes name="**/_Resharper*"/>
 			</fileset>
 		</delete>
 	</target>
@@ -26,13 +26,13 @@
 	<target name="runtests">
 		<nunit2>
 			<formatter type="Plain" />
-			<test assemblyname="src/Tests/bin/${buildconfig}/Neo.Tests.dll" />
+			<test assemblyname="Tests/bin/${buildconfig}/Neo.Tests.dll" />
 		</nunit2>
 	</target>
 	
 	<target name="solution">
-		<solution configuration="${buildconfig}" solutionfile="src/Neo.sln" verbose="false" />
-		<copy file="src/Tests/Resources/fbembed.dll" todir="src/Tests/bin/${buildconfig}" />
+		<solution configuration="${buildconfig}" solutionfile="Neo.sln" verbose="false" />
+		<copy file="Tests/Resources/fbembed.dll" todir="Tests/bin/${buildconfig}" />
 	</target>
 		
 </project>
