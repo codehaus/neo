@@ -1,9 +1,9 @@
-using System;
 using Neo.Core;
 using Neo.Core.Qualifiers;
 using Neo.Core.Util;
 using NUnit.Framework;
 using Pubs4.Model;
+
 
 namespace Neo.Tests.Fixtures
 {
@@ -109,7 +109,7 @@ namespace Neo.Tests.Fixtures
 			PropertyQualifier propertyQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
 			AndQualifier toplevelQualifier = new AndQualifier(propertyQualifier);
 			
-			Qualifier convertedQualifier = converter.MoveEntityObjectsRecursively(toplevelQualifier, childContext);
+			converter.MoveEntityObjectsRecursively(toplevelQualifier, childContext);
 		}
 
 	}

@@ -16,7 +16,7 @@ namespace Neo.Core.Parser
 		/// <param name="message">Reason for the error</param>
 		/// <param name="tokenizer"><c>Tokenizer</c> positioned at the error</param>
 		public QualifierParserException(string message, Tokenizer tokenizer) :
-			base(String.Format("{0} position {1} in \"{2}\"", message, tokenizer.Position, tokenizer.Input))
+			base(String.Format("{0} (position {1} in \"{2}\")", message, tokenizer.Position, tokenizer.Input))
 		{
 		}
 

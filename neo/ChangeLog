@@ -1,3 +1,8 @@
+2004-01-26 erik
+
+	* Added null keyword support in qualifier formats and cleaned up
+	some fixtures.
+
 
 2004-11-11 erik (proxy)
 

@@ -135,6 +135,8 @@ namespace Neo.Core.Parser
 				return new Token(TokenType.Conjunctor, typeof(OrQualifier));
 			else if(lowerVal == "like")
 				return new Token(TokenType.Operator, typeof(LikePredicate));
+			else if(lowerVal == "null")
+				return new Token(TokenType.Constant, null);
 	
 			return new Token(TokenType.String, val);
 		}
