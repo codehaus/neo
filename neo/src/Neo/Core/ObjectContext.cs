@@ -191,10 +191,13 @@ namespace Neo.Core
 
 		
 		/// <summary>
-		/// Marks row as being processed and to be ignored
+		/// Marks row as being processed and change events for it to be ignored
 		/// </summary>
 		/// <remarks>
-		/// Internal framework usage only.
+		// This is used during object creation because for some objects the PK is also a FK
+		// and when the PK is set in the row the context doesn't have the corresponding object 
+		// for that row in its tables and thus observers wouldn't be able to look it up. The 
+		// context resends the events after its data structures are okay.
 		/// </remarks>
 		protected internal DataRow RowPending
 		{
@@ -1118,18 +1121,18 @@ namespace Neo.Core
 				foreach(DataRow row in relation.ChildTable.Rows)
 				{
 					DataColumn				  fkColumn;
-					object					  prevValue;
+					object					  newValue;
 					DataColumnChangeEventArgs eventArg;
 
 					if((row.RowState == DataRowState.Deleted) || (row.RowState == DataRowState.Detached))
 						continue;
 					fkColumn = relation.ChildColumns[0];
-					prevValue = row[fkColumn];
+					newValue = row[fkColumn];
 					// the rows have the values in original/current but the values should be in
 					// current/proposed, so undo the last accept...
 					if(row.RowState == DataRowState.Modified)
 						row.RejectChanges();
-					eventArg = new DataColumnChangeEventArgs(row, row.Table.Columns[fkColumn.ColumnName], prevValue);
+					eventArg = new DataColumnChangeEventArgs(row, row.Table.Columns[fkColumn.ColumnName], newValue);
 					OnColumnChanging(mainDataSet.Tables[row.Table.TableName], eventArg);
 				}
 			}

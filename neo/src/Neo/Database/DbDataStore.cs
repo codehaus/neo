@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.Serialization;
@@ -83,7 +81,7 @@ namespace Neo.Database
 
 		protected string GetConnectionStringForLogging()
 		{
-		    Regex rpwd = new Regex("(?<key>.*[Pp]ass.*?)=.*");
+			Regex rpwd = new Regex("(?<key>.*[Pp]ass.*?)=.*");
 			ArrayList partList = new ArrayList();
 			foreach(string part in connection.ConnectionString.Split(';'))
 			{
@@ -216,7 +214,7 @@ namespace Neo.Database
 				childFirstTables.Reverse();
 				ProcessDeletes(childFirstTables);
 
-			    StringBuilder errorString = new StringBuilder();
+				StringBuilder errorString = new StringBuilder();
 				foreach(DataTable t in context.DataSet.Tables)
 				{
 					if(t.HasErrors)

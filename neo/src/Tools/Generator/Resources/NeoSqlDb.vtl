@@ -1,8 +1,8 @@
 
 #foreach($entity in $Neo.Model.Entities)
 #foreach($rel in $entity.ToOneRelationships)
-IF EXISTS(SELECT * FROM dbo.sysobjects WHERE id = object_id(N'pk_${entity.TableName}_${rel.VarName}') AND OBJECTPROPERTY(id, N'IsConstraint') = 1)
-	ALTER TABLE $entity.TableName DROP CONSTRAINT pk_${entity.TableName}_${rel.VarName};
+IF EXISTS(SELECT * FROM dbo.sysobjects WHERE id = object_id(N'fk_${entity.TableName}_${rel.VarName}') AND OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE $entity.TableName DROP CONSTRAINT fk_${entity.TableName}_${rel.VarName};
 
 #end
 #end
@@ -17,7 +17,7 @@ IF EXISTS(SELECT * FROM dbo.sysobjects WHERE id = object_id(N'$entity.TableName'
 CREATE TABLE $entity.TableName
 (
 #foreach($attribute in $entity.Attributes)
-	$attribute.ColumnName $attribute.ColumnType#if($attribute.Size)($attribute.Size)#end#if(!$attribue.AllowsNull) NOT NULL#end,
+	$attribute.ColumnName $attribute.ColumnType#if($attribute.Size)($attribute.Size)#end#if($attribute.IsPkColumn && $entity.IdMethod.ToString == "Native") IDENTITY#end#if(!$attribute.AllowsNull) NOT NULL#end,
 #end
 
 	CONSTRAINT pk_$entity.TableName PRIMARY KEY ( #foreach($column in $entity.PkColumns)#if( $velocityCount > 1), #end$column.ColumnName#end )
@@ -27,12 +27,9 @@ CREATE TABLE $entity.TableName
 
 #foreach($entity in $Neo.Model.Entities)
 #if($entity.ToOneRelationships.Count > 0)
-ALTER TABLE $entity.TableName
-(
 #foreach($rel in $entity.ToOneRelationships)
-	ADD CONSTRAINT pk_${entity.TableName}_${rel.VarName} FOREIGN KEY ( $rel.LocalKey ) REFERENCES $rel.ForeignEntity.TableName ( $rel.ForeignKey ) 
+ALTER TABLE $entity.TableName ADD CONSTRAINT fk_${entity.TableName}_${rel.VarName} FOREIGN KEY ( $rel.LocalKey ) REFERENCES $rel.ForeignEntity.TableName ( $rel.ForeignKey ); 
 #end
-);
 
 #end
 #end

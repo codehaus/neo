@@ -39,6 +39,25 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void ListHandlesPkChanges()
+		{
+			// I know that these PKs are not meant to change but when you work 
+			// with db generated keys these do change on save and we need to be
+			// able to handle this case.
+
+			Title		title;
+			int			countBefore;
+
+			title = new TitleFactory(context).FindObject("MC3021");
+			countBefore = title.TitleAuthors.Count;
+
+			title.TitleId = "XX9999";
+
+			Assertion.AssertEquals("Should have kept list same", countBefore, title.TitleAuthors.Count);
+		}
+
+
+		[Test]
 		public void SendsNotifcationOnFirstAccess()
 		{
 			Publisher		publisher;

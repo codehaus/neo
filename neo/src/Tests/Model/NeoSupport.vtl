@@ -15,7 +15,6 @@ namespace $Neo.Entity.Namespace
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 	#foreach($ns in $entity.UsedNamespaces)
@@ -63,7 +62,7 @@ public class ${entity.ClassName}Base : EntityObject
 	public virtual $rel.ForeignEntity.ClassName $rel.DotNetName
 	{
 		get { object v = Row["$rel.LocalKey"]; return (v == DBNull.Value) ? null : ($rel.ForeignEntity.ClassName)Context.GetObjectFromTable("$rel.ForeignEntity.TableName", new object[] { v }); }
-		set { Row["$rel.LocalKey"] = (value != null) ? value.Row["$rel.ForeignKey"] : null; }
+		set { Row["$rel.LocalKey"] = (value != null) ? value.Row["$rel.ForeignKey"] : DBNull.Value; }
 	}
 
 #end

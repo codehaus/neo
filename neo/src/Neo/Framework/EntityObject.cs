@@ -136,7 +136,7 @@ namespace Neo.Framework
 		    ObjectHelper.SetProperty(this, propName, propValue);
 		}
 
-		public object GetProperty(string propName)
+		public virtual object GetProperty(string propName)
 		{
 			return ObjectHelper.GetProperty(this, propName);
 		}
