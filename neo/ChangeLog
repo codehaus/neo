@@ -1,3 +1,15 @@
+2004-10-14 erik
+
+	* Improved qualifier parser error reporting.
+
+
+2004-10-11 jim
+
+    * Moved object instantiation into entity map so that it can be
+    overridden. The updated templates in the test suite show how
+    to improve object generation performance.
+
+
 2004-10-06 erik
 
     * Added Dave's algorithm to sort tables for insert/update and

@@ -7,8 +7,8 @@ namespace Neo.Core.Parser
 	[System.Serializable]
 	public class QualifierParserException : NeoException
 	{
-		public QualifierParserException(string message, int position) :
-			base(String.Format("position {0}: {1}", position, message))
+		public QualifierParserException(string message, Tokenizer tokenizer) :
+			base(String.Format("{0} position {1} in \"{2}\"", message, tokenizer.Position, tokenizer.Input))
 		{
 		}
 

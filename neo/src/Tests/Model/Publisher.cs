@@ -5,7 +5,6 @@
 // it will not be overwritten unless explicitly requested.
 //------------------------------------------------------------------------
 
-using System;
 using System.Data;
 using Neo.Core;
 
@@ -15,7 +14,7 @@ namespace Pubs4.Model
 
 	public class Publisher : PublisherBase
 	{
-		protected Publisher(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : 
+		protected internal Publisher(DataRow aRow, ObjectContext aContext) : 
 				base(aRow, aContext)
 		{
 		}

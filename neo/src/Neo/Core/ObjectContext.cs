@@ -407,7 +407,7 @@ namespace Neo.Core
 			// If we don't have an object yet, create it.
 			if((eo = objectTable.GetObject(oid)) == null)
 			{
-				eo = CreateEntityObjectInstance(aRow, emap);
+				eo = emap.CreateInstance(aRow, this);
 				objectTable.AddObject(oid, eo);
 			}
 			else
@@ -418,18 +418,10 @@ namespace Neo.Core
 			}
 			else
 			{
-				eo = CreateEntityObjectInstance(aRow, emap);
+				eo = emap.CreateInstance(aRow, this);
 				objectTable.AddDeletedObject(oid, eo);
 			}
 			return eo;
-		}
-
-
-		protected virtual IEntityObject CreateEntityObjectInstance(DataRow row, IEntityMap emap)
-		{
-			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-			object[] args = { row, this };
-			return (IEntityObject)Activator.CreateInstance(emap.ConcreteObjectType, bflags, null, args, null);
 		}
 
 

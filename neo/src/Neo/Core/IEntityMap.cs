@@ -64,6 +64,14 @@ namespace Neo.Core
 		string GetColumnForAttribute(string attribute);
 
 		/// <summary>
+		/// Creates an instance for this entity, a blank entity object
+		/// </summary>
+		/// <param name="row">The row that is represented by this object</param>
+		/// <param name="context">The context with which the object is associated with</param>
+		/// <returns></returns>
+		IEntityObject CreateInstance(DataRow row, ObjectContext context);
+
+		/// <summary>
 		/// Adds or updates ADO.NET schema information for the entity to the data set.
 		/// </summary>
 		/// <param name="aDataSet">The dataset to work on</param>

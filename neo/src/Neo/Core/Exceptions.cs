@@ -152,4 +152,26 @@ namespace Neo.Core
 	}
 
 
+	/// <summary>
+	/// Thrown when a query is invalid, for various reasons
+	/// </summary>
+	[Serializable]
+	public class InvalidQueryException : NeoException
+	{
+		internal InvalidQueryException(string message) : base(message)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the InvalidQueryException class with serialized data.
+		/// </summary>
+		/// <param name="si">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
+		protected InvalidQueryException(SerializationInfo si, StreamingContext sc) : base(si, sc)
+		{
+		}
+
+	}
+
+
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Reflection;
 using Neo.Core;
 
 
@@ -63,13 +64,13 @@ namespace Neo.Framework
 		}
 
 		
-		public abstract IPkInitializer GetPkInitializer();
-
-		
 		public abstract string[] RelatedTables
 		{
 			get;
 		}
+
+
+		public abstract IPkInitializer GetPkInitializer();
 
 
 		//--------------------------------------------------------------------------------------
@@ -99,6 +100,18 @@ namespace Neo.Framework
 		}
 		
 		
+		//--------------------------------------------------------------------------------------
+		//	Object Instantiation
+		//--------------------------------------------------------------------------------------
+
+		public virtual IEntityObject CreateInstance(DataRow row, ObjectContext context)
+		{
+			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			object[] args = { row, context };
+			return (IEntityObject)Activator.CreateInstance(ConcreteObjectType, bflags, null, args, null);
+		}
+
+
 		//--------------------------------------------------------------------------------------
 		//	Schema generation
 		//--------------------------------------------------------------------------------------

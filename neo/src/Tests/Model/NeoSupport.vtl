@@ -1,4 +1,7 @@
-/* This is a customised template for testing with Mocks. Search for #custom# below. */
+/* This is a customised template.
+ * It overrides some optional methods from EntityMap to allow for testing 
+ * with Mocks and fast object creation. Search for #custom# below. 
+ */
 
 #set($entity = $Neo.Entity)
 //------------------------------------------------------------------------
@@ -410,6 +413,11 @@ internal class ${entity.ClassName}Map : EntityMap
         get { return attributes; }
     }
 
+   public override string[] RelatedTables
+    {
+		get { return new string[] {#foreach($rel in $entity.Relationships)#if( $velocityCount > 1),#end "$rel.ForeignEntity.TableName"#end }; }
+	}
+    
 	public override IPkInitializer GetPkInitializer()
 	{
 #if($entity.IdMethod.ToString == "None")
@@ -422,13 +430,15 @@ internal class ${entity.ClassName}Map : EntityMap
 		return new UuidType4PkInitializer();
 #end
 	}
-    
-    public override string[] RelatedTables
-    {
-		get { return new string[] {#foreach($rel in $entity.Relationships)#if( $velocityCount > 1),#end "$rel.ForeignEntity.TableName"#end }; }
+	
+	public override IEntityObject CreateInstance(DataRow row, ObjectContext context) /* #custom# overridden */
+	{
+		if(ConcreteObjectType != ObjectType)
+			return base.CreateInstance(row, context);
+		return new ${entity.ClassName}(row, context);
 	}
     
-    protected override void WriteBasicSchema(DataTable table)
+     protected override void WriteBasicSchema(DataTable table)
     {
 		DataColumn		c;
 		

@@ -42,7 +42,7 @@ namespace Neo.Core.Parser
 			}
 
 			if(stack.Count != 1)
-				throw new QualifierParserException("Syntax error.", tokenizer.Position);
+				throw new QualifierParserException("Syntax error.", tokenizer);
 			
 			if(stack.Peek().Type == TokenType.String)
 			{
@@ -52,7 +52,7 @@ namespace Neo.Core.Parser
 			{
 				qualifier = stack.PopValue() as Qualifier;
 				if(qualifier == null)
-					throw new QualifierParserException("Syntax error.", tokenizer.Position);
+					throw new QualifierParserException("Syntax error.", tokenizer);
 			}
 
 			return qualifier;
@@ -130,7 +130,7 @@ namespace Neo.Core.Parser
 				Type pt = (Type)stack.PopValue();
 
 				if((str != "true") && (str != "false"))
-					throw new QualifierParserException("Invalid right hand side for comparison; found " + str, tokenizer.Position);
+					throw new QualifierParserException("Invalid right hand side for comparison; found " + str, tokenizer);
 
 				IPredicate pred = (IPredicate)Activator.CreateInstance(pt, new object[] { (str == "true") } );
 				token = new Token(TokenType.Predicate, pred);

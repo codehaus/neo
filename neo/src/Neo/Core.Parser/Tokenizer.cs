@@ -25,6 +25,11 @@ namespace Neo.Core.Parser
 		//	Accessors
 		//--------------------------------------------------------------------------------------
 
+		public string Input
+		{
+			get { return input; }
+		}
+
 		public int Position
 		{
 			get { return position; }
@@ -43,7 +48,7 @@ namespace Neo.Core.Parser
 		protected char GetCurrentChar()
 		{
 			if(position == input.Length)
-				throw new QualifierParserException("Unexpected end of input.", position);
+				throw new QualifierParserException("Unexpected end of input.", this);
 			return input[position];
 		}
 
@@ -108,8 +113,7 @@ namespace Neo.Core.Parser
 			}
 			else
 			{
-				throw new QualifierParserException(String.Format("Invalid start character for token; found {0}", c),
-					position);
+				throw new QualifierParserException(String.Format("Invalid start character for token; found {0}", c), this);
 			}
 			return token;
 		}
@@ -169,7 +173,7 @@ namespace Neo.Core.Parser
 			}
 			else
 			{
-				throw new QualifierParserException("Unknown operator; found: " + c, position);
+				throw new QualifierParserException("Unknown operator; found: " + c, this);
 			}
 			return new Token(TokenType.Operator, pt);
 		}
@@ -192,7 +196,7 @@ namespace Neo.Core.Parser
 			while(Char.IsDigit(GetCurrentChar()))
 				MoveNextChar();
 			if(GetCurrentChar() != '}')
-				throw new QualifierParserException("Invalid argument reference.", position);
+				throw new QualifierParserException("Invalid argument reference.", this);
 			MoveNextChar();
 			string val = input.Substring(start + 1, position - start - 2);
 			return new Token(TokenType.ParamRef, Convert.ToInt32(val));
