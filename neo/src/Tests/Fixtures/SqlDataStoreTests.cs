@@ -27,7 +27,11 @@ namespace Neo.Tests
 			store = GetDataStore();
 
 			dataset = new DataSet();
+			dataset.EnforceConstraints = false;
+			
 			jobOnlyDataSet = new DataSet();
+			jobOnlyDataSet.EnforceConstraints = false;
+
 			emapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
 			titleTable = dataset.Tables["titles"];
 			emapFactory.GetMap(typeof(Job)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
@@ -173,14 +177,60 @@ namespace Neo.Tests
 			{
 				tables.Add(new OrderTable(t));
 			}
-
 			store.ProcessInserts(tables, changeTables);
 			changeTable = (PkChangeTable) changeTables[0];
 			finalId = (System.Int16)newRow["job_id"];
 			store.RollbackTransaction();
+
 			Assertion.AssertEquals("Inconsistent old value in change table.", tempId, changeTable[0].OldValue);
 			Assertion.AssertEquals("Inconsistent new value in change table.", finalId, changeTable[0].NewValue);
 		}
+
+
+		[Test]
+		public void InsertIntoTableWithIdentityColumnPropagatesNewKey()
+		{
+			DataTable	  jobRefTable;
+			DataColumn	  column;
+			DataRelation  relation;
+			DataRow		  newJobRow, newJobRefRow;
+			int			  tempId, finalId, finalForeignId;
+
+
+			jobTable = jobOnlyDataSet.Tables["jobs"];
+			// for this test we also need a completely new entity with a relation to job_id
+			jobRefTable = jobOnlyDataSet.Tables.Add("jobrefs");
+			column = jobRefTable.Columns.Add("job_id", typeof(System.Int16));
+			column = jobRefTable.Columns.Add("ref_id", typeof(System.String));
+			column.Unique = true;
+			jobRefTable.PrimaryKey = new DataColumn[] { column };
+			relation = jobOnlyDataSet.Relations.Add("jobs.jobrefs", jobTable.Columns["job_id"], jobRefTable.Columns["job_id"]);
+			relation.ChildKeyConstraint.UpdateRule = Rule.Cascade;
+			relation.ChildKeyConstraint.DeleteRule = Rule.Cascade;
+
+			newJobRow = jobTable.NewRow();
+			newJobRow["job_desc"] = "Test row for automated tests";
+			newJobRow["min_lvl"] = 100;
+			newJobRow["max_lvl"] = 200;
+			jobTable.Rows.Add(newJobRow);
+			tempId = (System.Int16)newJobRow["job_id"];
+			newJobRefRow = jobRefTable.NewRow();
+			newJobRefRow["ref_id"] = "FOO1";
+			newJobRefRow["job_id"] = tempId;
+			jobRefTable.Rows.Add(newJobRefRow);
+
+			store.BeginTransaction();
+			ArrayList tables = new ArrayList();
+			tables.Add(new OrderTable(jobTable));
+			store.ProcessInserts(tables, new ArrayList());
+			finalId = (System.Int16)newJobRow["job_id"];
+			finalForeignId = (System.Int16)newJobRefRow["job_id"];
+			store.RollbackTransaction();
+
+			Assertion.Assert("Final id should be different from temp id.", finalId.Equals(tempId) == false);
+			Assertion.AssertEquals("Value should be propagated to child table.", finalId, finalForeignId);
+		}
+
 
 		[Test]
 		public void PkChangeTableListNotPopulatedIfNoPrimaryKeyGeneration()
