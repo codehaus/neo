@@ -19,7 +19,7 @@ using System.Reflection;
 // a mail to dev@neo.codehaus.org
 //
 
-[assembly: AssemblyVersion("1.2.4.*")]
+[assembly: AssemblyVersion("1.3.0.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
