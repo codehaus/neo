@@ -55,7 +55,3 @@ using log4net.Config;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
-
-
-
-[assembly: Domain(UseDefaultDomain=true)]
