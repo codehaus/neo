@@ -12,21 +12,23 @@
 
 <p class="body">This project's CVS repository can be checked out through anonymous (pserver) CVS with the following commands. When prompted for a password for anonymous, simply press the Enter key.</p> 
 
-<p class="code">cvs -d :pserver:anonymous@cvs.codehaus.org:/cvsroot/neo login</p>
-<p class="code">cvs -z3 -d :pserver:anonymous@cvs.codehaus.org:/cvsroot/neo co neo</p>
+<p class="code">cvs -d :pserver:anonymous@cvs.neo.codehaus.org:/scm/neo login</p>
+<p class="code">cvs -z3 -d :pserver:anonymous@cvs.neo.codehaus.org:/scm/neo co neo</p>
 
 <p class="body">Updates from within the module's directory do not need the -d parameter.</p>
 
-<p class="body">Note that the source distributions already contain the required CVS directories. All you need to do to keep up to date after downloading a distribution is to log in using the first command above (once) and then use the following command from within the toplevel neo directory:</p>
+<p class="body">The source distributions already contain the required CVS directories. All you need to do to keep up to date after downloading a distribution is to log in using the first command above (once) and then use the following command from within the toplevel neo directory:</p>
 
 <p class="code">cvs -z3 update neo</p>
+
+<p class="body"><b>Important note:</b> The repository has changed between the 1.1.1 and 1.2.0 releases. If you are working with a 1.1 release please download a zipped distribution or check out the new version as described above.
 
 
 <p class="heading1">Browse source</p>
 
 <p class="body">You can browse the source code and all its versions online at:</p>
-<p class="code"><a href="http://cvs.codehaus.org/viewcvs.cgi/?root=neo">http://cvs.codehaus.org/viewcvs.cgi/?root=neo</a></p>
+<p class="code"><a href="http://cvs.neo.codehaus.org/">http://cvs.neo.codehaus.org</a></p>
 <p class="body">This might help you decide whether you want to update to a new version.</p>
 
-<p class="footer">$Id: download.html,v 1.3 2004-01-17 17:13:04 erik Exp $</p>
+<p class="footer">$Id: download.html,v 1.4 2004-06-08 20:41:34 erik Exp $</p>
 
