@@ -12,13 +12,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 			
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class TitleBase : EntityObject
 {
 	public readonly TitleAuthorRelation TitleAuthors;
@@ -86,11 +84,35 @@ public class TitleBase : EntityObject
 	public virtual Publisher Publisher
 	{
 		get { object v = Row["pub_id"]; return (v == DBNull.Value) ? null : (Publisher)Context.GetObjectFromTable("publishers", new object[] { v }); }
-		set { Row["pub_id"] = (value != null) ? value.Row["pub_id"] : null; }
+		set { Row["pub_id"] = (value != null) ? value.Row["pub_id"] : DBNull.Value; }
 	}
 
 
+	public override object GetProperty(string propName)
+	{
+		if(propName == "Type") 
+			return Type;
+		if(propName == "Royalty") 
+			return Royalty;
+		if(propName == "Price") 
+			return Price;
+		if(propName == "TitleId") 
+			return TitleId;
+		if(propName == "Notes") 
+			return Notes;
+		if(propName == "Advance") 
+			return Advance;
+		if(propName == "PublicationDate") 
+			return PublicationDate;
+		if(propName == "TheTitle") 
+			return TheTitle;
+		if(propName == "YtdSales") 
+			return YtdSales;
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -196,7 +218,6 @@ public class TitleTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class TitleList : ObjectListBase
 {
 	public TitleList()
@@ -254,7 +275,6 @@ public class TitleList : ObjectListBase
 }
 
 
-[Serializable]
 public class TitleRelation : ObjectRelationBase
 {
 	public TitleRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -513,13 +533,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 			
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class DiscountBase : EntityObject
 {
        
@@ -543,11 +561,21 @@ public class DiscountBase : EntityObject
 	public virtual Store Store
 	{
 		get { object v = Row["stor_id"]; return (v == DBNull.Value) ? null : (Store)Context.GetObjectFromTable("stores", new object[] { v }); }
-		set { Row["stor_id"] = (value != null) ? value.Row["stor_id"] : null; }
+		set { Row["stor_id"] = (value != null) ? value.Row["stor_id"] : DBNull.Value; }
 	}
 
 
+	public override object GetProperty(string propName)
+	{
+		if(propName == "DiscountType") 
+			return DiscountType;
+		if(propName == "Value") 
+			return Value;
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -611,7 +639,6 @@ public class DiscountTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class DiscountList : ObjectListBase
 {
 	public DiscountList()
@@ -669,7 +696,6 @@ public class DiscountList : ObjectListBase
 }
 
 
-[Serializable]
 public class DiscountRelation : ObjectRelationBase
 {
 	public DiscountRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -909,13 +935,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 	
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class JobBase : EntityObject
 {
        
@@ -949,7 +973,21 @@ public class JobBase : EntityObject
 
 
 
+	public override object GetProperty(string propName)
+	{
+		if(propName == "Description") 
+			return Description;
+		if(propName == "JobId") 
+			return JobId;
+		if(propName == "MaxLevel") 
+			return MaxLevel;
+		if(propName == "MinLevel") 
+			return MinLevel;
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -1019,7 +1057,6 @@ public class JobTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class JobList : ObjectListBase
 {
 	public JobList()
@@ -1077,7 +1114,6 @@ public class JobList : ObjectListBase
 }
 
 
-[Serializable]
 public class JobRelation : ObjectRelationBase
 {
 	public JobRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -1304,13 +1340,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 			
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class PublisherBase : EntityObject
 {
 	public readonly TitleRelation Titles;
@@ -1352,7 +1386,23 @@ public class PublisherBase : EntityObject
 
 
 
+	public override object GetProperty(string propName)
+	{
+		if(propName == "Name") 
+			return Name;
+		if(propName == "State") 
+			return State;
+		if(propName == "PubId") 
+			return PubId;
+		if(propName == "Country") 
+			return Country;
+		if(propName == "City") 
+			return City;
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -1428,7 +1478,6 @@ public class PublisherTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class PublisherList : ObjectListBase
 {
 	public PublisherList()
@@ -1486,7 +1535,6 @@ public class PublisherList : ObjectListBase
 }
 
 
-[Serializable]
 public class PublisherRelation : ObjectRelationBase
 {
 	public PublisherRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -1730,13 +1778,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 	
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class StoreBase : EntityObject
 {
        
@@ -1776,7 +1822,23 @@ public class StoreBase : EntityObject
 
 
 
+	public override object GetProperty(string propName)
+	{
+		if(propName == "Name") 
+			return Name;
+		if(propName == "Address") 
+			return Address;
+		if(propName == "State") 
+			return State;
+		if(propName == "Zip") 
+			return Zip;
+		if(propName == "City") 
+			return City;
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -1852,7 +1914,6 @@ public class StoreTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class StoreList : ObjectListBase
 {
 	public StoreList()
@@ -1910,7 +1971,6 @@ public class StoreList : ObjectListBase
 }
 
 
-[Serializable]
 public class StoreRelation : ObjectRelationBase
 {
 	public StoreRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -2143,13 +2203,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 			
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class TitleAuthorBase : EntityObject
 {
        
@@ -2161,17 +2219,23 @@ public class TitleAuthorBase : EntityObject
 	public virtual Title Title
 	{
 		get { object v = Row["title_id"]; return (v == DBNull.Value) ? null : (Title)Context.GetObjectFromTable("titles", new object[] { v }); }
-		set { Row["title_id"] = (value != null) ? value.Row["title_id"] : null; }
+		set { Row["title_id"] = (value != null) ? value.Row["title_id"] : DBNull.Value; }
 	}
 
 	public virtual Author Author
 	{
 		get { object v = Row["au_id"]; return (v == DBNull.Value) ? null : (Author)Context.GetObjectFromTable("authors", new object[] { v }); }
-		set { Row["au_id"] = (value != null) ? value.Row["au_id"] : null; }
+		set { Row["au_id"] = (value != null) ? value.Row["au_id"] : DBNull.Value; }
 	}
 
 
+	public override object GetProperty(string propName)
+	{
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -2229,7 +2293,6 @@ public class TitleAuthorTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class TitleAuthorList : ObjectListBase
 {
 	public TitleAuthorList()
@@ -2287,7 +2350,6 @@ public class TitleAuthorList : ObjectListBase
 }
 
 
-[Serializable]
 public class TitleAuthorRelation : ObjectRelationBase
 {
 	public TitleAuthorRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
@@ -2531,13 +2593,11 @@ namespace Pubs4.Model
 	using System.Collections;
 	using System.Collections.Specialized;
 	using System.Data;
-	using System.Data.Common;
 	using Neo.Core;
 	using Neo.Framework;
 			
 //-------- Base Class ----------------------------------------------------
 
-[Serializable]
 public class AuthorBase : EntityObject
 {
 	public readonly TitleAuthorRelation TitleAuthors;
@@ -2573,7 +2633,21 @@ public class AuthorBase : EntityObject
 
 
 
+	public override object GetProperty(string propName)
+	{
+		if(propName == "ContractSigned") 
+			return ContractSigned;
+		if(propName == "FirstName") 
+			return FirstName;
+		if(propName == "Phone") 
+			return Phone;
+		if(propName == "LastName") 
+			return LastName;
+		return base.GetProperty(propName);
+	}
+
 }
+
 
 //-------- Query Template ------------------------------------------------
 
@@ -2643,7 +2717,6 @@ public class AuthorTemplate : IFetchSpecification
 
 //-------- Typed Collections ----------------------------------------------
 
-[Serializable]
 public class AuthorList : ObjectListBase
 {
 	public AuthorList()
@@ -2701,7 +2774,6 @@ public class AuthorList : ObjectListBase
 }
 
 
-[Serializable]
 public class AuthorRelation : ObjectRelationBase
 {
 	public AuthorRelation(IEntityObject eo, DataRelation aRelation) : base(eo, aRelation)
