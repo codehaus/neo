@@ -3,7 +3,10 @@ using System;
 
 namespace Neo.Core.Qualifiers
 {
-
+	/// <summary>
+	/// A qualifier that compares a value to the value stored in a given column of the 
+	/// <c>DataRow</c> that underlies the <c>EntityObject</c>.
+	/// </summary>
 	public sealed class ColumnQualifier : Qualifier
 	{
 		//--------------------------------------------------------------------------------------

@@ -6,6 +6,10 @@ using Neo.Core.Util;
 
 namespace Neo.Core.Qualifiers
 {
+	/// <summary>
+	/// A qualifier that describes a path of relations to follow before evaluating another
+	/// qualifier.
+	/// </summary>
 	public sealed class PathQualifier : Qualifier, IObjectQualifier
 	{
 		//--------------------------------------------------------------------------------------

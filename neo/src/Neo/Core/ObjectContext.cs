@@ -62,7 +62,7 @@ namespace Neo.Core
 		protected RowChangeBroker	rowChangeBroker;
 
 		/// <summary>
-		/// Default constructor. Creates empty context with <c>DefaultEntityMapFactory</c>.
+		/// Creates empty context which uses the <c>DefaultEntityMapFactory</c>.
 		/// </summary>
 		public ObjectContext()
 		{

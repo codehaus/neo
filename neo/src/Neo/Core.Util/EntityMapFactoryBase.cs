@@ -115,6 +115,16 @@ namespace Neo.Core.Util
 		//	IEntityMapFactory impl
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Adds a custom mapping from an object type to an <c>EntityMap</c>.
+		/// </summary>
+		/// <remarks>
+		/// Most of the mappings are defined by the EntityMaps that are created by the factory.
+		/// Certain additional mappings, for mocks or stubs for example, may be required at
+		/// runtime.
+		/// </remarks>
+		/// <param name="objType">the type</param>
+		/// <param name="map">the entity map</param>
 		public virtual void AddCustomType(Type objType, IEntityMap map)
 		{
 			mapByObjectTypeTable[objType] = map;

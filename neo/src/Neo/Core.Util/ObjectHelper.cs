@@ -6,6 +6,9 @@ using log4net;
 
 namespace Neo.Core.Util
 {
+	/// <summary>
+	/// Class containing several static methods that 
+	/// </summary>
 	public class ObjectHelper
 	{
 		protected static ILog logger;

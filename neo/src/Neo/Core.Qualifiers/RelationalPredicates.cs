@@ -7,6 +7,10 @@ namespace Neo.Core.Qualifiers
 	//	Base class for relational predicates (abstract)
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Abstract base class for predicates that compare values, i.e. determine the ordering
+	/// of two values.
+	/// </summary>
 	public abstract class RelationalPredicateBase : IMutablePredicate
 	{
 		protected IComparable predValue;
@@ -54,6 +58,10 @@ namespace Neo.Core.Qualifiers
 	//	LessThan
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the value is less than the value stored in the 
+	/// predicate.
+	/// </summary>
 	public class LessThanPredicate : RelationalPredicateBase, IPredicate
 	{
 		public LessThanPredicate(IComparable aValue) : base(aValue)
@@ -77,6 +85,10 @@ namespace Neo.Core.Qualifiers
 	//	GreaterThan
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the value is greater than the value stored in the 
+	/// predicate.
+	/// </summary>
 	public class GreaterThanPredicate : RelationalPredicateBase, IPredicate
 	{
 		public GreaterThanPredicate(IComparable aValue) : base(aValue)
@@ -100,6 +112,10 @@ namespace Neo.Core.Qualifiers
 	//	GreaterOrEqual
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the value is greater or equal to the value stored in 
+	/// the predicate.
+	/// </summary>
 	public class GreaterOrEqualPredicate : RelationalPredicateBase, IPredicate
 	{
 		public GreaterOrEqualPredicate(IComparable aValue) : base(aValue)
@@ -124,6 +140,10 @@ namespace Neo.Core.Qualifiers
 	//	LessOrEqual
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the value is less or equal to the value stored in 
+	/// the predicate.
+	/// </summary>
 	public class LessOrEqualPredicate : RelationalPredicateBase, IPredicate
 	{
 		public LessOrEqualPredicate(IComparable aValue) : base(aValue)

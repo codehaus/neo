@@ -38,7 +38,7 @@
 	</target>
 	
 	<target name="ndoc" >
-		<ndoc verbose="true">
+		<ndoc verbose="false">
 	        <assemblies basedir="${builddir}">
 	              <includes name="Neo.dll" />
 	        </assemblies>

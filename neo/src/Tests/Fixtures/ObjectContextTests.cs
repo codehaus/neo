@@ -543,6 +543,8 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(expectedNumberOfDeletedObjects, newContext.GetDeletedObjects().Count);
 		}
 
+		#region Helper method
+
 		private int CountRows(DataSet dataSet)
 		{
 			int count = 0;
@@ -555,6 +557,7 @@ namespace Neo.Tests.Fixtures
 			return count;
 		}
 
+		#endregion
 
 		[Test]
 		public void DoesNotRefetchFromStoreAfterFullTableFetch()
@@ -570,9 +573,11 @@ namespace Neo.Tests.Fixtures
 			storeMock.ExpectAndReturn("FetchRows", resultTable, new IsAnything());
 			context.GetObjects(fetchSpec);
 
+			// We are fetching again, the mock doesn't expect to be called.
 			context.GetObjects(fetchSpec);
 
 			storeMock.Verify();
 		}
+
 	}
 }

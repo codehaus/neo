@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Neo.Core.Qualifiers
 {
-	
+	/// <summary>
+	/// Abstract base class for qualifiers that combines a number of qualifiers.
+	/// </summary>
 	public abstract class ClauseQualifier : Qualifier
 	{
 		//--------------------------------------------------------------------------------------

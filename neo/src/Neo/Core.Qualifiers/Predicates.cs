@@ -8,6 +8,10 @@ namespace Neo.Core.Qualifiers
 	//	Equals
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the value is equal to the value stored in the 
+	/// predicate.
+	/// </summary>
 	public class EqualsPredicate : IMutablePredicate
 	{
 		protected object predValue;
@@ -51,6 +55,10 @@ namespace Neo.Core.Qualifiers
 	//	NotEqual
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the value is not equal to the value stored in the 
+	/// predicate.
+	/// </summary>
 	public class NotEqualPredicate : EqualsPredicate
 	{
 		public NotEqualPredicate(object aValue) : base(aValue)

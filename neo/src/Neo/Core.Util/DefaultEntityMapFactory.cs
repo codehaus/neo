@@ -8,10 +8,10 @@ using log4net;
 namespace Neo.Core.Util
 {
 	/// <summary>
-	/// Default concrete implementation of IEntityMapFactory
+	/// Default implementation of IEntityMapFactory.
 	/// </summary>
 	/// <remarks>
-	/// Uses the singleton pattern to hold maps in memory once they have been processed.
+	/// Caches entity maps in memory.
 	/// As a side effect it brings all assemblies that the current app depends on into memory.
 	/// To avoid loading certain assemblies that are known not to contain entity maps use
 	/// the AddAssemblyFilters method.
@@ -30,12 +30,12 @@ namespace Neo.Core.Util
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Gets a shared instance of this class
+		/// Gets the shared instance of this class.
 		/// </summary>
 		/// <remarks>
 		/// It is possible to create further instances but unless there is a specific need for
-		/// one it is advisable to use the shared one to avoid the overhead of searching through
-		/// the assemblies multiple times.
+		/// one it is advisable to use the shared one because this avoids the overhead of 
+		/// searching through the assemblies multiple times.
 		/// </remarks>
 		public static DefaultEntityMapFactory SharedInstance
 		{
@@ -55,7 +55,7 @@ namespace Neo.Core.Util
 		private string[] assemblyFilters;		
 
 		/// <summary>
-		/// Default constructor.
+		/// Initialises a new instance of this class.
 		/// </summary>
 		/// <remarks>
 		/// Only create new instances if the shared one cannot be used.
@@ -72,6 +72,10 @@ namespace Neo.Core.Util
 		//	Access filters
 		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// List of regular expressions that describe assemblies which should be ignored by
+		/// the discovery process because they are known to not contain <c>EntityMap</c>s.
+		/// </summary>
 		public ArrayList AssemblyFilters
 		{
 			get
@@ -81,6 +85,10 @@ namespace Neo.Core.Util
 		}
 
 		
+		/// <summary>
+		/// Adds a regular expression to the assembly filters.
+		/// </summary>
+		/// <param name="partialName">expression to add</param>
 		public void AddToAssemblyFilters(string partialName)
 		{
 			string[] newFilters = new string[assemblyFilters.Length + 1];

@@ -9,15 +9,15 @@ namespace Neo.Core
 	/// <summary>
 	/// Qualifiers define criteria for object selections.
 	/// </summary>
-	/// <remarks>There are class hierarchies for different qualifiers types and predicates but
-	/// normally qualifiers are constructed using formats:
+	/// <remarks>There is a class hierarchy of different qualifiers to express different types
+	/// of qualification but normally qualifiers are constructed using formats:
 	/// <code>
-	/// q = Qualifier.Format("name = {0}", input);
+	/// q = Qualifier.Format("Name = {0}", input);
 	/// </code>
 	/// Formats can use inlined values and comprise multiple clauses:
 	/// <code>
-	/// q = Qualifier.Format("name = &apos;Haruki&apos;");
-	/// q = Qualifier.Format("name = {0} and locked = false", input);
+	/// q = Qualifier.Format("Name = &apos;Haruki&apos;");
+	/// q = Qualifier.Format("Name = {0} and locked = false", input);
 	/// </code>
 	/// Formats can contain brackets and paths spanning multiple entities:
 	/// <code>

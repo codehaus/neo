@@ -110,8 +110,8 @@ namespace Neo.Core
 	}
 
 	/// <summary>
-	/// Flags for specifying how comprehensive the schema should be updated. Normally only 
-	/// used internally between <c>ObjectContext</c> and <c>EntityMap</c>.
+	/// Flags for specifying which aspects of the schema an <c>EntityMap</c> should write into
+	/// a <c>DataTable</c>.
 	/// </summary>
 	[Flags]
 	public enum SchemaUpdate

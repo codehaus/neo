@@ -5,6 +5,9 @@ using Neo.Core.Qualifiers;
 
 namespace Neo.Core.Parser
 {
+	/// <summary>
+	/// Internal class used by the <c>QualifierParser</c>.
+	/// </summary>
 	public class Tokenizer
 	{
 		//--------------------------------------------------------------------------------------

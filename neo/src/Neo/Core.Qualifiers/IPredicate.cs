@@ -1,5 +1,8 @@
 namespace Neo.Core.Qualifiers
 {
+	/// <summary>
+	/// Describes a predicate that can be applied to a value.
+	/// </summary>
 	public interface IPredicate
 	{
 		bool IsTrueForValue(object aValue, object nullVal);

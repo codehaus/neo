@@ -5,7 +5,9 @@ using Neo.Core.Util;
 
 namespace Neo.Core.Qualifiers
 {
-
+	/// <summary>
+	/// A qualifier that compares a value to the value of a property of an <c>EntityObject</c>.
+	/// </summary>
 	public sealed class PropertyQualifier : Qualifier, IObjectQualifier
 	{
 		//--------------------------------------------------------------------------------------

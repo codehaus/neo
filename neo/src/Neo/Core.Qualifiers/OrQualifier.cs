@@ -4,7 +4,14 @@ using System.Collections;
 
 namespace Neo.Core.Qualifiers
 {
-
+	/// <summary>
+	/// A qualifier that combines a number of qualifiers, evaluating to true if any of the
+	/// qualifiers evaluate to true.
+	/// </summary>
+	/// <remarks>
+	/// Uses short-circuit evaluation, i.e. stops evaluating its qualifiers when the first one
+	/// returns true.
+	/// </remarks>
 	public sealed class OrQualifier : ClauseQualifier, IObjectQualifier
 	{
 		//--------------------------------------------------------------------------------------

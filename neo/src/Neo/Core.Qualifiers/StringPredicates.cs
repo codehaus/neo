@@ -10,6 +10,9 @@ namespace Neo.Core.Qualifiers
 	//	Base class for string predicates (abstract)
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Abstract base class for predicates that work with string values.
+	/// </summary>
 	public abstract class StringPredicateBase
 	{
 		protected string predValue;
@@ -35,6 +38,9 @@ namespace Neo.Core.Qualifiers
 	//	Like
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the string matches the pattern.
+	/// </summary>
 	public class LikePredicate : StringPredicateBase, IMutablePredicate
 	{
 		protected string pattern;
@@ -68,6 +74,13 @@ namespace Neo.Core.Qualifiers
 	}
 
 	
+	/// <summary>
+	/// Predicate that returns true if the string is equal to the string stored in the
+	/// predicate not taking case into account.
+	/// </summary>
+	/// <remarks>
+	/// This predicate does not necessarily translate into SQL.
+	/// </remarks>
 	public class CaseInsensitiveEqualsPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public CaseInsensitiveEqualsPredicate(string aValue) : base(aValue)
@@ -95,6 +108,10 @@ namespace Neo.Core.Qualifiers
 	//	StartsWith
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the string begins with the string stored in the
+	/// predicate.
+	/// </summary>
 	public class StartsWithPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public StartsWithPredicate(string aValue) : base(aValue)
@@ -121,6 +138,10 @@ namespace Neo.Core.Qualifiers
 	//	EndsWith
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the string ends with the string stored in the
+	/// predicate.
+	/// </summary>
 	public class EndsWithPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public EndsWithPredicate(string aValue) : base(aValue)
@@ -147,6 +168,10 @@ namespace Neo.Core.Qualifiers
 	//	Contains
 	//--------------------------------------------------------------------------------------
 
+	/// <summary>
+	/// Predicate that returns true if the string contains the string stored in the
+	/// predicate.
+	/// </summary>
 	public class ContainsPredicate : StringPredicateBase, IMutablePredicate
 	{
 		public ContainsPredicate(string aValue) : base(aValue)
