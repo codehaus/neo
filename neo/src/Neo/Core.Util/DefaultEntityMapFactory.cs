@@ -134,5 +134,19 @@ namespace Neo.Core.Util
 				}
 			}
 		}
+
+
+		protected override void RegisterEntityMapsInAssembly(Assembly assembly)
+		{
+			try
+			{
+				base.RegisterEntityMapsInAssembly(assembly);
+			}
+			catch(Exception)
+			{
+			}
+		}
+
+
 	}
 }
