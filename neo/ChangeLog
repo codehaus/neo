@@ -1,3 +1,11 @@
+2004-06-16 erik
+
+	* Refactored the tools solution. The neo generator can now 
+	apply a Velocity template to the entire model which made it 
+	easy to write a Velocity template that creates the SQL schema. 
+	The XSL-based approach is still supported but discouraged. 
+
+
 2004-06-11 erik
 
 	* Added feature to ObjectContext to delay loading from
