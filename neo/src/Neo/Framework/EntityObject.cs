@@ -80,9 +80,14 @@ namespace Neo.Framework
 
 		public string ToStringAllProperties()
 		{
+			if(row.RowState == DataRowState.Detached)
+				return this.GetType().Name + "[detached]";
+			
+			DataRowVersion lookupVersion = (row.RowState == DataRowState.Deleted) ? DataRowVersion.Original : DataRowVersion.Current;
 			ArrayList values = new ArrayList();
-			foreach(object v in Row.ItemArray)
+			foreach(DataColumn c in row.Table.Columns)
 			{
+				object v = row[c, lookupVersion];
 				if(v.GetType() == typeof(Guid))
 					continue;
 				values.Add(v.ToString());

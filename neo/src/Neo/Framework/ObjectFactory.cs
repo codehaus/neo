@@ -77,6 +77,13 @@ namespace Neo.Framework
 			return (results.Count > 0) ? (IEntityObject)results[0] : null;
 		}
 
+		public IEntityObject FindFirst(Qualifier q)
+		{
+			FetchSpecification f = new FetchSpecification(EntityMap, q, 1);
+			IList result = Find(f);
+			return result.Count > 0 ? (IEntityObject)result[0]: null;
+		}
+
 		public IEntityObject FindUnique(string qualifierFormat, params object[] parameters)
 		{
 			IList results = FindWithLimit(2, qualifierFormat, parameters);

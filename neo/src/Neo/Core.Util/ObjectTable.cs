@@ -74,6 +74,12 @@ namespace Neo.Core.Util
 		}
 
 
+		public void AddDeletedObject(ObjectId oid, IEntityObject eo)
+		{
+			deletedObjectTable[oid] = eo;
+		}
+
+
 		public void DeleteObject(ObjectId oid)
 		{
 			IEntityObject eo;
@@ -91,7 +97,7 @@ namespace Neo.Core.Util
 		public void DeleteObject(ObjectId oid, IEntityObject eo)
 		{
 			RemoveObject(oid, eo);
-			deletedObjectTable[oid] = eo;
+			AddDeletedObject(oid, eo);
 		}
 
 
@@ -110,6 +116,12 @@ namespace Neo.Core.Util
 		public IList GetAllDeletedObjectIds()
 		{
 			return new ArrayList(deletedObjectTable.Keys);
+		}
+
+
+		public IList GetDeletedObjects()
+		{
+			return new ArrayList(deletedObjectTable.Values);
 		}
 
 

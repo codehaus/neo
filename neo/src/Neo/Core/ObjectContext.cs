@@ -52,8 +52,8 @@ namespace Neo.Core
 		private PropertyCollection	extendedProperties;
 		private DataRow				rowPending;
 		private Hashtable			eventHandlers;
-		private ColumnChangeBroker  columnChangeBroker;
-		private RowChangeBroker		rowChangeBroker;
+		protected ColumnChangeBroker  columnChangeBroker;
+		protected RowChangeBroker		rowChangeBroker;
 
 		/// <summary>
 		/// Default constructor. Sets up logger and default map factory
@@ -88,6 +88,17 @@ namespace Neo.Core
 
 		
 		/// <summary>
+		/// Constructor. Takes data from the supplied data set into this context
+		/// and uses a custom entitymapfactory to find maps.
+		/// </summary>
+		/// <param name="aDataSet">data to be imported</param>
+		public ObjectContext(DataSet aDataSet, IEntityMapFactory aFactory) : this()
+		{
+			emapFactory = aFactory;
+			MergeData(aDataSet, false);
+		}
+	
+		/// <summary>
 		/// Constructor. Takes data from the supplied data store into this context
 		/// </summary>
 		/// <remarks>
@@ -98,9 +109,11 @@ namespace Neo.Core
 		{
 			dataStore = aDataStore;
 
-			if(aDataStore is ObjectContext)
+			ObjectContext parentContext = aDataStore as ObjectContext;
+			if(parentContext != null)
 			{
-				MergeData(((ObjectContext)aDataStore).DataSet, false);
+				emapFactory = parentContext.emapFactory;
+				MergeData(parentContext.DataSet, false);
 				copiedParent = true;
 			}
 		}
@@ -120,6 +133,7 @@ namespace Neo.Core
 		{
 			dataStore = parentContext;
 
+			emapFactory = parentContext.emapFactory;
 			if(copyInCtor)
 			{
 				MergeData(parentContext.DataSet, false);
@@ -367,12 +381,14 @@ namespace Neo.Core
 		protected virtual IEntityObject GetObjectForRow(DataRow aRow)
 		{
 			IEntityMap	  emap;
+			DataRowVersion lookupVersion;
 			object[]	  pkvalues;
 			ObjectId	  oid;
 			IEntityObject eo;
 				
 			emap = emapFactory.GetMap(aRow.Table.TableName);
-			pkvalues = GetPrimaryKeyValuesForRow(emap, aRow, DataRowVersion.Current);
+			lookupVersion = (aRow.RowState == DataRowState.Deleted) ? DataRowVersion.Original : DataRowVersion.Current;
+			pkvalues = GetPrimaryKeyValuesForRow(emap, aRow, lookupVersion);
 			oid = new ObjectId(emap.TableName, pkvalues);
 
 			// If the object is known to be deleted, forget about it.
@@ -386,12 +402,12 @@ namespace Neo.Core
 					throw new InvalidOperationException("Row not found in this context's mainDataSet.");
 			}
 
+			if(aRow.RowState != DataRowState.Deleted)
+			{
 			// If we don't have an object yet, create it.
 			if((eo = objectTable.GetObject(oid)) == null)
 			{
-				BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-				object[] args = { aRow, this };
-				eo = (IEntityObject)Activator.CreateInstance(emap.ConcreteObjectType, bflags, null, args, null);
+				eo = CreateEntityObjectInstance(aRow, emap);
 				objectTable.AddObject(oid, eo);
 			}
 			else
@@ -399,7 +415,21 @@ namespace Neo.Core
 				if(eo.Row.Equals(aRow) == false)
 					throw new InvalidOperationException("Internal inconsistency; object exists but references different row.");
 			}
+			}
+			else
+			{
+				eo = CreateEntityObjectInstance(aRow, emap);
+				objectTable.AddDeletedObject(oid, eo);
+			}
 			return eo;
+		}
+
+
+		protected virtual IEntityObject CreateEntityObjectInstance(DataRow row, IEntityMap emap)
+		{
+			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			object[] args = { row, this };
+			return (IEntityObject)Activator.CreateInstance(emap.ConcreteObjectType, bflags, null, args, null);
 		}
 
 
@@ -420,7 +450,13 @@ namespace Neo.Core
 			}
 		}
 
-		protected void OnRowDeleting(object sender, DataRowChangeEventArgs e)
+		protected virtual void OnRowChanged(object sender, DataRowChangeEventArgs e)
+		{
+			if(e.Action == DataRowAction.Delete)
+				rowChangeBroker.OnRowDeleting(sender, e);
+		}
+
+		protected virtual void OnRowDeleting(object sender, DataRowChangeEventArgs e)
 		{
 			if(e.Row == rowPending)
 				return;
@@ -432,16 +468,11 @@ namespace Neo.Core
 			rowChangeBroker.OnRowDeleting(sender, e);
 		}
 	
-		protected void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
+		protected virtual void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
 		{
 			columnChangeBroker.OnColumnChanging(sender, e);
 		}
 
-		protected void OnRowChanged(object sender, DataRowChangeEventArgs e)
-		{
-			if(e.Action == DataRowAction.Delete)
-				rowChangeBroker.OnRowDeleting(sender, e);
-		}
 
 		public void RegisterForColumnChanges(ColumnChangeHandler handler, string tableName, string columnName) 
 		{
@@ -527,7 +558,7 @@ namespace Neo.Core
 		/// </summary>
 		/// <param name="aDataSet">DataSet object to be merged</param>
 		/// <returns>List of added <c>IEntityObject</c>s</returns>
-		public IList MergeData(DataSet aDataSet)
+		public virtual IList MergeData(DataSet aDataSet)
 		{
 			return MergeData(aDataSet, true);
 		}
@@ -558,8 +589,9 @@ namespace Neo.Core
 
 				foreach(DataRow r in table.Rows)
 				{
-					if((r.RowState != DataRowState.Deleted) && ((eo = GetObjectForRow(r)) != null))
+					if((eo = GetObjectForRow(r)) != null)
 					{
+						if(r.RowState != DataRowState.Deleted)
 						objectList.Add(eo);
 					}
 				}
@@ -662,7 +694,7 @@ namespace Neo.Core
 			DataRow			newRow, existingRow;
 			IEntityObject	newObject, deletedObject;
 
-			logger.Debug("Creating object of type " + objectType.ToString());
+			if(logger.IsDebugEnabled) logger.Debug("Creating object of type " + objectType.ToString());
 
 			emap = emapFactory.GetMap(objectType);
 			emap.UpdateSchemaInDataSet(mainDataSet, SchemaUpdate.Full);
@@ -706,6 +738,8 @@ namespace Neo.Core
 			}
 			newObject = GetObjectForRow(newRow);
 
+			RegisterForTableEvents(newRow.Table);
+
 			// Our ObjectRelation objects have ignored the column changing events
 			// so we need to resend them now.
 			SendPkColumnChangingEvents(newRow);
@@ -717,8 +751,6 @@ namespace Neo.Core
 				if(m.IsDefined(typeof(LifecycleCreateAttribute), true))
 					m.Invoke(newObject, null);
 			}
-
-			RegisterForTableEvents(newRow.Table);
 
 			return newObject;
 		}
@@ -831,6 +863,10 @@ namespace Neo.Core
 			return localList;
 		}
  
+		public IList GetDeletedObjects()
+		{
+			return ObjectTable.GetDeletedObjects();
+		}
  		
 		//--------------------------------------------------------------------------------------
 		//	Getting objects (Will fetch from store if neccessary)
@@ -1192,6 +1228,4 @@ namespace Neo.Core
 		}
 
 	}
-
-
 }

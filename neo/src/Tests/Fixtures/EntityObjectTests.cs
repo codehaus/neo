@@ -99,6 +99,18 @@ namespace Neo.Tests.Fixtures
 			logger2 = MyEntityObject.GetLogger(typeof(Publisher));
 			Assertion.Assert("Logger must be different for different classes.", logger.Equals(logger2) == false);
 		}
+
+		
+		[Test]
+		public void ToStringWorksOnDeletedObjects()
+		{
+			String	descriptionBeforeDelete;
+
+			descriptionBeforeDelete = title.ToString();
+			title.Delete();
+			Assertion.AssertEquals("Should have same description.", descriptionBeforeDelete, title.ToString());
+		}
+	
 	}
 
 

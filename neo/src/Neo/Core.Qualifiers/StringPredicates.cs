@@ -62,7 +62,30 @@ namespace Neo.Core.Qualifiers
 		}
 	}
 
-#if WANTS_STRING_PREDICATES
+	
+	public class CaseInsensitiveEqualsPredicate : StringPredicateBase, IPredicate
+	{
+		public CaseInsensitiveEqualsPredicate(string aValue) : base(aValue)
+		{
+		}
+
+		public bool IsTrueForValue(object aValue, object nullVal)
+		{
+			if(aValue == nullVal)
+				return false;
+
+			CompareInfo compInfo = CultureInfo.CurrentCulture.CompareInfo;
+			
+			return(compInfo.Compare((string)aValue, predValue, CompareOptions.IgnoreCase) == 0);
+		}
+
+		public override string ToString()
+		{
+			return (predValue != null) ? ("equals (case insensitive) " + predValue) : "null";
+		}
+
+	}
+
 	//--------------------------------------------------------------------------------------
 	//	StartsWith
 	//--------------------------------------------------------------------------------------
@@ -139,6 +162,6 @@ namespace Neo.Core.Qualifiers
 			return (predValue != null) ? ("contains " + predValue) : "null";
 		}
 	}
-#endif
+
 
 }

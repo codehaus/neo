@@ -2,7 +2,18 @@
 
     * Added Dave's algorithm to sort tables for insert/update and
     moved the code from the datastore to a separate helper class.
+
+
+2004-10-05 erik & jim
+
+    * ObjectContext now creates objects for deleted rows that are 
+    merged in. It also uses the same entity map factory as its parent
+    context.
     
+    * Added a case-insensitive string predicate but this only works in
+    the databases if they are configured to do case-insensitive string
+    comparisons.
+        
 
 2004-09-29 erik
 

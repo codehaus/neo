@@ -527,7 +527,30 @@ namespace Neo.Tests.Fixtures
 
 		#endregion
 
+		[Test]
+		public void DeletedRowsAreAddedAsDeletedObjects()
+		{
+			Title titleToDelete = new TitleFactory(context).FindAllObjects()[0];
+			titleToDelete.Delete();
+			DataSet dataSetWithDeletedRows = context.DataSet.GetChanges(DataRowState.Deleted);
 
+			int expectedNumberOfDeletedObjects = CountRows(dataSetWithDeletedRows);
 
+			ObjectContext newContext = new ObjectContext(dataSetWithDeletedRows);
+
+			Assert.AreEqual(expectedNumberOfDeletedObjects, newContext.GetDeletedObjects().Count);
+		}
+
+		private int CountRows(DataSet dataSet)
+		{
+			int count = 0;
+
+			foreach(DataTable table in dataSet.Tables)
+			{
+			 	count += table.Rows.Count;
+			}
+
+			return count;
+		}
 	}
 }

@@ -156,6 +156,8 @@ namespace Neo.Database
 					builder.Append(">=");
 				else if(q.Predicate is LikePredicate)
 					builder.Append(" LIKE ");
+				else if(q.Predicate is CaseInsensitiveEqualsPredicate)
+					builder.Append(" = ");
 				else
 					throw new ArgumentException("Invalid predicate in qualifier; found " + q.Predicate.GetType().FullName);
 				

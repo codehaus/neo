@@ -69,6 +69,16 @@ namespace Neo.Tests.Fixtures
 			Assertion.Assert("10 is greater than 15.", q.EvaluateWithObject(title) == false);
 		}
 
+		[Test]
+		public void PropertyQualifierCaseInsensitiveComparisons()
+		{
+			PropertyQualifier	q;
+			
+			q = new PropertyQualifier("TheTitle", new CaseInsensitiveEqualsPredicate("sUsHi, aNyOnE?"));
+			Assertion.Assert("Should match regardless of case.", q.EvaluateWithObject(title));
+
+			Assert.IsNotNull(new TitleFactory(context).FindFirst(q));
+		}
 
 		[Test]
 		public void ColumnQualifierSimpleMatch()
