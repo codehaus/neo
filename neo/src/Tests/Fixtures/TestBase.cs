@@ -20,11 +20,7 @@ namespace Neo.Tests.Fixtures
 		[TestFixtureSetUp]
 		public void SetUpResourcePath()
 		{
-#if NANTBUILD
-			resourcePath = "";
-#else
 			resourcePath = "..\\..";
-#endif
 		}
 
 

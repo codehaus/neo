@@ -7,37 +7,41 @@ using Pubs4.Model;
 
 namespace Neo.Tests.Fixtures
 {
-	[NUnit.Framework.TestFixture]
+	[TestFixture]
 	public class EntityMapTests : TestBase
 	{
-		protected DefaultEntityMapFactory EmapFactory;
+		protected DefaultEntityMapFactory emapFactory;
 		
 
-		[NUnit.Framework.SetUp]
+		[SetUp]
 		public void SetUp()
 		{
 			SetupLog4Net();
-			EmapFactory = DefaultEntityMapFactory.SharedInstance;
+			emapFactory = DefaultEntityMapFactory.SharedInstance;
 		}
 
 
-		[NUnit.Framework.Test]
+		[Test]
 		public void EntityMapRegistry()
 		{
-		    Assertion.AssertEquals("Wrong number of maps types.", 7, EmapFactory.GetRegisteredTypes().Count);
-			Assertion.AssertEquals("Wrong number of maps.", 7, EmapFactory.GetAllMaps().Count);
+			// We create a fresh instance because some other tests register custom mappings which
+			// would spoil the second count.
+			emapFactory = new DefaultEntityMapFactory();
+
+			Assertion.AssertEquals("Wrong number of maps types.", 7, emapFactory.GetRegisteredTypes().Count);
+			Assertion.AssertEquals("Wrong number of maps.", 7, emapFactory.GetAllMaps().Count);
 		}
 
 
 		[Test]
 		public void SchemaGeneration()
 		{
-		    DataSet			dataset;
+			DataSet			dataset;
 			DataTable		titleTable;
 			DataColumn		salesColumn;
 
 			dataset = new DataSet();
-			EmapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Full);
+			emapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Full);
 			
 			titleTable = dataset.Tables["titles"];
 			Assertion.AssertNotNull("Could not find titles table.", titleTable);

@@ -1,103 +1,38 @@
 <?xml version="1.0"?>
 <project name="Neo" default="full" basedir=".">
-
-	<property name="build.dir" value="build"/>
-	<property name="lib.dir" value="lib"/>
-	<property name="debug" value="true"/>
 	
-	<target name="full" depends="clean,tests,runtests"/>
-	<target name="quick" depends="tests,runtests"/>
+	<property name="buildconfig" value="Release" />
+	
+	<target name="full" depends="clean,solution,runtests"/>
+	<target name="quick" depends="solution,runtests"/>
 	
 	<target name="clean">
-		<delete dir="${build.dir}" failonerror="false"/>
+	 	<delete>
+			<fileset>
+				<includes name="src/**/bin"/>
+				<includes name="src/**/obj"/>
+			</fileset>
+		</delete>
 	</target>
 	
 	<target name="reallyclean" depends="clean">
-	     <delete>
-	            <fileset>
-	                <includes name="src/**/bin"/>
-	                <includes name="src/**/obj"/>
-	                <includes name="src/**/_Resharper*"/>
-	            </fileset>
-	        </delete>
-	</target>
-	
-	<target name="init">
-		<mkdir dir="${build.dir}"/>
-		<copy todir="${build.dir}" flatten="true" >
+	 	<delete>
 			<fileset>
-			    <includes name="${lib.dir}/*.dll" />
-		    </fileset>
-		</copy>
-	</target>
-	
-	<target name="framework" depends="init">
-		<csc target="library" output="${build.dir}\Neo.dll" debug="${debug}">
-			<sources basedir="src/Neo">
-				<includes name="**/*.cs"/>
-			</sources>
-			<references>
-				<includes name="${build.dir}/log4net.dll"/>
-			</references>
-		</csc>
-	</target>
-	
-	<target name="firebirdclient" depends="framework">
-		<csc target="library" output="${build.dir}\Neo.FirebirdClient.dll" debug="${debug}">
-			<sources basedir="src/Neo.FirebirdClient">
-				<includes name="**/*.cs"/>
-			</sources>
-			<references>
-				<includes name="${build.dir}/Neo.dll"/>
-				<includes name="${build.dir}/log4net.dll"/>
-				<includes name="${build.dir}/FirebirdSql.Data.Firebird.dll"/>
-			</references>
-		</csc>
-	</target>	
-	
-	<target name="oracleclient" depends="framework">
-		<csc target="library" output="${build.dir}\Neo.OracleClient.dll" debug="${debug}">
-			<sources basedir="src/Neo.OracleClient">
-				<includes name="**/*.cs"/>
-			</sources>
-			<references>
-				<includes name="${build.dir}/Neo.dll"/>
-				<includes name="${build.dir}/log4net.dll"/>
-				<includes name="System.Data.OracleClient.dll"/>
-			</references>
-		</csc>
-	</target>
-	
-	<target name="tests" depends="framework,firebirdclient,oracleclient">
-		<csc target="library" output="${build.dir}\Neo.Tests.dll" debug="${debug}" define="NANTBUILD">
-			<sources basedir="src/Tests">
-				<includes name="**/*.cs"/>
-			</sources>
-			<references>
-				<includes name="${build.dir}/Neo.dll"/>
-				<includes name="${build.dir}/Neo.FirebirdClient.dll"/>
-				<includes name="${build.dir}/Neo.OracleClient.dll"/>
-				<includes name="${build.dir}/nunit.framework.dll"/>
-				<includes name="${build.dir}/nmock.dll"/>
-				<includes name="${build.dir}/log4net.dll"/>
-			</references>
-		</csc>
-		<copy todir="${build.dir}" flatten="true" >
-			<fileset>
-				<includes name="src/Tests/log4net.config" />
-				<includes name="src/Tests/TestData.xml" />
-				<includes name="src/Tests/Resources/fbembed.dll" />
-				<includes name="src/Tests/Resources/PUBSDB.FDB" />
+				<includes name="src/**/_Resharper*"/>
 			</fileset>
-		</copy>
-		<copy file="src/Tests/integration.config" todir="${build.dir}" tofile="${build.dir}/test.config"/>
+		</delete>
 	</target>
-
+	
 	<target name="runtests">
 		<nunit2>
 			<formatter type="Plain" />
-			<test assemblyname="${build.dir}/Neo.Tests.dll" />
+			<test assemblyname="src/Tests/bin/${buildconfig}/Neo.Tests.dll" />
 		</nunit2>
+	</target>
+	
+	<target name="solution">
+		<solution configuration="${buildconfig}" solutionfile="src/Neo.sln" verbose="false" />
+		<copy file="src/Tests/Resources/fbembed.dll" todir="src/Tests/bin/${buildconfig}" />
 	</target>
 		
 </project>

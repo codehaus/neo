@@ -30,10 +30,12 @@ namespace Neo.Core.Util
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Gets shared and only instance of this class
+		/// Gets a shared instance of this class
 		/// </summary>
 		/// <remarks>
-		/// Uses the <c>singleton</c> pattern to ensure only one instance ever exists.
+		/// It is possible to create further instances but unless there is a specific need for
+		/// one it is advisable to use the shared one to avoid the overhead of searching through
+		/// the assemblies multiple times.
 		/// </remarks>
 		public static DefaultEntityMapFactory SharedInstance
 		{
@@ -53,9 +55,12 @@ namespace Neo.Core.Util
 		private string[] assemblyFilters;		
 
 		/// <summary>
-		/// Default, and non-public constructor since this class uses the singleton pattern.
+		/// Default constructor.
 		/// </summary>
-		protected DefaultEntityMapFactory()
+		/// <remarks>
+		/// Only create new instances if the shared one cannot be used.
+		/// </remarks>
+		public DefaultEntityMapFactory()
 		{
 			if(logger == null)
 				logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.ToString());
