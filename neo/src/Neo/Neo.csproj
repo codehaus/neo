@@ -219,6 +219,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Core.Util\Predicates.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Core.Util\PropertyQualifier.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -229,17 +234,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\QualifierPredicates.cs"
+                    RelPath = "Core.Util\RelationalPredicates.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Core.Util\QualifierRelationalPredicates.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Core.Util\QualifierStringPredicates.cs"
+                    RelPath = "Core.Util\StringPredicates.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

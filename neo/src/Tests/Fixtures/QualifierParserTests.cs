@@ -265,7 +265,46 @@ namespace Neo.Tests
 			Assertion.AssertEquals(7, ((PropertyQualifier)oq.Qualifiers[1]).Predicate.Value);
 		}
 
-		
+
+		[Test]
+		public void TestBracketsForClauseGrouping()
+		{	
+			QualifierParser		parser;
+			Qualifier			q;
+			ClauseQualifier		cq;
+
+			parser = new QualifierParser("TitleId = 'TC7777' and (Royalties < 7 or Royalties > 20)");
+			q = parser.GetQualifier();
+
+			Assertion.AssertNotNull("Parser failed.", q);
+			Assertion.AssertEquals("Should have AND qualifier at root.", typeof(AndQualifier), q.GetType());
+			cq = q as ClauseQualifier;
+
+			Assertion.AssertEquals("Root qualifier should have two sub qualifiers.", 2, cq.Qualifiers.Length);
+			Assertion.AssertEquals("Should preserve sequence.", typeof(PropertyQualifier), cq.Qualifiers[0].GetType());
+			Assertion.AssertEquals("Should preserve sequence.", typeof(OrQualifier), cq.Qualifiers[1].GetType());
+		}
+
+
+		[Test]
+		public void TestBracketsForClauseGroupingCanJoinAcrossBracketsFromLeft()
+		{	
+			QualifierParser		parser;
+			Qualifier			q;
+			ClauseQualifier		cq;
+
+			// The parser will ignore the brackets in this case. This is intentional!
+			parser = new QualifierParser("Royalties < 7 or (Royalties > 20 or Royalties = 10)");
+			q = parser.GetQualifier();
+
+			Assertion.AssertNotNull("Parser failed.", q);
+			Assertion.AssertEquals("Should have OR qualifier at root.", typeof(OrQualifier), q.GetType());
+			cq = q as ClauseQualifier;
+
+			Assertion.AssertEquals("Root qualifier should have three sub qualifiers.", 3, cq.Qualifiers.Length);
+		}
+
+
 		[Test]
 		public void TestEqualShortcut()
 		{

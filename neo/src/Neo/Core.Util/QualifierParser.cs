@@ -24,7 +24,9 @@ namespace Neo.Core.Util
 			ParamRef,
 			Qualifier,
 			PathSep,
-			Path
+			Path,
+			OpenBracket,
+			CloseBracket
 		}
 
 
@@ -106,10 +108,16 @@ namespace Neo.Core.Util
 		{
 			Token	token = null;
 
+			// Rule: OpenBracket, Qualifier, CloseBracket -> Qualifier
+			if(LhsMatch(TokenType.OpenBracket, TokenType.Qualifier, TokenType.CloseBracket))
+			{
+				token = stack[sp - 1];
+				sp -= 3;
+			}
 			// Rule: Qualifier, Conjunctor, Qualifier -> Qualifier
 			// If the left qualifier is a clause qualifier and its conjunctor matchtes the
-			// conjuctor on the stack, the right qualifier is added to the left.
-			if(LhsMatch(TokenType.Qualifier, TokenType.Conjunctor, TokenType.Qualifier))
+			// conjuctor on the stack, the right qualifier is added to the left; and vice versa.
+			else if(LhsMatch(TokenType.Qualifier, TokenType.Conjunctor, TokenType.Qualifier))
 			{
 				Qualifier right = (Qualifier)stack[sp--].Value;
 				Type conjType = (Type)stack[sp--].Value; 
@@ -118,6 +126,8 @@ namespace Neo.Core.Util
 
 				if(((q = left as ClauseQualifier) != null) && (q.GetType().Equals(conjType)))
 					q.AddToQualifiers(right);
+				else if(((q = right as ClauseQualifier) != null) && (q.GetType().Equals(conjType)))
+					q.AddToQualifiers(left);
 				else
 					q = (ClauseQualifier)Activator.CreateInstance(conjType, new object[] { left, right });
 				token = new Token(TokenType.Qualifier, q);
@@ -254,6 +264,16 @@ namespace Neo.Core.Util
 			else if(c == '\'')
 			{
 				token = ReadQuotedStringToken(c);
+			}
+			else if(c == '(')
+			{
+				token = new Token(TokenType.OpenBracket, null);
+				MoveNextChar();
+			}
+			else if(c ==')')
+			{
+				token = new Token(TokenType.CloseBracket, null);
+				MoveNextChar();
 			}
 			else if(c == '{')
 			{

@@ -166,6 +166,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Fixtures\PredicateTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Fixtures\PropertyComparerTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -1,3 +1,11 @@
+2004-06-01 erik
+
+	* Added support for bracketing expressions in qualifier formats
+	to define precedence. The parser will not create groupings among
+	qualifiers with the same conjunctor because this does not change
+	evaluation, i.e. (a and (b and c)) becomes (a and b and c)
+
+
 2004-05-28 erik
 
 	* Added support for like, greater or equal and less or equal
