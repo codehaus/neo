@@ -958,7 +958,10 @@ namespace Neo.Core
 			{
 				ArrayList objectsSorted = new ArrayList(result);
 				fetchSpec.SortOrderings[0].Sort(objectsSorted);
-				result = objectsSorted.GetRange(0, Math.Min(limit, objectsSorted.Count));
+				if((limit >= 0) && (limit < objectsSorted.Count))
+					result = objectsSorted.GetRange(0, Math.Min(limit, objectsSorted.Count));
+				else
+					result = objectsSorted;
 			}
 
 			return result;

@@ -141,10 +141,11 @@ namespace Neo.Database
 			}
 			else
 			{
-				if(q.Predicate is EqualsPredicate)
-					builder.Append("=");
-				else if(q.Predicate is NotEqualPredicate)
+				// Sequence matters because predicates inherit from each other.
+				if(q.Predicate is NotEqualPredicate)
 					builder.Append("<>");
+				else if(q.Predicate is EqualsPredicate)
+					builder.Append("=");
 				else if(q.Predicate is LessThanPredicate)
 					builder.Append("<");
 				else if(q.Predicate is LessOrEqualPredicate)

@@ -256,6 +256,24 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void FindSortedWithNoLimit()
+		{
+			TitleFactory		factory;
+			FetchSpecification	spec;
+			TitleList			result;
+			
+			spec = new FetchSpecification();
+			spec.SortOrderings = new PropertyComparer[] { new PropertyComparer("PublicationDate", SortDirection.Descending) };
+
+			factory = new TitleFactory(context);
+			result = factory.Find(spec);
+
+			Assertion.Assert("Should return several titles.", result.Count > 0);
+			Assertion.AssertEquals("Should return title with lastest date.", "PC9999", result[0].TitleId);
+		}
+
+		
+		[Test]
 		public void FindSortedWithExcessiveLimit()
 		{
 			TitleFactory		factory;
