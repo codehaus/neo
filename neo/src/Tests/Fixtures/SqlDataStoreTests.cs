@@ -1,11 +1,11 @@
 using System;
 using System.Data;
+using System.Collections;
 using NUnit.Framework;
 using Neo.Core;
 using Neo.Core.Util;
 using Neo.SqlClient;
 using Pubs4.Model;
-
 
 namespace Neo.Tests
 {
@@ -14,7 +14,7 @@ namespace Neo.Tests
 	{
 		IEntityMapFactory emapFactory;
 		SqlDataStore	  store;
-		DataSet			  dataset;
+		DataSet			  dataset, jobOnlyDataSet;
 		DataTable		  titleTable, jobTable;
 
 
@@ -27,9 +27,11 @@ namespace Neo.Tests
 			store = GetDataStore();
 
 			dataset = new DataSet();
+			jobOnlyDataSet = new DataSet();
 			emapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
 			titleTable = dataset.Tables["titles"];
 			emapFactory.GetMap(typeof(Job)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+			emapFactory.GetMap(typeof(Job)).UpdateSchemaInDataSet(jobOnlyDataSet, SchemaUpdate.Basic | SchemaUpdate.Constraints);
 			jobTable = dataset.Tables["jobs"];
 		}
 
@@ -60,7 +62,9 @@ namespace Neo.Tests
 			newPrice = getDifferentPrice((Decimal)titleTable.Rows[0]["price"]);
 			titleTable.Rows[0]["price"] = newPrice;
 			store.BeginTransaction();
-			store.Save(titleTable);
+			ArrayList tables = new ArrayList();
+			tables.Add(new OrderTable(titleTable));
+			store.ProcessUpdates(tables);
 			store.CommitTransaction();
 			Assertion.AssertEquals("Wrong row state.", DataRowState.Unchanged, titleTable.Rows[0].RowState);
 
@@ -81,7 +85,9 @@ namespace Neo.Tests
 			newPrice = getDifferentPrice(oldPrice);
 			titleTable.Rows[0]["price"] = newPrice;
 			store.BeginTransaction();
-			store.Save(dataset.Tables["titles"]);
+			ArrayList tables = new ArrayList();
+			tables.Add(new OrderTable(dataset.Tables["titles"]));
+			store.ProcessUpdates(tables);
 			store.RollbackTransaction();
 			Assertion.AssertEquals("Wrong row state.", DataRowState.Modified, titleTable.Rows[0].RowState);
 
@@ -107,43 +113,23 @@ namespace Neo.Tests
 			newPrice1 = getDifferentPrice((Decimal)titleRow["price"]);
 			titleRow["price"] = newPrice1;
 			store.BeginTransaction();
-			store.Save(dataset.Tables["titles"]);
+			ArrayList tables = new ArrayList();
+			tables.Add(new OrderTable(dataset.Tables["titles"]));
+			store.ProcessUpdates(tables);
+
 			store.CommitTransaction();
 
 			titleRow = dataset2.Tables["titles"].Rows[0];
 			newPrice2 = getDifferentPrice((Decimal)titleRow["price"], newPrice1);
 			titleRow["price"] = newPrice2;
 			store.BeginTransaction();
-			store.Save(dataset2.Tables["titles"]);
+			ArrayList tables2 = new ArrayList();
+			tables2.Add(new OrderTable(dataset2.Tables["titles"]));
+			store.ProcessUpdates(tables2);
 			hadErrors = dataset2.Tables["titles"].HasErrors;
 			store.RollbackTransaction();
 			Assertion.Assert("No error for conflicting concurrent updates.", hadErrors);
 		}
-
-
-		[Test]
-		public void Insert()
-		{
-			DataTable	fetchedTable;
-			DataRow		newRow;
-			
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "XX9999")));
-			Assertion.Assert("Row with test primary key exists in database.", fetchedTable.Rows.Count == 0);
-
-			newRow = titleTable.NewRow();
-			newRow["title_id"] = "XX9999";
-			newRow["title"] = "Test row for automated tests";
-			newRow["type"] = "TEST";
-			newRow["pubdate"] = new DateTime(2000, 1, 1);
-			titleTable.Rows.Add(newRow);
-
-			store.BeginTransaction();
-			store.Save(dataset.Tables["titles"]);
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "XX9999")));
-			store.RollbackTransaction();
-			Assertion.Assert("New row not in database.", fetchedTable.Rows.Count > 0);
-		}
-
 
 		[Test]
 		public void Delete()
@@ -153,13 +139,18 @@ namespace Neo.Tests
 			loadTitle("MC3026"); // this doesn't have any authors and can be deleted
 			dataset.Tables["titles"].Rows.Find("MC3026").Delete();
 			store.BeginTransaction();
-			store.Save(dataset.Tables["titles"]);
+
+			ArrayList tables = new ArrayList();
+			foreach(DataTable t in dataset.Tables)
+			{
+				tables.Add(new OrderTable(t));
+			}
+			store.ProcessDeletes(tables);
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "MC3026")));
 			store.RollbackTransaction();
 			Assertion.Assert("Row not deleted from database.", fetchedTable.Rows.Count == 0);
 		}
 
-	
 		[Test]
 		public void InsertIntoTableWithIdentityColumn()
 		{
@@ -167,6 +158,7 @@ namespace Neo.Tests
 			int			  tempId, finalId;
 			PkChangeTable changeTable;
 
+			jobTable = jobOnlyDataSet.Tables["jobs"];
 			newRow = jobTable.NewRow();
 			newRow["job_desc"] = "Test row for automated tests";
 			newRow["min_lvl"] = 100;
@@ -175,13 +167,97 @@ namespace Neo.Tests
 			tempId = (System.Int16)newRow["job_id"];
 
 			store.BeginTransaction();
-			changeTable = store.Save(dataset.Tables["jobs"]);
+			ArrayList changeTables = new ArrayList();
+			ArrayList tables = new ArrayList();
+			foreach(DataTable t in jobOnlyDataSet.Tables)
+			{
+				tables.Add(new OrderTable(t));
+			}
+
+			store.ProcessInserts(tables, changeTables);
+			changeTable = (PkChangeTable) changeTables[0];
 			finalId = (System.Int16)newRow["job_id"];
 			store.RollbackTransaction();
 			Assertion.AssertEquals("Inconsistent old value in change table.", tempId, changeTable[0].OldValue);
 			Assertion.AssertEquals("Inconsistent new value in change table.", finalId, changeTable[0].NewValue);
 		}
 
+		[Test]
+		public void PkChangeTableListNotPopulatedIfNoPrimaryKeyGeneration()
+		{
+			emapFactory.GetMap(typeof(Publisher)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+			DataTable titleTable = dataset.Tables["titles"];
+			DataTable publisherTable = dataset.Tables["publishers"];
+			titleTable.ParentRelations.Add(publisherTable.Columns["pub_id"],titleTable.Columns["pub_id"]);
+
+			DataRow titleNewRow = titleTable.NewRow();
+			titleNewRow["title"] = "Title";
+			titleNewRow["type"] = "Type";
+			titleNewRow["pub_id"] = "PUBL";
+
+			DataRow publisherNewRow = publisherTable.NewRow();
+			publisherNewRow["pub_id"] = "PUBL";
+			publisherNewRow["pub_name"] = "Publisher";
+	
+			ArrayList changeTables = new ArrayList();		
+			ArrayList tables = new ArrayList();
+			foreach(DataTable t in dataset.Tables)
+			{
+				tables.Add(new OrderTable(t));
+			}
+
+			store.ProcessInserts(tables, changeTables);
+			foreach(PkChangeTable chg in changeTables) 
+			{
+				Assertion.Assert("The Table had not generated it's primary key, it should not be in this list", chg.Count > 0);
+			}
+		}
+
+		[Test] 
+		public void AssignedOrderToInsertTablesIsCorrect() 
+		{
+			emapFactory.GetMap(typeof(Publisher)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+			OrderTable titleTable = new OrderTable(dataset.Tables["titles"]);
+			
+			OrderTable publisherTable = new OrderTable(dataset.Tables["publishers"]);
+			titleTable.Table.ParentRelations.Add(publisherTable.Table.Columns["pub_id"],titleTable.Table.Columns["pub_id"]);
+	
+			ArrayList insertTables = new ArrayList();		
+			insertTables.Add(titleTable);
+			insertTables.Add(publisherTable);
+
+			store.AssignOrderToInsertTables(insertTables);
+
+			Assertion.AssertEquals("publisher should has wrong order number", 1, publisherTable.Order );
+			Assertion.AssertEquals("title should has wrong order number", 0, titleTable.Order );
+			// not sorted yet :-)
+			Assertion.AssertEquals("The first item should have order of 0", 0, ((OrderTable)insertTables[0]).Order);
+			Assertion.AssertEquals("The first item should have order of 1", 1, ((OrderTable)insertTables[1]).Order);
+
+		}
+
+		[Test]
+		public void SortedOrderOfInsertTablesIsCorrect()
+		{
+			emapFactory.GetMap(typeof(Publisher)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Basic | SchemaUpdate.Constraints);
+			OrderTable titleTable = new OrderTable(dataset.Tables["titles"]);
+			
+			OrderTable publisherTable = new OrderTable(dataset.Tables["publishers"]);
+			titleTable.Table.ParentRelations.Add(publisherTable.Table.Columns["pub_id"],titleTable.Table.Columns["pub_id"]);
+	
+			ArrayList insertTables = new ArrayList();		
+			insertTables.Add(titleTable);
+			insertTables.Add(publisherTable);
+
+			store.AssignOrderToInsertTables(insertTables);
+			store.SortOrderOfInsertTables(insertTables);
+
+			Assertion.AssertEquals("The first item should have order of 1", 1, ((OrderTable)insertTables[0]).Order);
+			Assertion.AssertEquals("The first item should have order of 0", 0, ((OrderTable)insertTables[1]).Order);
+
+			//Assertion.AssertEquals("The first item in the list should be publishers", publisherTable.Table.TableName, ((OrderTable)insertTables[0]).Table.TableName);
+			//Assertion.AssertEquals("The second item in the list should be titles", titlesTable.Table.TableName, ((OrderTable)insertTables[1]).Table.TableName);
+		}
 
 		[Test]
 		public void UpdateTableWithIdentityColumn()
@@ -192,7 +268,9 @@ namespace Neo.Tests
 			Assertion.AssertEquals("Wrong number of rows.", 1, fetchedTable.Rows.Count);
 			fetchedTable.Rows[0]["max_lvl"] = 20;
 			store.BeginTransaction();
-			store.Save(fetchedTable);
+			ArrayList tables = new ArrayList();
+			tables.Add(new OrderTable(fetchedTable));
+			store.ProcessUpdates(tables);
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
 			store.RollbackTransaction();
 

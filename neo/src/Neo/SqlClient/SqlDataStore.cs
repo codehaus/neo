@@ -238,20 +238,20 @@ namespace Neo.SqlClient
 
 			switch(q.Operator)
 			{
-			case QualifierOperator.Equal:
-				builder.Append("=");
-				break;
-			case QualifierOperator.NotEqual:
-				builder.Append("<>");
-				break;
-			case QualifierOperator.GreaterThan:
-				builder.Append(">");
-				break;
-			case QualifierOperator.LessThan:
-				builder.Append("<");
-				break;
-			default:
-				throw new ArgumentException("Invalid operator in qualifier.");
+				case QualifierOperator.Equal:
+					builder.Append("=");
+					break;
+				case QualifierOperator.NotEqual:
+					builder.Append("<>");
+					break;
+				case QualifierOperator.GreaterThan:
+					builder.Append(">");
+					break;
+				case QualifierOperator.LessThan:
+					builder.Append("<");
+					break;
+				default:
+					throw new ArgumentException("Invalid operator in qualifier.");
 			}
 			// add the current parameter count as suffix to ensure names are unique
 			SqlParameter param = GetParameter(table.Columns[q.Column], parameters.Count.ToString(), q.Value);
@@ -266,14 +266,14 @@ namespace Neo.SqlClient
 
 			switch(q.Conjunctor)
 			{
-			case QualifierConjunctor.And:
-				conjunctor = " AND ";
-				break;
-			case QualifierConjunctor.Or:
-				conjunctor = " OR ";
-				break;
-			default:
-				throw new ArgumentException("Invalid conjunctor in qualifier.");
+				case QualifierConjunctor.And:
+					conjunctor = " AND ";
+					break;
+				case QualifierConjunctor.Or:
+					conjunctor = " OR ";
+					break;
+				default:
+					throw new ArgumentException("Invalid conjunctor in qualifier.");
 			}
 
 			bool isFirstChild = true;
@@ -342,25 +342,34 @@ namespace Neo.SqlClient
 
 		public ICollection SaveChangesInObjectContext(ObjectContext context)
 		{
-			ArrayList		pkChangeTableList;
-			PkChangeTable	pkChangeTable;
+			ArrayList pkChangeTableList = new ArrayList();
 
-			pkChangeTableList = new ArrayList();
 			try
 			{
 				EnsureOpen();
 				
 				BeginTransaction();
-				// WARNING: This is naive and will not work if foreign key contstraints are
-				// violated because SQL Server can't delay constraints. To fix we must ensure 
-				// that children are inserted before their parents and deleted after them.  
-				// Therefore, we can't do the saves simply table-by-table.
+
+				ArrayList parentFirstTables = new ArrayList();
+
+				foreach(DataTable t in context.DataSet.Tables)
+				{
+					parentFirstTables.Add(new OrderTable(t));
+				}
+				
+				AssignOrderToInsertTables(parentFirstTables);
+				SortOrderOfInsertTables(parentFirstTables);
+
+				ProcessInserts(parentFirstTables, pkChangeTableList);
+				ProcessUpdates(parentFirstTables);
+
+				ArrayList childFirstTables = new ArrayList(parentFirstTables);
+				childFirstTables.Reverse();
+				ProcessDeletes(childFirstTables);
+
 				StringBuilder errorString = new StringBuilder();
 				foreach(DataTable t in context.DataSet.Tables)
 				{
-					pkChangeTable = Save(t);
-					if(pkChangeTable.Count > 0)
-						pkChangeTableList.Add(pkChangeTable);
 					if(t.HasErrors)
 					{
 						errorString.Append(String.Format("\n{0}:\n", t.TableName));
@@ -387,31 +396,106 @@ namespace Neo.SqlClient
 
 		}
 
-		public virtual PkChangeTable Save(DataTable table)
+		public void ProcessInserts(ArrayList tables, ArrayList pkChangeTables)
 		{
-			PkChangeTable	pkChangeTable;
-			DataRow[]		modrows;
-
-			pkChangeTable = new PkChangeTable(table.TableName);
-			modrows = table.Select("", "", DataViewRowState.Added | DataViewRowState.Deleted | DataViewRowState.ModifiedCurrent);
-			foreach(DataRow row in modrows)
+			for(int ix = 0; ix < tables.Count; ix++)
 			{
-				switch(row.RowState)
+				PkChangeTable	pkChangeTable;
+				DataRow[]		modrows;
+				DataTable table = ((OrderTable) tables[ix]).Table;
+
+				pkChangeTable = new PkChangeTable(table.TableName);
+				modrows = table.Select("", "", DataViewRowState.Added);
+				foreach(DataRow row in modrows)
 				{
-				case DataRowState.Added:
 					InsertRow(row, pkChangeTable);
-					break;
-				case DataRowState.Deleted:
-					DeleteRow(row);
-					break;
-				case DataRowState.Modified:
-					UpdateRow(row);
-					break;
+				}
+				if (pkChangeTable.Count > 0) 
+				{
+					pkChangeTables.Add(pkChangeTable);
 				}
 			}
-			return pkChangeTable;
 		}
 
+		public void ProcessDeletes(ArrayList tables)
+		{
+			for(int ix = 0; ix < tables.Count; ix++)
+			{
+				DataRow[]		modrows;
+				DataTable table = ((OrderTable) tables[ix]).Table;
+
+				modrows = table.Select("", "", DataViewRowState.Deleted);
+				foreach(DataRow row in modrows)
+				{
+					DeleteRow(row);
+				}
+			}
+		}
+
+		public void ProcessUpdates(ArrayList tables)
+		{
+			for(int ix = 0; ix < tables.Count; ix++)
+			{
+				DataRow[]		modrows;
+				DataTable table = ((OrderTable) tables[ix]).Table;
+
+				modrows = table.Select("", "", DataViewRowState.ModifiedCurrent);
+				foreach(DataRow row in modrows)
+				{
+					UpdateRow(row);
+				}
+			}
+		}
+
+		public void SortOrderOfInsertTables(ArrayList tables)
+		{
+			bool changesToOrder;
+			// sort of order
+			changesToOrder = true;
+			
+			while(changesToOrder) 
+			{
+				changesToOrder = false;
+				for(int ix = 0; ix < tables.Count; ix++)
+				{
+					if (ix < tables.Count -1) 
+					{
+						OrderTable t1 = (OrderTable) tables[ix];
+						OrderTable t2 = (OrderTable) tables[ix +1];
+						if (t1.Order < t2.Order)
+						{
+							tables[ix] = t2;
+							tables[ix+1] = t1;
+							changesToOrder = true;
+						}
+					}
+				}
+			}
+		}
+
+		public void AssignOrderToInsertTables(ArrayList tables)
+		{
+			bool changesToOrder = true;
+			while (changesToOrder) 
+			{
+				changesToOrder = false;
+				foreach(OrderTable t in tables)
+				{
+					//how many parents
+					DataRelationCollection parents = t.Table.ParentRelations;
+					string tableN = t.Table.TableName;
+
+					foreach(OrderTable t2 in tables)
+					{
+						if (t.IsChildOf(t2) && t2.Order <= t.Order && t.Table.TableName != t2.Table.TableName) 
+						{
+							t2.Order++;
+							changesToOrder = true;
+						}
+					}
+				}
+			}
+		}
 
 		//--------------------------------------------------------------------------------------
 
@@ -777,4 +861,6 @@ namespace Neo.SqlClient
 		}
 
 	}
+
+
 }

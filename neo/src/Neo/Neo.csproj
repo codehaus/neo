@@ -254,6 +254,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SqlClient\OrderTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SqlClient\SqlDataStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -1,9 +1,12 @@
 2004-03-30 erik (proxy)
 
+	* Added Jim's code to order insert and delete operations so that
+	constraints between parent and child tables are never violated.
+
 	* Added handling of null values for relations when following
 	query paths as proposed by Arjen.
 
-
+	
 2004-03-29 erik
 
 	* Added support to qualifier parser to generate comparison
