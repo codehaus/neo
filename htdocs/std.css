@@ -1,24 +1,28 @@
-p {
+p, li {
 	font-family: Lucida Grande, Arial, Geneva, sans-serif;
 	font-size:80%;
 }
 
 p.heading1, p.heading2, p.heading2f {
 	margin:0px;
-	margin-top:3ex;
 	margin-bottom:0.5ex;
 	font-weight:bold;
 }
 
 p.heading1 {
+	margin-top:3ex;
 	font-size:110%;
 }
 
-p.heading2f {
-	margin-top:0.0ex;
+p.heading2 {
+	margin-top:2.0ex;
 }
 
-p.body { 
+p.heading2f {
+	margin-top:1.0ex;
+}
+
+p.body, li { 
 	margin:0px;
 	margin-bottom:1ex;
 	line-height:1.7em; 
@@ -28,6 +32,8 @@ p.code {
 	font-family: Courier New, Courier;
 	white-space: pre;
 	margin:0px;
+	margin-bottom:1ex;
+	margin-left:3ex;
 	line-height:1.7em; 
 }
 

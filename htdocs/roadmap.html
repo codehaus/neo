@@ -1,8 +1,11 @@
 
 <p class="heading1">What we are working on</p>
 
-<p class="heading2">Stability</p>
-<p class="body">Now that Neo is used in a major project we are discovering and fixing some intricate bugs that the tests didn't pick up. Of course, we are adding new tests for these. Xiao and Erik are also adding a suite of 'scenario tests' derived from a <a href="http://sourceforge.net/projects/nexor">nexor</a> implementation to the unit tests.</p>
+<p class="heading2f">Documentation</p>
+<p class="body">This includes a more comprehensive Quick Start guide and API documentation. Simon Williams made a good start at the latter and it looks like we'll be using <a href="http://ndoc.sourceforge.net/">Ndoc</a> to embed the documentation into the actual code.</p>
+
+<p class="heading2">A new SQL generator</p>
+<p class="body">With the refactoring of the ER model classes complete we will create a SQL generator based on Velocity templates. The XSL based generator will continue to work as it only depends on the XML format of the model file; which will not be changed.</p>
 
 <p class="heading2">Model Diagrams</p>
 <p class="body">Paul is adding a new generator to the tool set that will generate output that can be transformed into an Entity Relationship Diagram using <a href="http://www.graphviz.org/">Dot</a>.</p>
@@ -10,15 +13,14 @@
 
 <p class="heading1">Planned Features</p>
 
-<p class="heading2">Support for Oracle and other data sources</p>
+<p class="heading2f">Support for Oracle and other data sources</p>
 <p class="body">Neo, in its current form, only supports MS SQL Server. Somebody will have to write an IDataStore implementation for Oracle. The best approach seems to be to refactor the SqlDataStore implemetation such that all re-usable functionality is moved to a new superclass, DatabaseDataStore for example, and then have SqlDataStore and OracleDataStore as subclasses.</p>
 
 <p class="heading2">Improved qualifiers and fetch limits</p>
 <p class="body">Qualifiers that can contain paths and restrictions. Have a look at the following examples which should be self explanatory:</p>
 
-<p class="code">
-    new TitleFactory().Find("Publisher.Name = 'Something'");
-    new TitleAuthorFactory().Find("Title[Royalty > 5000].Publisher.Country = 'Something'");
+<p class="code">new TitleFactory().Find("Publisher.Name = 'Something'");
+new TitleAuthorFactory().Find("Title[Royalty > 5000].Publisher.Country = 'Something'");
 </p>
 
 <p class="body">Additionally, a possibity to specify the maximum number of rows to be returned, maybe even just a boolean saying whether any row matched. For this to be meaningful it is also required to pass the sorting through to the database.</p>
@@ -26,5 +28,5 @@
 <p class="heading2">Schema generation for 'legacy' databases</p>
 <p class="body">Sometimes you will have the need to retrofit an object layer using Neo to an existing database. In such a case it would be cool to generate either the XML file or the object model from schema information in the database. A first step would be to add Neo support to <a href="http://boss.bekk.no/boss/middlegen/">MiddleGen</a>.</p>
 
-<p class="footer">$Id: roadmap.html,v 1.1.1.1 2003-12-16 18:00:49 erik Exp $</p>
+<p class="footer">$Id: roadmap.html,v 1.2 2004-01-17 17:13:04 erik Exp $</p>
 
