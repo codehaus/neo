@@ -45,7 +45,7 @@
 	    &nbsp;&middot;&nbsp;
 	    <a class="mn" href="http://jira.codehaus.org/secure/BrowseProject.jspa?id=10377">Bugs</a>
         &nbsp;&middot;&nbsp;
-        <a class="mn" href="http://lists.codehaus.org/mailman/listinfo">Lists</a>
+        <a class="mn" href="http://archive.neo.codehaus.org/">Lists</a>
 	    &nbsp;&middot;&nbsp;
 	    <a class="mn" href="http://cvs.neo.codehaus.org/">CVS</a>
     </div>
