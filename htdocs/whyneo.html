@@ -1,6 +1,6 @@
 <p class="heading1">Why Neo?</p>
 
-<p class="body">The following is a list of five technical reasons why you should consider using Neo. Of course, there are non-technical reasons as well: Neo is Open Source and has an active user community. It is being used on several large commercial projects and its feature set and performance have been tuned on these. At the same time, it is still in active development and we are adding advanced features. Okay, enough of this and on to the technical benefits.</p>
+<p class="body">The following is a list of five technical reasons why people use Neo. Of course, there are non-technical reasons as well: Neo is Open Source and has an active user community. It is being used on several large commercial projects and its feature set and performance have been tuned on these. At the same time, it is still in active development and we are adding advanced features. Okay, enough of this and on to the technical benefits.</p>
 
 <p class="heading1">Because it is simple and object-oriented</p>
 
@@ -32,15 +32,11 @@ public void ApplyClearanceDiscount()
 
 <p class="body">The model is defined in an abstract format and Neo creates extensible base classes that handle data storage, change tracking, sending of events etc. without any extra work. Other frameworks use normal objects for the domain model, which also has some advantages, but it also limits what the framework can do for you. Say, you want to add a title to the list of titles of a given publisher. In Neo, and most other frameworks, you would do this somehow like this:</p>
 
-<p class="code">
-aPublisher.Titles.Add(theTitle);
-</p>
+<p class="code">aPublisher.Titles.Add(theTitle);</p>
 
 <p class="body">Normally, the title object also knows its publisher and if you use plain objects you must not forget to set this, or else your domain model becomes inconsistent. In other words you also need the following:</p>
 
-<p class="code">
-theTitle.Publisher = aPublisher;
-</p>
+<p class="code">theTitle.Publisher = aPublisher;</p>
 
 <p class="body">With the domain model created by Neo, you can do either and the framework ensures that the model remains consistent.</p>
 
@@ -77,5 +73,5 @@ changeDataSet = context.GetChanges();
 <p class="body">Despite the fact that Neo does not use plain objects for the domain model, it is very easy to create domain models in tests without having to work with a database. This is achieved with the same technique that allows Neo to work disconnected.</p>
 
 
-<p class="footer">$Id: whyneo.html,v 1.1 2004-08-30 21:56:34 erik Exp $</p>
+<p class="footer">$Id: whyneo.html,v 1.2 2004-09-13 19:29:09 erik Exp $</p>
 
