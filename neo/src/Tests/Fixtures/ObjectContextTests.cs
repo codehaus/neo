@@ -2,6 +2,8 @@ using System.Collections;
 using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
+using NMock;
+using NMock.Constraints;
 using NUnit.Framework;
 using Pubs4.Model;
 
@@ -551,6 +553,26 @@ namespace Neo.Tests.Fixtures
 			}
 
 			return count;
+		}
+
+
+		[Test]
+		public void DoesNotRefetchFromStoreAfterFullTableFetch()
+		{
+			IEntityMap titleMap = DefaultEntityMapFactory.SharedInstance.GetMap(typeof(Title));
+			
+			IMock storeMock = new DynamicMock(typeof(IDataStore));
+			DataTable resultTable = new DataTable(titleMap.TableName);
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			FetchSpecification fetchSpec = new FetchSpecification(titleMap);
+
+			storeMock.ExpectAndReturn("FetchRows", resultTable, new IsAnything());
+			context.GetObjects(fetchSpec);
+
+			context.GetObjects(fetchSpec);
+
+			storeMock.Verify();
 		}
 	}
 }

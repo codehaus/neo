@@ -61,7 +61,7 @@ namespace Neo.Core.Qualifiers
 					builder.Append(" " + OperatorString + " ");
 				builder.Append(qualifiers[i]);
 			}
-			builder.Append(" ");
+			builder.Append(")");
 			return builder.ToString();
 		}
 

@@ -45,6 +45,7 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		private ObjectTable			objectTable;
+		private Hashtable			  loadedEntities;
 		private DataSet				mainDataSet;
 		private IDataStore			dataStore;
 		private bool				copiedParent;
@@ -67,6 +68,7 @@ namespace Neo.Core
 			
 			// If you add code here, you might want to add it to Clear() as well
 			objectTable = new ObjectTable();
+			loadedEntities = new Hashtable();
 			mainDataSet = new DataSet();
 			mainDataSet.EnforceConstraints = false;
 			eventHandlers = new Hashtable();
@@ -890,7 +892,12 @@ namespace Neo.Core
 			if(CanLoadFromStore)
 			{
 				FetchObjectFromStore(emapFactory.GetMap(tableName), pkvalues);
-				return objectTable.GetObject(oid);
+				if((obj = objectTable.GetObject(oid)) == null)
+				{
+					if(logger.IsInfoEnabled) logger.Info("No rows returned for " + oid.ToString() + " (PK)");
+					throw new ObjectNotFoundException("No rows returned for " + oid.ToString() + " (PK)");
+				}
+				return obj;
 			}
 			
 			return null;
@@ -1031,7 +1038,6 @@ namespace Neo.Core
 		{
 			FetchSpecification	fetchSpec;
 			Qualifier			mainQualifier;
-			DataTable			table;
 
 			string[] pkcolumns = emap.PrimaryKeyColumns;				
 			if(pkcolumns.Length == 1)
@@ -1047,24 +1053,20 @@ namespace Neo.Core
 			}
 
 			fetchSpec = new FetchSpecification(emap, mainQualifier);
-			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString() + " (PK)");
-			table = dataStore.FetchRows(fetchSpec);
-
-			if(table.Rows.Count == 0)
-			{
-				if(logger.IsInfoEnabled) logger.Info("No rows returned for " + fetchSpec.ToString() + " (PK)");
-				throw new ObjectNotFoundException("No rows returned for " + fetchSpec.ToString() + " (PK)");
-			}
-
-			ImportRowsFromTable(table);
+			FetchObjectsFromStore(fetchSpec);
 		}
 
 
 		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec)
 		{
+			if(loadedEntities.ContainsKey(fetchSpec.EntityMap))
+				return;
+
 			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString());
 			DataTable table = dataStore.FetchRows(fetchSpec);
 			ImportRowsFromTable(table);
+			if(fetchSpec.Qualifier == null)
+				loadedEntities.Add(fetchSpec.EntityMap, null);
 		}
 
 

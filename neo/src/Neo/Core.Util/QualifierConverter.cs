@@ -35,6 +35,7 @@ namespace Neo.Core.Util
 
 			if((eo = propQualifier.Predicate.Value as IEntityObject) != null)
 			{
+				emap.UpdateSchemaInDataSet(eo.Context.DataSet, SchemaUpdate.Basic|SchemaUpdate.Relations);
 				otherEmap = eo.Context.EntityMapFactory.GetMap(eo.GetType());
 				if((rel = eo.Context.DataSet.Relations[otherEmap.TableName + "." + emap.TableName]) == null)
 					throw new NeoException("Can't to convert PropertyQualifier to ColumnQualifier; did not find relation " + otherEmap.TableName + "." + emap.TableName);

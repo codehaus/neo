@@ -1,3 +1,12 @@
+2004-10-18 erik
+
+    * Added a new feature to ObjectContext. It now does not go to
+    a datastore if it has previously brought all objects of the entity in
+    question into memory.
+    
+    * Some small bugfixes.
+
+
 2004-10-14 erik
 
 	* Improved qualifier parser error reporting.

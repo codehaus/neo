@@ -198,6 +198,52 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void PathQualifierWithComplexQualifierAtPathEnd()
+		{
+			Publisher		publisher2;
+			TitleFactory	factory;
+			IList			result;
+		
+			publisher2 = new PublisherFactory(context).FindObject("0736");
+			factory = new TitleFactory(context);
+			result = factory.Find("Publisher.(PubId = {0} or PubId = {1})", publisher.PubId, publisher2.PubId);
+
+			Assertion.AssertEquals("Should return right number of titles.", 11, result.Count);
+			foreach(Title t in result)
+			{
+				if(t.Publisher.PubId != publisher.PubId && t.Publisher.PubId != publisher2.PubId)
+					Assertion.Fail("Should only return relevant titles");
+			}
+		}
+
+
+		[Test]
+		public void PathQualifierWithNestedClauseAndPathQualifier()
+		{
+			AuthorList result;
+			Title	   title;
+
+			title = new TitleFactory(context).FindObject("MC3021");
+			result = new AuthorFactory(context).Find("TitleAuthors.(Title = {0} or Title.Publisher = {1})", title, publisher);
+			Assertion.AssertEquals("Did not match right number of authors.", 11, result.Count);
+			foreach(Author a in result)
+			{
+				title = null;
+				foreach(TitleAuthor ta in a.TitleAuthors)
+				{
+					if((ta.Title.Publisher == publisher) || (ta.Title.TitleId == "MC3021"))
+					{
+						title = ta.Title;
+						break;
+					}
+				}
+				if(title == null)
+					Assertion.Fail("Wrong author.");
+			}
+		}
+
+		
+		[Test]
 		public void FindUnique()
 		{
 			TitleFactory	factory;
