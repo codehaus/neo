@@ -1,0 +1,18 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean />
+  </SettingsComponent>
+  <RecentFilesTracker>
+    <RecentFilesTracker>
+      <TrackedFile location="C:\SCM\tutorial\Movies\src\Tests\Model\MovieTests.cs" offset="215" line="4" column="0" />
+      <TrackedFile location="C:\SCM\tutorial\Movies\src\Model\Movie.cs" offset="1093" line="7" column="0" />
+      <TrackedFile location="C:\SCM\tutorial\Movies\src\Forms\MovieEntryForm.cs" offset="4947" line="25" column="0" />
+      <TrackedFile location="C:\SCM\tutorial\Movies\src\Forms\MovieListForm.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="C:\SCM\tutorial\Movies\src\Model\movies-schema.xml" offset="803" line="3" column="0" />
+      <TrackedFile location="C:\SCM\tutorial\Movies\src\Model\movies-schema.cs" offset="9204" line="0" column="0" />
+    </RecentFilesTracker>
+  </RecentFilesTracker>
+  <CompletionStatisticsManager />
+</Configuration>

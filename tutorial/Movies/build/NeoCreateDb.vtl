@@ -26,10 +26,14 @@ CREATE TABLE $entity.TableName
 #end
 
 #foreach($entity in $Neo.Model.Entities)
+#foreach($attribute in $entity.Attributes)
+#if($attribute.PropertyAttributes.IndexOf("Unique") > -1)
+ALTER TABLE $entity.TableName ADD CONSTRAINT uq_${entity.TableName}_${attribute.ColumnName} UNIQUE ( $attribute.ColumnName ) 
+#end
+#end
 #if($entity.ToOneRelationships.Count > 0)
 #foreach($rel in $entity.ToOneRelationships)
 ALTER TABLE $entity.TableName ADD CONSTRAINT fk_${entity.TableName}_${rel.VarName} FOREIGN KEY ( $rel.LocalKey ) REFERENCES $rel.ForeignEntity.TableName ( $rel.ForeignKey ); 
 #end
-
 #end
 #end

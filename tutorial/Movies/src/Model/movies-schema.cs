@@ -25,6 +25,7 @@ public class PersonBase : EntityObject
 		MovieActorLinks = new MovieActorLinkRelation(this, "MovieActorLinks");
 	}	
 	
+	[Unique]
 	public virtual System.String Name
 	{
 		get { return Row["name"] as System.String; }
@@ -418,6 +419,7 @@ public class MovieBase : EntityObject
 		MovieActorLinks = new MovieActorLinkRelation(this, "MovieActorLinks");
 	}	
 	
+	[Unique]
 	public virtual System.String Title
 	{
 		get { return Row["title"] as System.String; }

@@ -1,6 +1,6 @@
 <!--
     Torque XML database schema DTD
-    $Id: norque.dtd,v 1.1 2005-03-25 12:43:40 erik Exp $
+    $Id: norque.dtd,v 1.2 2005-03-31 19:31:40 erik Exp $
 -->
 
 <!--
@@ -81,6 +81,7 @@ Java class or method name.
     ) "VARCHAR"
   hidden (true|false) "false"
   javaType (object|primitive) #IMPLIED
+  attributes CDATA #IMPLIED
   size CDATA #IMPLIED
   default CDATA #IMPLIED
   autoIncrement (true|false) "false"
