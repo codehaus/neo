@@ -49,7 +49,7 @@ namespace Neo.Tests.Fixtures
 		public void CheckSetup()
 		{
 			loadTitle("TC7777");
-			Assertion.AssertEquals("Wrong title.", "TC7777", titleTable.Rows[0]["title_id"]);
+			Assert.AreEqual("TC7777", titleTable.Rows[0]["title_id"], "Wrong title.");
 		}
 
 
@@ -57,7 +57,7 @@ namespace Neo.Tests.Fixtures
 		public void FetchAll()
 		{
 			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title))));
-			Assertion.Assert("There should be more than 15 titles.", fetchedTable.Rows.Count > 15);
+			Assert.IsTrue( fetchedTable.Rows.Count > 15, "There should be more than 15 titles.");
 		}
 
 
@@ -73,11 +73,11 @@ namespace Neo.Tests.Fixtures
 			store.BeginTransaction();
 			store.ProcessUpdates(titleTable);
 			store.CommitTransaction();
-			Assertion.AssertEquals("Wrong row state.", DataRowState.Unchanged, titleTable.Rows[0].RowState);
+			Assert.AreEqual( DataRowState.Unchanged, titleTable.Rows[0].RowState, "Wrong row state.");
 
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "TC7777")));
 			// Don't use AssertEquals with Decimals. (Would compare their string value which is precision dependent.)
-			Assertion.Assert("Price not updated in database.", newPrice.Equals(fetchedTable.Rows[0]["price"]));
+			Assert.IsTrue(newPrice.Equals(fetchedTable.Rows[0]["price"]), "Price not updated in database.");
 		}
 
 
@@ -94,10 +94,10 @@ namespace Neo.Tests.Fixtures
 			store.BeginTransaction();
 			store.ProcessUpdates(dataset.Tables["titles"]);
 			store.RollbackTransaction();
-			Assertion.AssertEquals("Wrong row state.", DataRowState.Modified, titleTable.Rows[0].RowState);
+			Assert.AreEqual(DataRowState.Modified, titleTable.Rows[0].RowState, "Wrong row state.");
 
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId" , "TC7777")));
-			Assertion.AssertEquals("Price was updated in database.", oldPrice, fetchedTable.Rows[0]["price"]);
+			Assert.AreEqual(oldPrice, fetchedTable.Rows[0]["price"], "Price was updated in database.");
 		}
 
 
@@ -128,7 +128,7 @@ namespace Neo.Tests.Fixtures
 			store.ProcessUpdates(dataset2.Tables["titles"]);
 			hadErrors = dataset2.Tables["titles"].HasErrors;
 			store.RollbackTransaction();
-			Assertion.Assert("No error for conflicting concurrent updates.", hadErrors);
+			Assert.IsTrue( hadErrors, "No error for conflicting concurrent updates.");
 		}
 
 		[Test]
@@ -142,7 +142,7 @@ namespace Neo.Tests.Fixtures
 			store.ProcessDeletes(new OrderedTableCollection(dataset));
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "MC3026")));
 			store.RollbackTransaction();
-			Assertion.Assert("Row not deleted from database.", fetchedTable.Rows.Count == 0);
+			Assert.IsTrue( fetchedTable.Rows.Count == 0, "Row not deleted from database.");
 		}
 
 		[Test]
@@ -170,8 +170,8 @@ namespace Neo.Tests.Fixtures
 			finalId = (Int16)newRow["job_id"];
 			store.RollbackTransaction();
 
-			Assertion.AssertEquals("Inconsistent old value in change table.", tempId, changeTable[0].OldValue);
-			Assertion.AssertEquals("Inconsistent new value in change table.", finalId, changeTable[0].NewValue);
+			Assert.AreEqual(tempId, changeTable[0].OldValue, "Inconsistent old value in change table.");
+			Assert.AreEqual(finalId, changeTable[0].NewValue, "Inconsistent new value in change table.");
 		}
 
 
@@ -215,8 +215,8 @@ namespace Neo.Tests.Fixtures
 			finalForeignId = (Int16)newJobRefRow["job_id"];
 			store.RollbackTransaction();
 
-			Assertion.Assert("Final id should be different from temp id.", finalId.Equals(tempId) == false);
-			Assertion.AssertEquals("Value should be propagated to child table.", finalId, finalForeignId);
+			Assert.IsTrue(finalId.Equals(tempId) == false, "Final id should be different from temp id.");
+			Assert.AreEqual(finalId, finalForeignId, "Value should be propagated to child table.");
 		}
 
 
@@ -240,7 +240,7 @@ namespace Neo.Tests.Fixtures
 			ArrayList changeTables = new ArrayList();		
 			store.ProcessInserts(new OrderedTableCollection(dataset), changeTables);
 
-			Assertion.AssertEquals("Should not have created change tables", 0, changeTables.Count);
+			Assert.AreEqual(0, changeTables.Count, "Should not have created change tables");
 		}
 
 		
@@ -256,14 +256,14 @@ namespace Neo.Tests.Fixtures
 														  new PropertyComparer("Type", SortDirection.Descending)};
 
 			fetchedTable = store.FetchRows(spec);
-			Assertion.Assert("Should have more than 2 rows", fetchedTable.Rows.Count > 2);
+			Assert.IsTrue(fetchedTable.Rows.Count > 2, "Should have more than 2 rows");
 
 			prevRow = fetchedTable.Rows[0];
 			foreach(DataRow currRow in fetchedTable.Rows)
 			{
-				Assertion.Assert("Should return titles in correct order.", (DateTime)prevRow["pubdate"] <= (DateTime)currRow["pubdate"]);
+				Assert.IsTrue((DateTime)prevRow["pubdate"] <= (DateTime)currRow["pubdate"], "Should return titles in correct order.");
 				if((DateTime)prevRow["pubdate"] == (DateTime)currRow["pubdate"])
-					Assertion.Assert("Should return titles in correct order.", Comparer.Default.Compare((String)prevRow["type"], (String)currRow["type"]) >= 0);
+					Assert.IsTrue(Comparer.Default.Compare((String)prevRow["type"], (String)currRow["type"]) >= 0, "Should return titles in correct order.");
 				prevRow = currRow;
 			}
 		}
@@ -278,15 +278,15 @@ namespace Neo.Tests.Fixtures
 				return;
 			
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
-			Assertion.AssertEquals("Wrong number of rows.", 1, fetchedTable.Rows.Count);
+			Assert.AreEqual(1, fetchedTable.Rows.Count, "Wrong number of rows.");
 			fetchedTable.Rows[0]["max_lvl"] = 20;
 			store.BeginTransaction();
 			store.ProcessUpdates(fetchedTable);
 			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
 			store.RollbackTransaction();
 
-			Assertion.AssertEquals("Wrong number of rows.", 1, fetchedTable.Rows.Count);
-			Assertion.AssertEquals("Value not updated.", 20, fetchedTable.Rows[0]["max_lvl"]);
+			Assert.AreEqual(1, fetchedTable.Rows.Count, "Wrong number of rows.");
+			Assert.AreEqual(20, fetchedTable.Rows[0]["max_lvl"], "Value not updated.");
 		}
 
 
@@ -308,9 +308,9 @@ namespace Neo.Tests.Fixtures
 		private void loadTitle(string title_id)
 		{
 			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", title_id)));
-			Assertion.AssertEquals("Wrong number of rows.", 1, fetchedTable.Rows.Count);
+			Assert.AreEqual(1, fetchedTable.Rows.Count, "Wrong number of rows.");
 			dataset.Merge(fetchedTable, false, MissingSchemaAction.Ignore);
-			Assertion.AssertEquals("Merge with dataset failed.", 1, titleTable.Rows.Count);
+			Assert.AreEqual(1, titleTable.Rows.Count, "Merge with dataset failed.");
 		}
 
 

@@ -30,8 +30,8 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void ObjectsAreMocks()
 		{
-		    Assertion.AssertEquals("Object should be of mock type.", typeof(TitleMock), title.GetType());
-			Assertion.AssertEquals("Object should be of mock type.", typeof(PublisherMock), title.Publisher.GetType());
+		    Assert.AreEqual(typeof(TitleMock), title.GetType(), "Object should be of mock type.");
+			Assert.AreEqual(typeof(PublisherMock), title.Publisher.GetType(), "Object should be of mock type.");
 		}
 
 		
@@ -44,7 +44,7 @@ namespace Neo.Tests.Fixtures
 			childContext = new ObjectContext(context);
 			titleInChildContext = (Title)childContext.GetLocalObject(title);
 
-			Assertion.AssertEquals("Object should be of mock type.", typeof(TitleMock), titleInChildContext.GetType());
+			Assert.AreEqual(typeof(TitleMock), titleInChildContext.GetType(), "Object should be of mock type.");
 		}
 
 	}

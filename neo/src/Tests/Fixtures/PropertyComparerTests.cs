@@ -29,20 +29,20 @@ namespace Neo.Tests.Fixtures
 		    TitleList	titles;
 
 			titles = new TitleList(new PublisherFactory(context).FindObject("0736").Titles);
-		    Assertion.AssertEquals("Wrong number of titles.", 5, titles.Count);
+		    Assert.AreEqual(5, titles.Count, "Wrong number of titles.");
 			
 			titles.Sort(new PropertyComparer("Advance", SortDirection.Ascending));
 			for(int i = 1; i < titles.Count; i++)
-				Assertion.Assert("Wrong ordering; not ascending.", titles[i - 1].Advance <= titles[i].Advance);
+				Assert.IsTrue(titles[i - 1].Advance <= titles[i].Advance, "Wrong ordering; not ascending.");
 
 			titles.Sort(new PropertyComparer("Advance", SortDirection.Descending));
 			for(int i = 1; i < titles.Count; i++)
-				Assertion.Assert("Wrong ordering; not descending.", titles[i - 1].Advance >= titles[i].Advance);
+				Assert.IsTrue(titles[i - 1].Advance >= titles[i].Advance, "Wrong ordering; not descending.");
 
 			// try again on the off change that they were pre-sorted and the first didn't really work
 			titles.Sort(new PropertyComparer("Advance", SortDirection.Ascending));
 			for(int i = 1; i < titles.Count; i++)
-				Assertion.Assert("Wrong ordering; not ascending again.", titles[i - 1].Advance <= titles[i].Advance);
+				Assert.IsTrue(titles[i - 1].Advance <= titles[i].Advance, "Wrong ordering; not ascending again.");
 		}
 
 
@@ -61,14 +61,14 @@ namespace Neo.Tests.Fixtures
 			t = factory.CreateObject("XX9001");   t.TheTitle = "ABC";   titles.Add(t);
 
 			titles.Sort(new PropertyComparer("TheTitle", SortDirection.AscendingCaseInsensitive));
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "ABC", titles[0].TheTitle);
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "mmm", titles[1].TheTitle);
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "XYZ", titles[2].TheTitle);
+			Assert.AreEqual("ABC", titles[0].TheTitle, "Wrong ordering; not ascending.");
+			Assert.AreEqual("mmm", titles[1].TheTitle, "Wrong ordering; not ascending.");
+			Assert.AreEqual("XYZ", titles[2].TheTitle, "Wrong ordering; not ascending.");
 	
 			titles.Sort(new PropertyComparer("TheTitle", SortDirection.DescendingCaseInsensitive));
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "XYZ", titles[0].TheTitle);
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "mmm", titles[1].TheTitle);
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "ABC", titles[2].TheTitle);
+			Assert.AreEqual("XYZ", titles[0].TheTitle, "Wrong ordering; not ascending.");
+			Assert.AreEqual("mmm", titles[1].TheTitle, "Wrong ordering; not ascending.");
+			Assert.AreEqual("ABC", titles[2].TheTitle, "Wrong ordering; not ascending.");
 		}
 	
 
@@ -91,12 +91,12 @@ namespace Neo.Tests.Fixtures
 			t = factory.CreateObject("XX9000");   t.TheTitle = "lugar";		titles.Add(t);
 
 			titles.Sort(new PropertyComparer("TheTitle", SortDirection.AscendingCaseInsensitive, culture));
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "lugar", titles[0].TheTitle);
-			Assertion.AssertEquals("Wrong ordering; not ascending.", "llegar", titles[1].TheTitle);
+			Assert.AreEqual("lugar", titles[0].TheTitle, "Wrong ordering; not ascending.");
+			Assert.AreEqual("llegar", titles[1].TheTitle, "Wrong ordering; not ascending.");
 	
 			titles.Sort(new PropertyComparer("TheTitle", SortDirection.DescendingCaseInsensitive, culture));
-			Assertion.AssertEquals("Wrong ordering; not descending.", "llegar", titles[0].TheTitle);
-			Assertion.AssertEquals("Wrong ordering; not descending.", "lugar", titles[1].TheTitle);
+			Assert.AreEqual("llegar", titles[0].TheTitle, "Wrong ordering; not descending.");
+			Assert.AreEqual("lugar", titles[1].TheTitle, "Wrong ordering; not descending.");
 		}
 
 
@@ -115,7 +115,7 @@ namespace Neo.Tests.Fixtures
 
 			titles.Sort("TitleId", SortDirection.AscendingCaseInsensitive);
 			for(int i = 0; i < titles.Count; i++)
-				Assertion.AssertEquals("Sorting failed.", sortedTitles[i], titles[i]);
+				Assert.AreEqual(sortedTitles[i], titles[i], "Sorting failed.");
 		}
 	
 
@@ -135,7 +135,7 @@ namespace Neo.Tests.Fixtures
 
 			sortedTitlesFromRel = titles.GetSortedList("TitleId", SortDirection.AscendingCaseInsensitive);
 			for(int i = 0; i < titles.Count; i++)
-				Assertion.AssertEquals("Sorting failed.", sortedTitles[i], sortedTitlesFromRel[i]);
+				Assert.AreEqual(sortedTitles[i], sortedTitlesFromRel[i], "Sorting failed.");
 		}
 
 	}

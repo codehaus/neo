@@ -34,8 +34,8 @@ namespace Neo.Tests.Fixtures
 			originalTitle = new TitleFactory(context).FindObject("TC7777");
 			publisher = new PublisherFactory(context).FindObject("0877");
 			foundTitles = publisher.Titles.Find("TitleId", "TC7777");
-		    Assertion.AssertEquals("Found wrong number of titles.", 1, foundTitles.Count);
-			Assertion.AssertEquals("Found wrong title.", originalTitle, foundTitles[0]);
+		    Assert.AreEqual(1, foundTitles.Count, "Found wrong number of titles.");
+			Assert.AreEqual(originalTitle, foundTitles[0], "Found wrong title.");
 		}
 
 		
@@ -48,7 +48,7 @@ namespace Neo.Tests.Fixtures
 			publisher = new PublisherFactory(context).FindObject("0877");
 			allTitles = new TitleFactory(context).FindAllObjects();
 			matchingTitles = allTitles.Find("Publisher", publisher);
-			Assertion.AssertEquals("Found wrong number of titles.", publisher.Titles.Count, matchingTitles.Count);
+			Assert.AreEqual(publisher.Titles.Count, matchingTitles.Count, "Found wrong number of titles.");
 		}
 
 
@@ -62,7 +62,7 @@ namespace Neo.Tests.Fixtures
 			originalTitle = new TitleFactory(context).FindObject("TC7777");
 			publisher = new PublisherFactory(context).FindObject("0877");
 			foundTitle = publisher.Titles.FindUnique("TitleId", "TC7777");
-			Assertion.AssertEquals("Found wrong title.", originalTitle, foundTitle);
+			Assert.AreEqual(originalTitle, foundTitle, "Found wrong title.");
 		}
 
 
@@ -83,7 +83,7 @@ namespace Neo.Tests.Fixtures
 			Publisher	publisher;
 
 			publisher = new PublisherFactory(context).FindObject("1622");
-			Assertion.AssertNotNull("Found wrong publisher.", publisher);
+			Assert.IsNotNull(publisher, "Found wrong publisher.");
 			publisher.Titles.FindUnique("Publisher = {0} AND Royalty = {1}", publisher, 10);
 		}
 
@@ -97,7 +97,7 @@ namespace Neo.Tests.Fixtures
 			originalTitle = new TitleFactory(context).FindObject("TC7777");
 			publisher = new PublisherFactory(context).FindObject("0877");
 			foundTitle = publisher.Titles.FindFirst("TitleId", "TC7777");
-			Assertion.AssertEquals("Found wrong title.", originalTitle, foundTitle);
+			Assert.AreEqual(originalTitle, foundTitle, "Found wrong title.");
 		}
 
 
@@ -108,9 +108,9 @@ namespace Neo.Tests.Fixtures
 			Title		foundTitle;
 
 			publisher = new PublisherFactory(context).FindObject("1622");
-			Assertion.AssertNotNull("Found wrong publisher.", publisher);
+			Assert.IsNotNull(publisher, "Found wrong publisher.");
 			foundTitle = publisher.Titles.FindFirst("Publisher", publisher);
-			Assertion.AssertNull("Found wrong title.", foundTitle);
+			Assert.IsNull(foundTitle, "Found wrong title.");
 		}
 
 
@@ -122,8 +122,8 @@ namespace Neo.Tests.Fixtures
 
 			publisher = new PublisherFactory(context).FindObject("0877");
 			matchingTitles = publisher.Titles.Find("Notes", null);
-			Assertion.AssertEquals("Wrong number of titles.", 1, matchingTitles.Count);
-			Assertion.AssertEquals("Wrong title object.", "MC3026", matchingTitles[0].TitleId);
+			Assert.AreEqual(1, matchingTitles.Count, "Wrong number of titles.");
+			Assert.AreEqual("MC3026", matchingTitles[0].TitleId, "Wrong title object.");
 		}
 
 
@@ -136,9 +136,9 @@ namespace Neo.Tests.Fixtures
 
 			titles = new TitleFactory(context).FindAllObjects();
 			countBefore = titles.Count;
-			Assertion.Assert("Too few titles.", countBefore > 1);
+			Assert.IsTrue(countBefore > 1, "Too few titles.");
 			titles.Remove(titles[0]);
-			Assertion.Assert("Removal failed.", titles.Count == countBefore - 1);
+			Assert.IsTrue(titles.Count == countBefore - 1, "Removal failed.");
 			titles.MakeReadOnly();
 			titles.Remove(titles[0]);
 		}
@@ -151,10 +151,10 @@ namespace Neo.Tests.Fixtures
 		    IList	titles;
 
 			titles = new TitleFactory(context).FindAllObjects();
-			Assertion.Assert("Too few titles.", titles.Count > 2);
-			Assertion.Assert("First titles must not be the same.", titles[0].Equals(titles[1]) == false);
+			Assert.IsTrue(titles.Count > 2, "Too few titles.");
+			Assert.IsTrue(titles[0].Equals(titles[1]) == false, "First titles must not be the same.");
 			titles[0] = titles[1];
-			Assertion.Assert("Assignment failed.", titles[0].Equals(titles[1]));
+			Assert.IsTrue(titles[0].Equals(titles[1]), "Assignment failed.");
 			((TitleList)titles).MakeReadOnly();
 			titles[0] = titles[1];
 		}
@@ -175,8 +175,8 @@ namespace Neo.Tests.Fixtures
 
 			titleList.Clear();
 			
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.Reset, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.Reset, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -193,8 +193,8 @@ namespace Neo.Tests.Fixtures
 			
 			titleList.Add(title);
 			
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemAdded, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.ItemAdded, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -212,8 +212,8 @@ namespace Neo.Tests.Fixtures
 
 			titleList.Remove(title);
 
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemDeleted, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.ItemDeleted, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -280,7 +280,7 @@ namespace Neo.Tests.Fixtures
 			public EventRecorder(ObjectCollectionBase collection)
 			{
 				IBindingList bindingList = collection;
-				Assertion.Assert("Collection must support notification", bindingList.SupportsChangeNotification);
+				Assert.IsTrue(bindingList.SupportsChangeNotification, "Collection must support notification");
 				collection.ListChanged += new ListChangedEventHandler(Titles_ListChanged);
 			}
 		

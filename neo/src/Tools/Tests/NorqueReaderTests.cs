@@ -33,7 +33,7 @@ namespace Neo.Tools.Tests
 				if(e.TableName == "titles")
 					return e;
 			}
-			Assertion.Fail("Could not find entity for table 'titles.'");
+			Assert.Fail("Could not find entity for table 'titles.'");
 			return null; // keep compiler happy
 		}
 
@@ -43,9 +43,9 @@ namespace Neo.Tools.Tests
 		{
 			Entity	e = GetTitleEntity(schema_multipleNamespaces);
 
-			Assertion.AssertEquals("Wrong class name.", "Title", e.ClassName);
-			Assertion.AssertEquals("Wrong id method (inherited.)", IdMethod.None, e.IdMethod);
-			Assertion.AssertEquals("Wrong id method (inherited.)", IdMethod.None, e.IdMethod);
+			Assert.AreEqual("Title", e.ClassName, "Wrong class name.");
+			Assert.AreEqual(IdMethod.None, e.IdMethod, "Wrong id method (inherited.)");
+			Assert.AreEqual(IdMethod.None, e.IdMethod, "Wrong id method (inherited.)");
 		}
 
 
@@ -55,8 +55,8 @@ namespace Neo.Tools.Tests
 			Entity	e = GetTitleEntity(schema_multipleNamespaces);
 		    ArrayList namespaces = new ArrayList(e.UsedNamespaces);
 			
-			Assertion.AssertEquals("Wrong number of namespaces for 'using'.", 1, namespaces.Count);
-			Assertion.Assert("Did not find namespace pubs4.Model.X", namespaces.Contains("pubs4.Model.X"));
+			Assert.AreEqual(1, namespaces.Count, "Wrong number of namespaces for 'using'.");
+			Assert.IsTrue(namespaces.Contains("pubs4.Model.X"), "Did not find namespace pubs4.Model.X");
 		}
 
 		#region Test data (multipleNamespaces)

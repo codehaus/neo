@@ -26,7 +26,7 @@ namespace Neo.Tests.Fixtures
 
 			context = new ObjectContext(GetTestDataSet());
 			title = new TitleFactory(context).FindObject("TC7777");
-			Assertion.AssertNotNull("Failed to find title object.", title);
+			Assert.IsNotNull(title, "Failed to find title object.");
 		}
 		
 			
@@ -67,12 +67,12 @@ namespace Neo.Tests.Fixtures
 			childContext = new ObjectContext(context);
 			titleInChild = new TitleFactory(childContext).FindUnique("TitleId = 'TC7777'");
 
-			Assertion.Assert("Not same.", titleInChild.IsSame(title));
-			Assertion.Assert("Not same.", title.IsSame(titleInChild));
+			Assert.IsTrue(titleInChild.IsSame(title), "Not same.");
+			Assert.IsTrue(title.IsSame(titleInChild), "Not same.");
 
 			otherTitleInChild = new TitleFactory(context).FindUnique("TitleId = 'BU1032'");
-			Assertion.Assert("Same but shouldn't.", otherTitleInChild.IsSame(title) == false);
-			Assertion.Assert("Same but shouldn't.", title.IsSame(otherTitleInChild) == false);
+			Assert.IsTrue(otherTitleInChild.IsSame(title) == false, "Same but shouldn't.");
+			Assert.IsTrue(title.IsSame(otherTitleInChild) == false, "Same but shouldn't.");
 		}
 
 
@@ -82,10 +82,10 @@ namespace Neo.Tests.Fixtures
 			ILog		logger, logger2;
 
 			logger = MyEntityObject.GetLogger(typeof(Title));
-			Assertion.AssertNotNull("Did not get logger.", logger);
+			Assert.IsNotNull(logger, "Did not get logger.");
 
 			logger2 = MyEntityObject.GetLogger(typeof(Title));
-			Assertion.AssertEquals("Logger not cached.", logger, logger2);
+			Assert.AreEqual(logger, logger2, "Logger not cached.");
 		}
 
 
@@ -96,7 +96,7 @@ namespace Neo.Tests.Fixtures
 
 			logger = MyEntityObject.GetLogger(typeof(Title));
 			logger2 = MyEntityObject.GetLogger(typeof(Publisher));
-			Assertion.Assert("Logger must be different for different classes.", logger.Equals(logger2) == false);
+			Assert.IsTrue(logger.Equals(logger2) == false, "Logger must be different for different classes.");
 		}
 
 		
@@ -107,7 +107,7 @@ namespace Neo.Tests.Fixtures
 
 			descriptionBeforeDelete = title.ToString();
 			title.Delete();
-			Assertion.AssertEquals("Should have same description.", descriptionBeforeDelete, title.ToString());
+			Assert.AreEqual(descriptionBeforeDelete, title.ToString(), "Should have same description.");
 		}
 	
 	}

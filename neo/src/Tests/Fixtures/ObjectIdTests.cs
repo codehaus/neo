@@ -18,17 +18,17 @@ namespace Neo.Tests.Fixtures
 			oid3 = new ObjectId("table1", new object[] { "bar" });
 			oid4 = new ObjectId("table2", new object[] { "foo" });
 
-		    Assertion.Assert("oid1.Equals(null) must be false", oid1.Equals(null) == false);
-			Assertion.Assert("oid1.Equals(this) must be false", oid1.Equals(this) == false);
+		    Assert.IsTrue(oid1.Equals(null) == false, "oid1.Equals(null) must be false");
+			Assert.IsTrue(oid1.Equals(this) == false, "oid1.Equals(this) must be false");
 
-			Assertion.Assert("oid1.Equals(oid2) must be true", oid1.Equals(oid2) == true);
-			Assertion.Assert("oid1.GetHashCode() must be equal to oid2.GetHashCode()", oid1.GetHashCode() == oid2.GetHashCode());
+			Assert.IsTrue(oid1.Equals(oid2) == true, "oid1.Equals(oid2) must be true");
+			Assert.IsTrue(oid1.GetHashCode() == oid2.GetHashCode(), "oid1.GetHashCode() must be equal to oid2.GetHashCode()");
 
-			Assertion.Assert("oid1.Equals(oid3) must be false", oid1.Equals(oid3) == false);
-			Assertion.Assert("oid1.GetHashCode() must not be equal to oid3.GetHashCode()", oid1.GetHashCode() != oid3.GetHashCode());
+			Assert.IsTrue(oid1.Equals(oid3) == false, "oid1.Equals(oid3) must be false");
+			Assert.IsTrue(oid1.GetHashCode() != oid3.GetHashCode(), "oid1.GetHashCode() must not be equal to oid3.GetHashCode()");
 
-			Assertion.Assert("oid1.Equals(oid4) must be false", oid1.Equals(oid4) == false);
-			Assertion.Assert("oid1.GetHashCode() must not be equal to oid4.GetHashCode()", oid1.GetHashCode() != oid4.GetHashCode());
+			Assert.IsTrue(oid1.Equals(oid4) == false, "oid1.Equals(oid4) must be false");
+			Assert.IsTrue(oid1.GetHashCode() != oid4.GetHashCode(), "oid1.GetHashCode() must not be equal to oid4.GetHashCode()");
 		}
 
 
@@ -41,14 +41,14 @@ namespace Neo.Tests.Fixtures
 			oid2 = new ObjectId("titleauthor", new object[] { "486-29-1786", "TC7777" });
 			oid3 = new ObjectId("titleauthor", new object[] { "672-71-3249", "TC7777" });
 
-			Assertion.Assert("oid1.Equals(null) must be false", oid1.Equals(null) == false);
-			Assertion.Assert("oid1.Equals(this) must be false", oid1.Equals(this) == false);
+			Assert.IsTrue(oid1.Equals(null) == false, "oid1.Equals(null) must be false");
+			Assert.IsTrue(oid1.Equals(this) == false, "oid1.Equals(this) must be false");
 
-			Assertion.Assert("oid1.Equals(oid2) must be true", oid1.Equals(oid2) == true);
-			Assertion.Assert("oid1.GetHashCode() must be equal to oid2.GetHashCode()", oid1.GetHashCode() == oid2.GetHashCode());
+			Assert.IsTrue(oid1.Equals(oid2) == true, "oid1.Equals(oid2) must be true");
+			Assert.IsTrue(oid1.GetHashCode() == oid2.GetHashCode(), "oid1.GetHashCode() must be equal to oid2.GetHashCode()");
 
-			Assertion.Assert("oid1.Equals(oid3) must be false", oid1.Equals(oid3) == false);
-			Assertion.Assert("oid1.GetHashCode() must not be equal to oid3.GetHashCode()", oid1.GetHashCode() != oid3.GetHashCode());
+			Assert.IsTrue(oid1.Equals(oid3) == false, "oid1.Equals(oid3) must be false");
+			Assert.IsTrue(oid1.GetHashCode() != oid3.GetHashCode(), "oid1.GetHashCode() must not be equal to oid3.GetHashCode()");
 		}
 
 
@@ -62,22 +62,22 @@ namespace Neo.Tests.Fixtures
 			
 			oid1 = new ObjectId("titleauthor", new object[] { "486-29-1786", "TC7777" });
 			table[oid1] = "foo";
-			Assertion.Assert("Not found in table.", table[oid1].Equals("foo"));
+			Assert.IsTrue(table[oid1].Equals("foo"), "Not found in table.");
 
 			oid1 = new ObjectId("titleauthor", new object[] { "672-71-3249", "TC7777" });
 			table[oid1] = "foo";
-			Assertion.Assert("Not found in table.", table[oid1].Equals("foo"));
+			Assert.IsTrue(table[oid1].Equals("foo"), "Not found in table.");
 
 			oid1 = new ObjectId("titleauthor", new object[] { "472-27-2349", "TC7777" });
 			table[oid1] = "foo";
-			Assertion.Assert("Not found in table.", table[oid1].Equals("foo"));
+			Assert.IsTrue(table[oid1].Equals("foo"), "Not found in table.");
 
 			oid1 = new ObjectId("titleauthor", new object[] { "267-41-2394", "TC7777" });
 			table[oid1] = "foo";
-			Assertion.Assert("Not found in table.", table[oid1].Equals("foo"));
+			Assert.IsTrue(table[oid1].Equals("foo"), "Not found in table.");
 
 			oid2 = new ObjectId("titleauthor", new object[] { "486-29-1786", "TC7777" });
-			Assertion.Assert("Not found in table using new oid.", table[oid2].Equals("foo"));
+			Assert.IsTrue(table[oid2].Equals("foo"), "Not found in table using new oid.");
 		}
 
 
@@ -87,7 +87,7 @@ namespace Neo.Tests.Fixtures
 			ObjectId	oid1;
 
 			oid1 = new ObjectId("table1", new object[] { "foo", "bar" });
-			Assertion.AssertEquals("ToString() wrong.", "{table1: foo, bar}", oid1.ToString());
+			Assert.AreEqual("{table1: foo, bar}", oid1.ToString(), "ToString() wrong.");
 		}
 	}
 }

@@ -28,8 +28,8 @@ namespace Neo.Tests.Fixtures
 			// would spoil the second count.
 			emapFactory = new DefaultEntityMapFactory();
 
-			Assertion.AssertEquals("Wrong number of maps types.", 7, emapFactory.GetRegisteredTypes().Count);
-			Assertion.AssertEquals("Wrong number of maps.", 7, emapFactory.GetAllMaps().Count);
+			Assert.AreEqual( 7, emapFactory.GetRegisteredTypes().Count, "Wrong number of maps types.");
+			Assert.AreEqual(7, emapFactory.GetAllMaps().Count, "Wrong number of maps.");
 		}
 
 
@@ -44,12 +44,12 @@ namespace Neo.Tests.Fixtures
 			emapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(dataset, SchemaUpdate.Full);
 			
 			titleTable = dataset.Tables["titles"];
-			Assertion.AssertNotNull("Could not find titles table.", titleTable);
-			Assertion.AssertNotNull("Could not find publishers.titles relation.", dataset.Relations["publishers*titles.pub_id"]);
-			Assertion.AssertEquals("Wrong number of columns in titles.", 10, titleTable.Columns.Count);
+			Assert.IsNotNull(titleTable, "Could not find titles table.");
+			Assert.IsNotNull(dataset.Relations["publishers*titles.pub_id"], "Could not find publishers.titles relation.");
+			Assert.AreEqual(10, titleTable.Columns.Count, "Wrong number of columns in titles.");
 			salesColumn = titleTable.Columns["ytd_sales"];
-			Assertion.AssertNotNull("Could not find sales column.", salesColumn);
-			Assertion.AssertEquals("Wrong type of sales column.", typeof(int), salesColumn.DataType);
+			Assert.IsNotNull(salesColumn, "Could not find sales column.");
+			Assert.AreEqual(typeof(int), salesColumn.DataType, "Wrong type of sales column.");
 		}
 	}
 }

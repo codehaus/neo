@@ -43,7 +43,7 @@ namespace Neo.Tests.Fixtures
 			builder = new GenericSql92Builder(table, null);
 			builder.WriteSelect((IFetchSpecification)fetchSpecMock.MockInstance);
 
-			Assertion.AssertEquals("Should have created correct statement.", "SELECT name, count FROM foo", builder.Command);
+			Assert.AreEqual("SELECT name, count FROM foo", builder.Command, "Should have created correct statement.");
 		}
 
 
@@ -63,7 +63,7 @@ namespace Neo.Tests.Fixtures
 			builder.UsesDelimitedIdentifiers = true;
 			builder.WriteSelect((IFetchSpecification)fetchSpecMock.MockInstance);
 
-			Assertion.AssertEquals("Should have created correct statement.", "SELECT \"name\", \"count\" FROM \"foo\"", builder.Command);
+			Assert.AreEqual("SELECT \"name\", \"count\" FROM \"foo\"", builder.Command, "Should have created correct statement.");
 		}
 
 
@@ -86,7 +86,7 @@ namespace Neo.Tests.Fixtures
 			// parameters but that's not what we are testing.
 			builder = new GenericSql92Builder(table, new SqlImplFactory());
 			builder.WriteSelect((IFetchSpecification)fetchSpecMock.MockInstance);
-			Assertion.AssertEquals("Should have created correct statement.", "SELECT name, count FROM foo WHERE count<>count0", builder.Command);
+			Assert.AreEqual("SELECT name, count FROM foo WHERE count<>count0", builder.Command, "Should have created correct statement.");
 		}
 
 
@@ -108,7 +108,7 @@ namespace Neo.Tests.Fixtures
 			// parameters but that's not what we are testing.
 			builder = new GenericSql92Builder(table, new SqlImplFactory());
 			builder.WriteDelete(row);
-			Assertion.Assert("Should have created correct statement.", builder.Command.IndexOf("name LIKE name_ORIG") != -1);
+			Assert.IsTrue(builder.Command.IndexOf("name LIKE name_ORIG") != -1, "Should have created correct statement.");
 		}
 	
 	}

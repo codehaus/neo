@@ -35,8 +35,8 @@ namespace Neo.Tools.Tests
 		[Test]
 		public void EndToEnd() 
 		{
-			Assertion.Assert("No file named Title.cs", File.Exists("Title.cs"));
-			Assertion.Assert("No file named _Title.cs", File.Exists("_Title.cs"));
+			Assert.IsTrue(File.Exists("Title.cs"), "No file named Title.cs");
+			Assert.IsTrue(File.Exists("_Title.cs"), "No file named _Title.cs");
 		}
 
 		[Test]
@@ -50,8 +50,8 @@ namespace Neo.Tools.Tests
 			reader.Close();
 
 			// Check some random strings that should definitely be in the file
-			Assertion.Assert("No/wrong namespace def.", contents.IndexOf("namespace pubs4.Model") > 0);
-			Assertion.Assert("No/wrong class def.", contents.IndexOf("public class Title : TitleBase") > 0);
+			Assert.IsTrue(contents.IndexOf("namespace pubs4.Model") > 0, "No/wrong namespace def.");
+			Assert.IsTrue(contents.IndexOf("public class Title : TitleBase") > 0, "No/wrong class def.");
 		}
 
 
@@ -66,9 +66,9 @@ namespace Neo.Tools.Tests
 			reader.Close();
 
 			// Check some random strings that should definitely be in the file
-			Assertion.Assert("No/wrong namespace def.", contents.IndexOf("namespace pubs4.Model") > 0);
-			Assertion.Assert("No/wrong class def.", contents.IndexOf("public class TitleBase : EntityObject") > 0);
-			Assertion.Assert("No/wrong property def, TitleId signature.", contents.IndexOf("public virtual System.String TitleId") > 0);
+			Assert.IsTrue(contents.IndexOf("namespace pubs4.Model") > 0, "No/wrong namespace def.");
+			Assert.IsTrue(contents.IndexOf("public class TitleBase : EntityObject") > 0, "No/wrong class def.");
+			Assert.IsTrue(contents.IndexOf("public virtual System.String TitleId") > 0, "No/wrong property def, TitleId signature.");
 		}
 	}
 }

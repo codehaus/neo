@@ -27,7 +27,7 @@ namespace Neo.Tests.Fixtures
 		    Title	title;
 
 			title = new TitleFactory(context).CreateObject("TC1234");
-		    Assertion.Assert("Couldn't create title object.", title != null);
+		    Assert.IsTrue(title != null, "Couldn't create title object.");
 		}
 
 
@@ -39,7 +39,7 @@ namespace Neo.Tests.Fixtures
 
 			factory = new TitleFactory(context);
 			title = factory.FindObject("TC7777");
-			Assertion.AssertNotNull("Did not find title with key TC7777.", title);
+			Assert.IsNotNull(title, "Did not find title with key TC7777.");
 		}
 
 		
@@ -54,7 +54,7 @@ namespace Neo.Tests.Fixtures
 			template = factory.GetQueryTemplate();
 			template.TitleId = "TC7777";
 			titleList = factory.Find(template);
-			Assertion.AssertEquals("Matched zero or too many titles.", 1, titleList.Count);
+			Assert.AreEqual(1, titleList.Count, "Matched zero or too many titles.");
 		}
 
 		
@@ -68,7 +68,7 @@ namespace Neo.Tests.Fixtures
 			factory = new TitleFactory(context);
 			template = factory.GetQueryTemplate();
 			titleList = factory.Find(template);
-			Assertion.AssertEquals("Empty Template should fetch all records.", 18, titleList.Count);
+			Assert.AreEqual(18, titleList.Count, "Empty Template should fetch all records.");
 		}
 
 
@@ -81,13 +81,13 @@ namespace Neo.Tests.Fixtures
 			TitleList		titleList;
 
 			pubList = new PublisherFactory(context).Find("PubId = '0877'"); 
-			Assertion.AssertEquals("Matched zero or too many publishers.", 1, pubList.Count);
+			Assert.AreEqual(1, pubList.Count, "Matched zero or too many publishers.");
 
 			factory = new TitleFactory(context);
 			template = factory.GetQueryTemplate();
 			template.Publisher = pubList[0];
 			titleList = factory.Find(template);
-			Assertion.AssertEquals("Wrong number of titles for publisher.", 7, titleList.Count);
+			Assert.AreEqual(7, titleList.Count, "Wrong number of titles for publisher.");
 		}
 
 
@@ -99,8 +99,8 @@ namespace Neo.Tests.Fixtures
 
 			factory = new TitleFactory(context);
 			titleList = factory.Find("TitleId = 'TC7777'");
-			Assertion.AssertEquals("Wrong number of titles matching.", 1, titleList.Count);
-			Assertion.AssertEquals("Wrong title.", "TC7777", titleList[0].TitleId);
+			Assert.AreEqual(1, titleList.Count, "Wrong number of titles matching.");
+			Assert.AreEqual("TC7777", titleList[0].TitleId, "Wrong title.");
 		}
 
 

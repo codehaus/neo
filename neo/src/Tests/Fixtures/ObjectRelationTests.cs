@@ -31,10 +31,10 @@ namespace Neo.Tests.Fixtures
 
 			publisher = new PublisherFactory(context).FindObject("0877");
 			titleList = publisher.Titles.GetReadOnlyList();
-		    Assertion.AssertEquals("Count differs.", publisher.Titles.Count, titleList.Count);
+		    Assert.AreEqual(publisher.Titles.Count, titleList.Count, "Count differs.");
 			for(int i = 0; i < titleList.Count; i++)
-				Assertion.AssertEquals("Objects differ.", publisher.Titles[i], titleList[i]);
-			Assertion.Assert("List not read-only.", titleList.IsReadOnly);
+				Assert.AreEqual(publisher.Titles[i], titleList[i], "Objects differ.");
+			Assert.IsTrue(titleList.IsReadOnly, "List not read-only.");
 		}
 
 
@@ -53,7 +53,7 @@ namespace Neo.Tests.Fixtures
 
 			title.TitleId = "XX9999";
 
-			Assertion.AssertEquals("Should have kept list same", countBefore, title.TitleAuthors.Count);
+			Assert.AreEqual(countBefore, title.TitleAuthors.Count, "Should have kept list same");
 		}
 
 
@@ -68,8 +68,8 @@ namespace Neo.Tests.Fixtures
 	
 			publisher.Titles.Touch();
 			
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.Reset, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.Reset, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -89,8 +89,8 @@ namespace Neo.Tests.Fixtures
 			
 			publisher.Titles.Add(title);
 			
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemAdded, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.ItemAdded, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -105,8 +105,8 @@ namespace Neo.Tests.Fixtures
 			
 			publisher.Titles.Remove(publisher.Titles[0]);
 			
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemDeleted, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.ItemDeleted, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -125,8 +125,8 @@ namespace Neo.Tests.Fixtures
 			
 			publisher.Titles[0].Advance += 1;
 			
-			Assertion.Assert("Event should have been fired", recorder.changeHandlerWasCalled);
-			Assertion.AssertEquals("Event of correct type should have been fired.", ListChangedType.ItemChanged, recorder.receivedChangeType);
+			Assert.IsTrue(recorder.changeHandlerWasCalled, "Event should have been fired");
+			Assert.AreEqual(ListChangedType.ItemChanged, recorder.receivedChangeType, "Event of correct type should have been fired.");
 		}
 
 
@@ -140,7 +140,7 @@ namespace Neo.Tests.Fixtures
 			public EventRecorder(ObjectRelationBase collection)
 			{
 				IBindingList bindingList = collection;
-				Assertion.Assert("Collection must support notification", bindingList.SupportsChangeNotification);
+				Assert.IsTrue(bindingList.SupportsChangeNotification, "Collection must support notification");
 				collection.ListChanged += new ListChangedEventHandler(Titles_ListChanged);
 			}
 		

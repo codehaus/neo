@@ -21,7 +21,7 @@ namespace Neo.Tests.Fixtures
 			
 			context = GetContext();
 			title = new TitleFactory(context).FindObject("TC7777");
-		    Assertion.AssertNotNull("Failed to find title object.", title);
+		    Assert.IsNotNull(title, "Failed to find title object.");
 		}
 
 
@@ -45,18 +45,18 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void ReadAttributes()
 		{
-			Assertion.AssertEquals("Wrong title.", "Sushi, Anyone?", title.TheTitle);
-			Assertion.AssertEquals("Wrong royalty.", 10, title.Royalty);
-			Assertion.AssertEquals("Wrong date.", GetDate(1991, 06, 12), title.PublicationDate);
+			Assert.AreEqual("Sushi, Anyone?", title.TheTitle, "Wrong title.");
+			Assert.AreEqual(10, title.Royalty, "Wrong royalty.");
+			Assert.AreEqual(GetDate(1991, 06, 12), title.PublicationDate, "Wrong date.");
 		}
 
 		[Test]
 		public void WriteAttributes()
 		{
 			title.TheTitle = "SUSHI";
-			Assertion.AssertEquals("String prop not changed.", "SUSHI", title.TheTitle);
+			Assert.AreEqual("SUSHI", title.TheTitle, "String prop not changed.");
 			title.PublicationDate = new DateTime(2003, 01, 01);
-			Assertion.AssertEquals("DateTime prop not changed.", new DateTime(2003, 01, 01), title.PublicationDate);
+			Assert.AreEqual(new DateTime(2003, 01, 01), title.PublicationDate, "DateTime prop not changed.");
 		}
 
 			
@@ -67,12 +67,12 @@ namespace Neo.Tests.Fixtures
 			TitleList	result;
 
 			title = new TitleFactory(context).FindObject("TC7777");
-			Assertion.Assert("Object should not have changes.", title.HasChanges() == false);
+			Assert.IsTrue(title.HasChanges() == false, "Object should not have changes.");
 			// now refetch and cause a merge
 			result = new TitleFactory(context).FindAllObjects();
 			
-			Assertion.Assert("Explicitly fetched title should be in list.", result.Contains(title));
-			Assertion.Assert("Object should not have changes.", title.HasChanges() == false);
+			Assert.IsTrue(result.Contains(title), "Explicitly fetched title should be in list.");
+			Assert.IsTrue(title.HasChanges() == false, "Object should not have changes.");
 
 		}
 
@@ -80,12 +80,12 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void RefetchDoesNotClobberUpdates()
 		{
-			Assertion.Assert("Unexpected initial type.", title.Type != "foo");
+			Assert.IsTrue(title.Type != "foo", "Unexpected initial type.");
 			title.Type = "foo";
-			Assertion.AssertEquals("Unexpected type after change.", "foo", title.Type);
+			Assert.AreEqual("foo", title.Type, "Unexpected type after change.");
 			new TitleFactory(context).FindAllObjects();
 			
-			Assertion.AssertEquals("Refetch should not revert object to database state.", "foo", title.Type);
+			Assert.AreEqual("foo", title.Type, "Refetch should not revert object to database state.");
 		}
 
 
@@ -97,18 +97,18 @@ namespace Neo.Tests.Fixtures
 
 			// to-one
 			publisher = title.Publisher;
-			Assertion.AssertNotNull("Failed to find publisher for title.", publisher);
-			Assertion.AssertEquals("Wrong publisher for title.", "Binnet & Hardley", publisher.Name);
+			Assert.IsNotNull(publisher, "Failed to find publisher for title.");
+			Assert.AreEqual("Binnet & Hardley", publisher.Name, "Wrong publisher for title.");
 
 			// to-many
-			Assertion.AssertNotNull("Failed to find titles for publisher.", publisher.Titles);
-			Assertion.AssertEquals("Wrong number of titles for publisher.", 7, publisher.Titles.Count);
+			Assert.IsNotNull(publisher.Titles, "Failed to find titles for publisher.");
+			Assert.AreEqual(7, publisher.Titles.Count, "Wrong number of titles for publisher.");
 		
 			// get another title/publisher
 			otherTitle = (Title)context.GetObjectFromTable("titles", new object[] { "BU1032" });
-			Assertion.AssertNotNull("Failed to find other title object.", otherTitle);
+			Assert.IsNotNull(otherTitle, "Failed to find other title object.");
 			otherPublisher = otherTitle.Publisher;
-			Assertion.Assert("Other title is by same publisher.", otherPublisher != publisher);
+			Assert.IsTrue(otherPublisher != publisher, "Other title is by same publisher.");
 		}
 
 
@@ -118,8 +118,8 @@ namespace Neo.Tests.Fixtures
 			Discount	discount;
 		
 			discount = new DiscountFactory(context).FindUnique("DiscountType = {0}", "Initial Customer");
-			Assertion.AssertNotNull("Initial customer discount not found.", discount);
-			Assertion.AssertNull("No store should be associated with this discount.", discount.Store);
+			Assert.IsNotNull(discount, "Initial customer discount not found.");
+			Assert.IsNull(discount.Store, "No store should be associated with this discount.");
 		}
 
 
@@ -136,20 +136,20 @@ namespace Neo.Tests.Fixtures
 
 			// set other title's publisher to b&h and check
 			otherTitle.Publisher = publisher;
-			Assertion.Assert("Other title's publisher is not B&H now.", otherTitle.Publisher == publisher);
-			Assertion.Assert("Original publisher's title list still contains title.", otherPublisher.Titles.Contains(otherTitle) == false);
-			Assertion.Assert("Publisher's title list does not contain new title", publisher.Titles.Contains(otherTitle));
+			Assert.IsTrue(otherTitle.Publisher == publisher, "Other title's publisher is not B&H now.");
+			Assert.IsTrue(otherPublisher.Titles.Contains(otherTitle) == false, "Original publisher's title list still contains title.");
+			Assert.IsTrue(publisher.Titles.Contains(otherTitle), "Publisher's title list does not contain new title");
 			
 			// to-many / set, i.e. use  publisher.addToTitles to change back and check
 			otherPublisher.Titles.Add(otherTitle);
-			Assertion.Assert("Other title's publisher is not original publisher", otherTitle.Publisher == otherPublisher);
-			Assertion.Assert("B&H title list still contains title", publisher.Titles.Contains(otherTitle) == false);
+			Assert.IsTrue(otherTitle.Publisher == otherPublisher, "Other title's publisher is not original publisher");
+			Assert.IsTrue(publisher.Titles.Contains(otherTitle) == false, "B&H title list still contains title");
 
 			// add the title another time. this should duplivate the entry
 			countBefore = otherPublisher.Titles.Count;
 			otherPublisher.Titles.Add(otherTitle);
 			countAfter = otherPublisher.Titles.Count;
-			Assertion.AssertEquals("Wrong number of titles after redundant add.", countBefore, countAfter);
+			Assert.AreEqual(countBefore, countAfter, "Wrong number of titles after redundant add.");
 		}
 
 		
@@ -165,13 +165,13 @@ namespace Neo.Tests.Fixtures
 			publisher.Titles.Touch();
 			newTitle = new TitleFactory(context).CreateObject("XX1111");
 			newTitle.Publisher = publisher;
-			Assertion.Assert("Publisher does not contain new title.", publisher.Titles.Contains(newTitle));
+			Assert.IsTrue(publisher.Titles.Contains(newTitle), "Publisher does not contain new title.");
 
 			// new try adding with an "untouched" list in publisher
 			publisher.Titles.InvalidateCache();
 			newTitle = new TitleFactory(context).CreateObject("XX2222");
 			newTitle.Publisher = publisher;
-			Assertion.Assert("Publisher does not contain new title.", publisher.Titles.Contains(newTitle));
+			Assert.IsTrue(publisher.Titles.Contains(newTitle), "Publisher does not contain new title.");
 		}
 
 
@@ -236,7 +236,7 @@ namespace Neo.Tests.Fixtures
 			publisher = title.Publisher;
 			publisher.Titles.Touch(); // make sure the list is loaded
 			title.Delete();
-			Assertion.Assert("Deleted object did not disappear from rel.", publisher.Titles.Contains(title) == false);
+			Assert.IsTrue(publisher.Titles.Contains(title) == false, "Deleted object did not disappear from rel.");
 		}
 
 		
@@ -263,18 +263,18 @@ namespace Neo.Tests.Fixtures
 			Author      author;
 
 			author = new AuthorFactory(context).FindObject("486-29-1786");
-			Assertion.AssertNotNull("Did not find author.", author);
+			Assert.IsNotNull(author, "Did not find author.");
 
 			corr = new TitleAuthorFactory(context).CreateObject(author, title);
-			Assertion.Assert("Title not in Author.", author.TitleAuthors.Contains(corr));
-			Assertion.Assert("Author not in Title.", title.TitleAuthors.Contains(corr));
+			Assert.IsTrue(author.TitleAuthors.Contains(corr), "Title not in Author.");
+			Assert.IsTrue(title.TitleAuthors.Contains(corr), "Author not in Title.");
 			corr.Delete();
 
 			// Now try the same but with the list touched before
 			title.TitleAuthors.Touch();
 			corr = new TitleAuthorFactory(context).CreateObject(author, title);
-			Assertion.Assert("Title not in Author.", author.TitleAuthors.Contains(corr));
-			Assertion.Assert("Author not in Title.", title.TitleAuthors.Contains(corr));
+			Assert.IsTrue(author.TitleAuthors.Contains(corr), "Title not in Author.");
+			Assert.IsTrue(title.TitleAuthors.Contains(corr), "Author not in Title.");
 			corr.Delete();
 		}
 
@@ -287,10 +287,10 @@ namespace Neo.Tests.Fixtures
 			Title referencedTitle = title;
 			Title unreferencedTitle = new TitleFactory(context).FindObject("MC3026");
 
-			Assertion.Assert("The publisher should be referenced", referencedPublisher.GetReferences().Count > 0);
-			Assertion.Assert("The publisher should not be referenced", unreferencedPublisher.GetReferences().Count == 0);
-			Assertion.Assert("The title should be referenced", referencedTitle.GetReferences().Count > 0);
-			Assertion.Assert("The title should not be referenced", unreferencedTitle.GetReferences().Count == 0);
+			Assert.IsTrue(referencedPublisher.GetReferences().Count > 0, "The publisher should be referenced");
+			Assert.IsTrue(unreferencedPublisher.GetReferences().Count == 0, "The publisher should not be referenced");
+			Assert.IsTrue(referencedTitle.GetReferences().Count > 0, "The title should be referenced");
+			Assert.IsTrue(unreferencedTitle.GetReferences().Count == 0, "The title should not be referenced");
 		}
 
 
@@ -302,10 +302,10 @@ namespace Neo.Tests.Fixtures
 			Title referencedTitle = title;
 			Title unreferencedTitle = new TitleFactory(context).FindObject("MC3026");
 
-			Assertion.Assert("The publisher should be referenced", referencedPublisher.GetReferences(true).Count > 0);
-			Assertion.Assert("The publisher should not be referenced", unreferencedPublisher.GetReferences(true).Count == 0);
-			Assertion.Assert("The title should not be referenced", referencedTitle.GetReferences(true).Count == 0);
-			Assertion.Assert("The title should not be referenced", unreferencedTitle.GetReferences(true).Count == 0);
+			Assert.IsTrue(referencedPublisher.GetReferences(true).Count > 0, "The publisher should be referenced");
+			Assert.IsTrue(unreferencedPublisher.GetReferences(true).Count == 0, "The publisher should not be referenced");
+			Assert.IsTrue(referencedTitle.GetReferences(true).Count == 0, "The title should not be referenced");
+			Assert.IsTrue(unreferencedTitle.GetReferences(true).Count == 0, "The title should not be referenced");
 		}
 
 	}

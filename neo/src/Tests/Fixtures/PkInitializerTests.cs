@@ -38,8 +38,8 @@ namespace Neo.Tests.Fixtures
 			row2 = table.NewRow();
 			initializer.InitializeRow(row2, null);
 
-		    Assertion.AssertNotNull("Should have set value.", row["ID"]);
-			Assertion.AssertNotNull("Should create different values.", row2["ID"]);
+		    Assert.IsNotNull(row["ID"], "Should have set value.");
+			Assert.IsNotNull(row2["ID"], "Should create different values.");
 		}
 
 	}

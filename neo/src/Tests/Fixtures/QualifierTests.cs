@@ -24,8 +24,8 @@ namespace Neo.Tests.Fixtures
 			context.MergeData(GetTestDataSet());
 
 			title = new TitleFactory(context).FindObject("TC7777");
-		    Assertion.AssertNotNull("Failed to find title object.", title);
-			Assertion.AssertEquals("Wrong value for royalties", 10, title.Royalty);
+		    Assert.IsNotNull(title, "Failed to find title object.");
+			Assert.AreEqual(10, title.Royalty, "Wrong value for royalties");
 		}
 
 
@@ -35,19 +35,19 @@ namespace Neo.Tests.Fixtures
 		    PropertyQualifier	q;
 			
 			q = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
-			Assertion.Assert("Should match (String).", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Should match (String).");
 
 			q = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
-			Assertion.Assert("Should not match.", q.EvaluateWithObject(title) == false);
+			Assert.IsTrue(q.EvaluateWithObject(title) == false, "Should not match.");
 
 			q = new PropertyQualifier("TitleId", new NotEqualPredicate("XX2222"));
-			Assertion.Assert("Should match.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Should match.");
 
 			q = new PropertyQualifier("Royalty", new EqualsPredicate(10));
-			Assertion.Assert("Should match (Integer).", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Should match (Integer).");
 
 			q = new PropertyQualifier("Publisher", new EqualsPredicate(title.Publisher));
-			Assertion.Assert("Should match (Object).", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Should match (Object).");
 		}
 
 
@@ -57,16 +57,16 @@ namespace Neo.Tests.Fixtures
 			PropertyQualifier	q;
 			
 			q = new PropertyQualifier("Royalty", new LessThanPredicate(15));
-			Assertion.Assert("10 is not less than 15.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "10 is not less than 15.");
 
 			q = new PropertyQualifier("Royalty", new LessThanPredicate(9));
-			Assertion.Assert("10 is less than 9.", q.EvaluateWithObject(title) == false);
+			Assert.IsTrue(q.EvaluateWithObject(title) == false, "10 is less than 9.");
 
 			q = new PropertyQualifier("Royalty", new GreaterThanPredicate(9));
-			Assertion.Assert("10 is not greater than 9.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "10 is not greater than 9.");
 
 			q = new PropertyQualifier("Royalty", new GreaterThanPredicate(15));
-			Assertion.Assert("10 is greater than 15.", q.EvaluateWithObject(title) == false);
+			Assert.IsTrue(q.EvaluateWithObject(title) == false, "10 is greater than 15.");
 		}
 
 		[Test]
@@ -75,7 +75,7 @@ namespace Neo.Tests.Fixtures
 			PropertyQualifier	q;
 			
 			q = new PropertyQualifier("TheTitle", new CaseInsensitiveEqualsPredicate("sUsHi, aNyOnE?"));
-			Assertion.Assert("Should match regardless of case.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Should match regardless of case.");
 
 			Assert.IsNotNull(new TitleFactory(context).FindFirst(q));
 		}
@@ -86,7 +86,7 @@ namespace Neo.Tests.Fixtures
 			ColumnQualifier	q;
 			
 			q = new ColumnQualifier("pub_id", new EqualsPredicate(title.Publisher.PubId));
-			Assertion.Assert("Should match.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Should match.");
 		}
 
 
@@ -99,12 +99,12 @@ namespace Neo.Tests.Fixtures
 			q1 = new PropertyQualifier("Royalty", new LessThanPredicate(15));
 			q2 = new PropertyQualifier("Royalty", new GreaterThanPredicate(9));
 			q = new AndQualifier(q1, q2);
-			Assertion.Assert("10 not inbetween 9 and 15.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "10 not inbetween 9 and 15.");
 
 			q1 = new PropertyQualifier("Royalty", new LessThanPredicate(15));
 			q2 = new PropertyQualifier("Royalty", new GreaterThanPredicate(11));
 			q = new AndQualifier(q1, q2);
-			Assertion.Assert("10 is inbetween 11 and 15.", q.EvaluateWithObject(title) == false);
+			Assert.IsTrue(q.EvaluateWithObject(title) == false, "10 is inbetween 11 and 15.");
 		}
 
 
@@ -117,12 +117,12 @@ namespace Neo.Tests.Fixtures
 			q1 = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
 			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			q = new OrQualifier(q1, q2);
-			Assertion.Assert("Did not match either title id.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Did not match either title id.");
 
 			q1 = new PropertyQualifier("TitleId", new EqualsPredicate("XX1111"));
 			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("XX2222"));
 			q = new OrQualifier(q1, q2);
-			Assertion.Assert("Did not match a title id.", q.EvaluateWithObject(title) == false);
+			Assert.IsTrue(q.EvaluateWithObject(title) == false, "Did not match a title id.");
 		}
 
 
@@ -138,7 +138,7 @@ namespace Neo.Tests.Fixtures
 			qb = new PropertyQualifier("Royalty", new LessThanPredicate(15));
 			q = new AndQualifier(qa, qb);
 
-			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Did not match.");
 		}
 
 
@@ -153,7 +153,7 @@ namespace Neo.Tests.Fixtures
 			q2 = new PropertyQualifier("TitleId", new EqualsPredicate("TC7777"));
 			q.AddToQualifiers(q2);
 
-			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Did not match.");
 		}
 
 
@@ -166,7 +166,7 @@ namespace Neo.Tests.Fixtures
 			q1 = new PropertyQualifier("Name", new EqualsPredicate(title.Publisher.Name));
 			q = new PathQualifier("Publisher", q1);
 
-			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
+			Assert.IsTrue(q.EvaluateWithObject(title), "Did not match.");
 		}
 
 
@@ -179,7 +179,7 @@ namespace Neo.Tests.Fixtures
 			q1 = new PropertyQualifier("Name", new EqualsPredicate(title.Publisher.Name));
 			q = new PathQualifier("Title.Publisher", q1);
 
-			Assertion.Assert("Did not match.", q.EvaluateWithObject(title.TitleAuthors[0]));
+			Assert.IsTrue(q.EvaluateWithObject(title.TitleAuthors[0]), "Did not match.");
 		}
 
 
@@ -189,8 +189,8 @@ namespace Neo.Tests.Fixtures
 			Qualifier	q;
 
 			q = Qualifier.Format("TitleId = 'TC7777' and Royalty < 15");
-			Assertion.AssertNotNull("Did not create a qualifier.", q);
-			Assertion.Assert("Did not match.", q.EvaluateWithObject(title));
+			Assert.IsNotNull(q, "Did not create a qualifier.");
+			Assert.IsTrue(q.EvaluateWithObject(title), "Did not match.");
 		}
 
 
@@ -205,9 +205,9 @@ namespace Neo.Tests.Fixtures
 			propQualifier = new PropertyQualifier("Publisher", new EqualsPredicate(pub));
 			colQualifier = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertToColumnQualifier(propQualifier);
 
-			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
-			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
-			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Predicate.Value);
+			Assert.AreEqual("pub_id", colQualifier.Column, "Wrong column.");
+			Assert.AreEqual(typeof(EqualsPredicate), colQualifier.Predicate.GetType(), "Wrong operator.");
+			Assert.AreEqual(pub.PubId, colQualifier.Predicate.Value, "Wrong value.");
 		}
 
 
@@ -226,14 +226,14 @@ namespace Neo.Tests.Fixtures
 			clauseQualifier = new AndQualifier(propQualifier);
 			convertedQualifer = new QualifierConverter(title.Context.EntityMapFactory.GetMap(typeof(Title))).ConvertToColumnQualifiersRecursively(clauseQualifier);
 			
-			Assertion.AssertNotNull("Should return a qualifier.", convertedQualifer);
-			Assertion.AssertEquals("Should have top-level AND qualifier.", typeof(AndQualifier), convertedQualifer.GetType());
+			Assert.IsNotNull(convertedQualifer, "Should return a qualifier.");
+			Assert.AreEqual(typeof(AndQualifier), convertedQualifer.GetType(), "Should have top-level AND qualifier.");
 			andQualifier = convertedQualifer as AndQualifier;
-			Assertion.AssertEquals("Wrong number of qualifiers", 1, andQualifier.Qualifiers.Length);
+			Assert.AreEqual(1, andQualifier.Qualifiers.Length, "Wrong number of qualifiers");
 			colQualifier = (ColumnQualifier)andQualifier.Qualifiers[0];
-			Assertion.AssertEquals("Wrong column.", "pub_id", colQualifier.Column);
-			Assertion.AssertEquals("Wrong operator.", typeof(EqualsPredicate), colQualifier.Predicate.GetType());
-			Assertion.AssertEquals("Wrong value.", pub.PubId, colQualifier.Predicate.Value);
+			Assert.AreEqual("pub_id", colQualifier.Column, "Wrong column.");
+			Assert.AreEqual(typeof(EqualsPredicate), colQualifier.Predicate.GetType(), "Wrong operator.");
+			Assert.AreEqual(pub.PubId, colQualifier.Predicate.Value, "Wrong value.");
 		}
 
 
@@ -246,8 +246,8 @@ namespace Neo.Tests.Fixtures
 			values = new Hashtable();
 			values.Add("foo", "bar%");
 			q = Qualifier.FromPropertyDictionary(values) as PropertyQualifier;
-			Assertion.AssertNotNull("Should create PropertyQualifier.", q);
-			Assertion.Assert("Should create like when required.", q.Predicate is LikePredicate);
+			Assert.IsNotNull(q, "Should create PropertyQualifier.");
+			Assert.IsTrue(q.Predicate is LikePredicate, "Should create like when required.");
 		}
 			
 
@@ -260,8 +260,8 @@ namespace Neo.Tests.Fixtures
 			values = new Hashtable();
 			values.Add("foo", "bar");
 			q = Qualifier.FromPropertyDictionary(values) as PropertyQualifier;
-			Assertion.AssertNotNull("Should create PropertyQualifier.", q);
-			Assertion.Assert("Should not create like when not required.", q.Predicate is LikePredicate == false);
+			Assert.IsNotNull(q, "Should create PropertyQualifier.");
+			Assert.IsTrue(q.Predicate is LikePredicate == false, "Should not create like when not required.");
 		}
 
 	}

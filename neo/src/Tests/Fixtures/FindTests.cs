@@ -40,7 +40,7 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void PrimaryKey()
 		{
-			Assertion.AssertNotNull("Failed to find publisher by primary key.", publisher);
+			Assert.IsNotNull(publisher, "Failed to find publisher by primary key.");
 		}
 
 		
@@ -52,7 +52,7 @@ namespace Neo.Tests.Fixtures
 			
 			fSpec = new FetchSpecification(context.EntityMapFactory.GetMap(typeof(Title)), null, 5);
 			result = context.GetObjects(fSpec);
-			Assertion.AssertEquals("Should only fetch up to limit.", 5, result.Count);
+			Assert.AreEqual(5, result.Count, "Should only fetch up to limit.");
 		}
 
 
@@ -64,8 +64,8 @@ namespace Neo.Tests.Fixtures
 
 			otherTitle = new TitleFactory(context).FindObject("MC3026");
 			titles = new TitleFactory(context).Find("Royalty = {0}", null);
-			Assertion.Assert("Should return some titles.", titles.Count > 0);
-			Assertion.Assert("Should return title MC3026 which has NULL royalty.", titles.Contains(otherTitle));							 
+			Assert.IsTrue(titles.Count > 0, "Should return some titles.");
+			Assert.IsTrue(titles.Contains(otherTitle), "Should return title MC3026 which has NULL royalty.");							 
 		}
 
 
@@ -75,7 +75,7 @@ namespace Neo.Tests.Fixtures
 			TitleList		titles;
 
 			titles = new TitleFactory(context).Find("Advance >= 10125");
-			Assertion.AssertEquals("Should return titles correctly matching.", 2, titles.Count);
+			Assert.AreEqual(2, titles.Count, "Should return titles correctly matching.");
 
 		}
 
@@ -86,7 +86,7 @@ namespace Neo.Tests.Fixtures
 			TitleList		titles;
 
 			titles = new TitleFactory(context).Find("TheTitle like '%Cooking%'");
-			Assertion.AssertEquals("Should return titles correctly matching.", 3, titles.Count);
+			Assert.AreEqual(3, titles.Count, "Should return titles correctly matching.");
 		}
 
 
@@ -96,7 +96,7 @@ namespace Neo.Tests.Fixtures
 			TitleList result;
 
 			result = new TitleFactory(context).Find("TitleId = 'TC7777' or TitleId = 'MC3026'");
-			Assertion.AssertEquals("Should have found both titles.", 2, result.Count);
+			Assert.AreEqual(2, result.Count, "Should have found both titles.");
 		}
 
 
@@ -107,7 +107,7 @@ namespace Neo.Tests.Fixtures
 
 			result = new TitleFactory(context).Find("Publisher = {0}", publisher);
 
-			Assertion.Assert("Did not match any rows.", result.Count > 0);
+			Assert.IsTrue(result.Count > 0, "Did not match any rows.");
 		}
 
 
@@ -118,7 +118,7 @@ namespace Neo.Tests.Fixtures
 
 			result = new TitleFactory(context).Find("Publisher = {0} and Advance = {1}", publisher, 5000);
 
-			Assertion.Assert("Did not match any rows.", result.Count > 0);
+			Assert.IsTrue(result.Count > 0, "Did not match any rows.");
 		}
 
 
@@ -129,9 +129,9 @@ namespace Neo.Tests.Fixtures
 
 			result = new TitleFactory(context).Find("Publisher.Name = {0}", publisher.Name);
 
-			Assertion.Assert("Did not match any rows.", result.Count > 0);
+			Assert.IsTrue(result.Count > 0, "Did not match any rows.");
 			foreach(Title title in result)
-				Assertion.AssertEquals("Wrong publisher on title.", publisher.Name, title.Publisher.Name);
+				Assert.AreEqual(publisher.Name, title.Publisher.Name, "Wrong publisher on title.");
 		}
 
 		
@@ -142,7 +142,7 @@ namespace Neo.Tests.Fixtures
 
 			result = new DiscountFactory(context).Find("Store.Name = 'Bookbeat'");
 			
-			Assertion.AssertEquals("Should have found one discount for this store.", 1, result.Count);
+			Assert.AreEqual(1, result.Count, "Should have found one discount for this store.");
 		}
 
 
@@ -153,9 +153,9 @@ namespace Neo.Tests.Fixtures
 
 			result = new TitleAuthorFactory(context).Find("Title.Publisher.Name = {0}", publisher.Name);
 
-			Assertion.Assert("Did not match any rows.", result.Count > 0);
+			Assert.IsTrue(result.Count > 0, "Did not match any rows.");
 			foreach(TitleAuthor ta in result)
-				Assertion.AssertEquals("Wrong publisher.", publisher.Name, ta.Title.Publisher.Name);
+				Assert.AreEqual(publisher.Name, ta.Title.Publisher.Name, "Wrong publisher.");
 		}
 
 
@@ -166,9 +166,9 @@ namespace Neo.Tests.Fixtures
 
 			result = new TitleAuthorFactory(context).Find("Title.Publisher.Name = {0} or Title.Publisher.Country = {1}", publisher.Name, publisher.Country);
 
-			Assertion.Assert("Did not match any rows.", result.Count > 0);
+			Assert.IsTrue(result.Count > 0, "Did not match any rows.");
 			foreach(TitleAuthor ta in result)
-				Assertion.Assert("Invalid ta.", publisher.Name == ta.Title.Publisher.Name || publisher.Country == ta.Title.Publisher.Country);
+				Assert.IsTrue(publisher.Name == ta.Title.Publisher.Name || publisher.Country == ta.Title.Publisher.Country, "Invalid ta.");
 		}
 
 
@@ -179,7 +179,7 @@ namespace Neo.Tests.Fixtures
 			Title	   title;
 
 			result = new AuthorFactory(context).Find("TitleAuthors.Title.Publisher = {0}", publisher);
-			Assertion.AssertEquals("Did not match right number of authors.", 9, result.Count);
+			Assert.AreEqual(9, result.Count, "Did not match right number of authors.");
 			foreach(Author a in result)
 			{
 				title = null;
@@ -192,7 +192,7 @@ namespace Neo.Tests.Fixtures
 					}
 				}
 				if(title == null)
-					Assertion.Fail("Wrong author.");
+					Assert.Fail("Wrong author.");
 			}
 		}
 
@@ -208,11 +208,11 @@ namespace Neo.Tests.Fixtures
 			factory = new TitleFactory(context);
 			result = factory.Find("Publisher.(PubId = {0} or PubId = {1})", publisher.PubId, publisher2.PubId);
 
-			Assertion.AssertEquals("Should return right number of titles.", 11, result.Count);
+			Assert.AreEqual(11, result.Count, "Should return right number of titles.");
 			foreach(Title t in result)
 			{
 				if(t.Publisher.PubId != publisher.PubId && t.Publisher.PubId != publisher2.PubId)
-					Assertion.Fail("Should only return relevant titles");
+					Assert.Fail("Should only return relevant titles");
 			}
 		}
 
@@ -225,7 +225,7 @@ namespace Neo.Tests.Fixtures
 
 			title = new TitleFactory(context).FindObject("MC3021");
 			result = new AuthorFactory(context).Find("TitleAuthors.(Title = {0} or Title.Publisher = {1})", title, publisher);
-			Assertion.AssertEquals("Did not match right number of authors.", 11, result.Count);
+			Assert.AreEqual(11, result.Count, "Did not match right number of authors.");
 			foreach(Author a in result)
 			{
 				title = null;
@@ -238,7 +238,7 @@ namespace Neo.Tests.Fixtures
 					}
 				}
 				if(title == null)
-					Assertion.Fail("Wrong author.");
+					Assert.Fail("Wrong author.");
 			}
 		}
 
@@ -251,7 +251,7 @@ namespace Neo.Tests.Fixtures
 
 			factory = new TitleFactory(context);
 			title = factory.FindUnique("TitleId = 'TC7777'");
-			Assertion.AssertEquals("Wrong title.", "TC7777", title.TitleId);
+			Assert.AreEqual("TC7777", title.TitleId, "Wrong title.");
 		}
 
 
@@ -285,7 +285,7 @@ namespace Neo.Tests.Fixtures
 
 			factory = new TitleFactory(context);
 			title = factory.FindFirst("TitleId = 'TC7777'");
-			Assertion.AssertEquals("Wrong title.", "TC7777", title.TitleId);
+			Assert.AreEqual("TC7777", title.TitleId, "Wrong title.");
 		}
 
 
@@ -297,7 +297,7 @@ namespace Neo.Tests.Fixtures
 
 			factory = new TitleFactory(context);
 			title = factory.FindFirst("TitleId = 'XX1111'");
-			Assertion.AssertNull("Wrong title returned.", title);
+			Assert.IsNull(title, "Wrong title returned.");
 		}
 
 
@@ -314,8 +314,8 @@ namespace Neo.Tests.Fixtures
 			factory = new TitleFactory(context);
 			result = factory.Find(spec);
 
-			Assertion.Assert("Should return several titles.", result.Count > 0);
-			Assertion.AssertEquals("Should return title with lastest date.", "PC9999", result[0].TitleId);
+			Assert.IsTrue(result.Count > 0, "Should return several titles.");
+			Assert.AreEqual("PC9999", result[0].TitleId, "Should return title with lastest date.");
 		}
 
 		
@@ -333,8 +333,8 @@ namespace Neo.Tests.Fixtures
 			factory = new TitleFactory(context);
 			result = factory.Find(spec);
 
-			Assertion.Assert("Should return several titles.", result.Count > 0);
-			Assertion.AssertEquals("Should return title with lastest date.", "PC9999", result[0].TitleId);
+			Assert.IsTrue(result.Count > 0, "Should return several titles.");
+			Assert.AreEqual("PC9999", result[0].TitleId, "Should return title with lastest date.");
 		}
 		
 		
@@ -353,8 +353,8 @@ namespace Neo.Tests.Fixtures
 			factory = new TitleFactory(context);
 			result = factory.Find(spec);
 
-			Assertion.AssertEquals("Should return just one.", 1, result.Count);
-			Assertion.AssertEquals("Should return title with earliest date for this publisher.", "BU1111", result[0].TitleId);
+			Assert.AreEqual(1, result.Count, "Should return just one.");
+			Assert.AreEqual("BU1111", result[0].TitleId, "Should return title with earliest date for this publisher.");
 		}
 
 

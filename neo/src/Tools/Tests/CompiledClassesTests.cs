@@ -15,7 +15,7 @@ using CodeGenerator = Neo.Generator.CodeGen.CodeGenerator;
 namespace Neo.Tools.Tests
 {
 	[TestFixture]
-	public class CompiledClassesTests : Assertion
+	public class CompiledClassesTests
 	{
 		string[] sourceFileNames;
 		Assembly assembly;
@@ -41,7 +41,7 @@ namespace Neo.Tools.Tests
 		{
 			Type titleType = assembly.GetType("pubs4.Model.Title", true);
 
-			AssertEquals("Namespace is wrong", "pubs4.Model", titleType.Namespace);
+			Assert.AreEqual("pubs4.Model", titleType.Namespace, "Namespace is wrong");
 		}
 
 		[Test] 
@@ -50,8 +50,8 @@ namespace Neo.Tools.Tests
 			Type titleBaseType = assembly.GetType("pubs4.Model.TitleBase", true);
 			Type titleType = assembly.GetType("pubs4.Model.Title", true);
 
-			AssertEquals("TitleBase does not inherit from EntityObject", typeof(EntityObject), titleBaseType.BaseType);
-			AssertEquals("Title does not inherit from TitleBase", titleBaseType, titleType.BaseType);
+			Assert.AreEqual(typeof(EntityObject), titleBaseType.BaseType, "TitleBase does not inherit from EntityObject");
+			Assert.AreEqual(titleBaseType, titleType.BaseType, "Title does not inherit from TitleBase");
 		}
 
 		[Test] 
@@ -70,15 +70,15 @@ namespace Neo.Tools.Tests
 		{
 			Type titleBaseType = assembly.GetType("pubs4.Model.Title", true);
 			ConstructorInfo[] constructors = titleBaseType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert("Wrong number of constructors", constructors.Length == 1);
+			Assert.IsTrue(constructors.Length == 1, "Wrong number of constructors");
 
 			ConstructorInfo constructor = constructors[0];
-			Assert("Constructor should be protected internal", constructor.IsFamilyOrAssembly);
+			Assert.IsTrue(constructor.IsFamilyOrAssembly, "Constructor should be protected internal");
 
 			ParameterInfo[] parameters = constructor.GetParameters();
-			Assert("Wrong number of args", parameters.Length == 2);
-			AssertEquals("Arg 1 type is wrong", typeof(DataRow), parameters[0].ParameterType);
-			AssertEquals("Arg 2 type is wrong", typeof(ObjectContext), parameters[1].ParameterType);
+			Assert.IsTrue(parameters.Length == 2, "Wrong number of args");
+			Assert.AreEqual(typeof(DataRow), parameters[0].ParameterType, "Arg 1 type is wrong");
+			Assert.AreEqual(typeof(ObjectContext), parameters[1].ParameterType, "Arg 2 type is wrong");
 		}
 
 		[Test] 
@@ -86,12 +86,12 @@ namespace Neo.Tools.Tests
 		{
 			Type factoryType = assembly.GetType("pubs4.Model.JobRecordFactory", true);
 			MethodInfo method = factoryType.GetMethod("CreateObject", BindingFlags.Instance | BindingFlags.Public);
-			AssertNotNull("Should have generated CreateObject method on factory.", method);
+			Assert.IsNotNull(method, "Should have generated CreateObject method on factory.");
 
 			ParameterInfo[] parameters = method.GetParameters();
-			AssertEquals("Wrong number of args", 2, parameters.Length);
-			AssertEquals("Arg 1 type is wrong", "Job", parameters[0].ParameterType.Name);
-			AssertEquals("Arg 2 type is wrong", typeof(DateTime), parameters[1].ParameterType);
+			Assert.AreEqual(2, parameters.Length, "Wrong number of args");
+			Assert.AreEqual("Job", parameters[0].ParameterType.Name, "Arg 1 type is wrong");
+			Assert.AreEqual(typeof(DateTime), parameters[1].ParameterType, "Arg 2 type is wrong");
 		}
 
 		[Test] 
@@ -99,12 +99,12 @@ namespace Neo.Tools.Tests
 		{
 			Type factoryType = assembly.GetType("pubs4.Model.JobRecordFactory", true);
 			MethodInfo method = factoryType.GetMethod("CreateObject", BindingFlags.Instance | BindingFlags.Public);
-			AssertNotNull("Should have generated FindObject method on factory.", method);
+			Assert.IsNotNull(method, "Should have generated FindObject method on factory.");
 
 			ParameterInfo[] parameters = method.GetParameters();
-			AssertEquals("Wrong number of args", 2, parameters.Length);
-			AssertEquals("Arg 1 type is wrong", "Job", parameters[0].ParameterType.Name);
-			AssertEquals("Arg 2 type is wrong", typeof(DateTime), parameters[1].ParameterType);
+			Assert.AreEqual(2, parameters.Length, "Wrong number of args");
+			Assert.AreEqual("Job", parameters[0].ParameterType.Name, "Arg 1 type is wrong");
+			Assert.AreEqual(typeof(DateTime), parameters[1].ParameterType, "Arg 2 type is wrong");
 		}
 
 		[Test] 
@@ -112,16 +112,16 @@ namespace Neo.Tools.Tests
 		{
 			Type factoryType = assembly.GetType("pubs4.Model.CorrelationFactory", true);
 			MethodInfo method1 = factoryType.GetMethod("CreateObject", GetTypes("Publisher", "Publisher"));
-			AssertNotNull("Should have generated CreateObject method with two publishers on factory.", method1);
+			Assert.IsNotNull(method1, "Should have generated CreateObject method with two publishers on factory.");
 
 			MethodInfo method2 = factoryType.GetMethod("CreateObject", GetTypes("Publisher", "Title"));
-			AssertNotNull("Should have generated CreateObject method with publisher/title on factory.", method2);
+			Assert.IsNotNull(method2, "Should have generated CreateObject method with publisher/title on factory.");
 
 			MethodInfo method3 = factoryType.GetMethod("CreateObject", GetTypes("Title", "Publisher"));
-			AssertNotNull("Should have generated CreateObject method with publisher/title on factory.", method3);
+			Assert.IsNotNull(method3, "Should have generated CreateObject method with publisher/title on factory.");
 		
 			MethodInfo method4 = factoryType.GetMethod("CreateObject", GetTypes("Title", "Title"));
-			AssertNotNull("Should have generated CreateObject method with two titles on factory.", method4);
+			Assert.IsNotNull(method4, "Should have generated CreateObject method with two titles on factory.");
 		}
 
 		[Test] 
@@ -130,7 +130,7 @@ namespace Neo.Tools.Tests
 			Type titleTemplateType = assembly.GetType("pubs4.Model.TitleTemplate", true);
 			Type iFetchSpecificationType = titleTemplateType.GetInterface("IFetchSpecification");
 
-			AssertNotNull("Template type should implement IFetchSpecification", iFetchSpecificationType);
+			Assert.IsNotNull(iFetchSpecificationType, "Template type should implement IFetchSpecification");
 		}
 
 		[Test] 
@@ -140,7 +140,7 @@ namespace Neo.Tools.Tests
 
 			PropertyInfo[] properties = jobBaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
-			AssertEquals("Wrong number of properties", 4, properties.Length);
+			Assert.AreEqual(4, properties.Length, "Wrong number of properties");
 		}
 
 		#region SupportMethods
@@ -169,7 +169,7 @@ namespace Neo.Tools.Tests
 
 			foreach(CompilerError error in results.Errors)
 				Console.WriteLine(error.ToString());
-			Assertion.Assert("Failed to compile assembly. (See console output for details.)", results.Errors.Count == 0);
+			Assert.IsTrue(results.Errors.Count == 0, "Failed to compile assembly. (See console output for details.)");
 			
 			assembly = results.CompiledAssembly;
 		}

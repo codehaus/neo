@@ -55,8 +55,8 @@ namespace Neo.Tools.Tests
 			EntityRelationship rel;
 
 			rel = entity.RelationshipForAttribute(attr1);
-			Assertion.AssertNotNull("Did not find any.", rel);
-			Assertion.AssertNotNull("Found wrong one.", rel.VarName == "a" || rel.VarName == "b");
+			Assert.IsNotNull(rel, "Did not find any.");
+			Assert.IsNotNull(rel.VarName == "a" || rel.VarName == "b", "Found wrong one.");
 		}
 
 
@@ -69,9 +69,9 @@ namespace Neo.Tools.Tests
 			foreach(EntityRelationship r in entity.RelationshipsForAttribute(attr1))
 				vars.Add(r.VarName);
 
-			Assertion.AssertEquals("Found wrong number.", 2, vars.Count);
-			Assertion.Assert("Did not find a.", vars.Contains("a"));
-			Assertion.Assert("Did not find b.", vars.Contains("b"));
+			Assert.AreEqual(2, vars.Count, "Found wrong number.");
+			Assert.IsTrue(vars.Contains("a"), "Did not find a.");
+			Assert.IsTrue(vars.Contains("b"), "Did not find b.");
 		}
 
 
@@ -88,15 +88,15 @@ namespace Neo.Tools.Tests
 			combinations = new EntityRelationship[] { relc, reld }; 
 	
 			entity.AddCombinations(fixedPart, combinations, result);
-			Assertion.AssertEquals("Wrong number of combinations.", 2, result.Count);
+			Assert.AreEqual(2, result.Count, "Wrong number of combinations.");
 			
 			combination = (IList)result[0];
-			Assertion.AssertEquals("Wrong length.", 1, combination.Count);
-			Assertion.AssertEquals("Wrong combination 0.", "c", ((EntityRelationship)combination[0]).VarName);
+			Assert.AreEqual(1, combination.Count, "Wrong length.");
+			Assert.AreEqual("c", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
 
 			combination = (IList)result[1];
-			Assertion.AssertEquals("Wrong length.", 1, combination.Count);
-			Assertion.AssertEquals("Wrong combination 0.", "d", ((EntityRelationship)combination[0]).VarName);
+			Assert.AreEqual(1, combination.Count, "Wrong length.");
+			Assert.AreEqual("d", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
 		}
 
 		
@@ -113,17 +113,17 @@ namespace Neo.Tools.Tests
 			combinations = new EntityRelationship[] { relc, reld }; 
 	
 			entity.AddCombinations(fixedPart, combinations, result);
-			Assertion.AssertEquals("Wrong number of combinations.", 2, result.Count);
+			Assert.AreEqual(2, result.Count, "Wrong number of combinations.");
 			
 			combination = (IList)result[0];
-			Assertion.AssertEquals("Wrong length.", 2, combination.Count);
-			Assertion.AssertEquals("Wrong combination 0.", "a", ((EntityRelationship)combination[0]).VarName);
-			Assertion.AssertEquals("Wrong combination 0.", "c", ((EntityRelationship)combination[1]).VarName);
+			Assert.AreEqual(2, combination.Count, "Wrong length.");
+			Assert.AreEqual("a", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
+			Assert.AreEqual("c", ((EntityRelationship)combination[1]).VarName, "Wrong combination 0.");
 
 			combination = (IList)result[1];
-			Assertion.AssertEquals("Wrong length.", 2, combination.Count);
-			Assertion.AssertEquals("Wrong combination 0.", "a", ((EntityRelationship)combination[0]).VarName);
-			Assertion.AssertEquals("Wrong combination 0.", "d", ((EntityRelationship)combination[1]).VarName);
+			Assert.AreEqual(2, combination.Count, "Wrong length.");
+			Assert.AreEqual("a", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
+			Assert.AreEqual("d", ((EntityRelationship)combination[1]).VarName, "Wrong combination 0.");
 		}
 
 
@@ -137,23 +137,23 @@ namespace Neo.Tools.Tests
 			attrList = new EntityAttribute[2] { attr1, attr2 };
 
 			result = entity.RelationshipSetsForColumns(attrList);
-			Assertion.AssertEquals("Wrong number of combinations.", 4, result.Length);
+			Assert.AreEqual(4, result.Length, "Wrong number of combinations.");
 			
 			combination = result[0];
-			Assertion.AssertEquals("Wrong combination 0.", "a", ((EntityRelationship)combination[0]).VarName);
-			Assertion.AssertEquals("Wrong combination 0.", "c", ((EntityRelationship)combination[1]).VarName);
+			Assert.AreEqual("a", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
+			Assert.AreEqual("c", ((EntityRelationship)combination[1]).VarName, "Wrong combination 0.");
 
 			combination = result[1];
-			Assertion.AssertEquals("Wrong combination 0.", "a", ((EntityRelationship)combination[0]).VarName);
-			Assertion.AssertEquals("Wrong combination 0.", "d", ((EntityRelationship)combination[1]).VarName);
+			Assert.AreEqual("a", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
+			Assert.AreEqual("d", ((EntityRelationship)combination[1]).VarName, "Wrong combination 0.");
 
 			combination = result[2];
-			Assertion.AssertEquals("Wrong combination 0.", "b", ((EntityRelationship)combination[0]).VarName);
-			Assertion.AssertEquals("Wrong combination 0.", "c", ((EntityRelationship)combination[1]).VarName);
+			Assert.AreEqual("b", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
+			Assert.AreEqual("c", ((EntityRelationship)combination[1]).VarName, "Wrong combination 0.");
 
 			combination = result[3];
-			Assertion.AssertEquals("Wrong combination 0.", "b", ((EntityRelationship)combination[0]).VarName);
-			Assertion.AssertEquals("Wrong combination 0.", "d", ((EntityRelationship)combination[1]).VarName);
+			Assert.AreEqual("b", ((EntityRelationship)combination[0]).VarName, "Wrong combination 0.");
+			Assert.AreEqual("d", ((EntityRelationship)combination[1]).VarName, "Wrong combination 0.");
 		}
 
 	}

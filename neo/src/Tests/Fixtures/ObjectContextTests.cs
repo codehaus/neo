@@ -32,7 +32,7 @@ namespace Neo.Tests.Fixtures
 			Title	title;
 			bool	foundSampleTitle;
 
-			Assertion.Assert("No objects registered.", context.GetAllRegisteredObjects().Count > 0);
+			Assert.IsTrue(context.GetAllRegisteredObjects().Count > 0, "No objects registered.");
 
 			foundSampleTitle = false;
 			foreach(object o in context.GetAllRegisteredObjects())
@@ -43,7 +43,7 @@ namespace Neo.Tests.Fixtures
 					break;
 				}
 			}
-			Assertion.Assert("Could not find title with id TC7777.", foundSampleTitle);
+			Assert.IsTrue(foundSampleTitle, "Could not find title with id TC7777.");
 		}
 
 
@@ -53,7 +53,7 @@ namespace Neo.Tests.Fixtures
 			Title		titleObject;
 
 			titleObject = (Title)context.GetObjectFromTable("titles", new string[] { "TC7777" });
-			Assertion.AssertNotNull("Failed to find title with id TC7777", titleObject);
+			Assert.IsNotNull(titleObject, "Failed to find title with id TC7777");
 		}
 
 
@@ -63,9 +63,9 @@ namespace Neo.Tests.Fixtures
 			Job	newJob;
 
 			newJob = new JobFactory(context).CreateObject();
-			Assertion.AssertEquals("Wrong (sequence) primary key for new object.", -1, newJob.JobId);
+			Assert.AreEqual(-1, newJob.JobId, "Wrong (sequence) primary key for new object.");
 			newJob = new JobFactory(context).CreateObject();
-			Assertion.AssertEquals("Wrong (sequence) primary key for new object.", -2, newJob.JobId);
+			Assert.AreEqual(-2, newJob.JobId, "Wrong (sequence) primary key for new object.");
 		}
 		
 
@@ -81,7 +81,7 @@ namespace Neo.Tests.Fixtures
 			table.AddPkChange("TC7777", "TC9999");
 			context.UpdatePrimaryKeys(table);
 
-			Assertion.AssertEquals("Pk update failed.", "TC9999", titleObject.TitleId);
+			Assert.AreEqual("TC9999", titleObject.TitleId, "Pk update failed.");
 		}
 
 
@@ -103,14 +103,14 @@ namespace Neo.Tests.Fixtures
 
 			// test a new object
 			newTitle = new TitleFactory(context).CreateObject("XX9999");
-			Assertion.AssertEquals("Wrong default value for type.", "UNDECIDED", newTitle.Type);
+			Assert.AreEqual("UNDECIDED", newTitle.Type, "Wrong default value for type.");
 
 			// test with an object that is based on a recycled row
 			newTitle.Type = "Whatever";
-			Assertion.AssertEquals("Wrong value for type.", "Whatever", newTitle.Type);
+			Assert.AreEqual("Whatever", newTitle.Type, "Wrong value for type.");
 			newTitle.Delete();
 			newTitle = new TitleFactory(context).CreateObject("XX9999");
-			Assertion.AssertEquals("Wrong default value for type after recreate.", "UNDECIDED", newTitle.Type);
+			Assert.AreEqual("UNDECIDED", newTitle.Type, "Wrong default value for type after recreate.");
 		}
 
 
@@ -123,9 +123,9 @@ namespace Neo.Tests.Fixtures
 			childContext = new ObjectContext(context);
 			titleInParent = new TitleFactory(context).FindUnique("TitleId = 'TC7777'");
 			titleInChild = (Title)childContext.GetLocalObject(titleInParent);
-			Assertion.AssertNotNull("titleInChild not there.", titleInChild);
-			Assertion.Assert("titleInChild not in child context.", childContext == titleInChild.Context);
-			Assertion.AssertEquals("Referes to different title.", titleInParent.TitleId, titleInChild.TitleId);
+			Assert.IsNotNull(titleInChild, "titleInChild not there.");
+			Assert.IsTrue(childContext == titleInChild.Context, "titleInChild not in child context.");
+			Assert.AreEqual(titleInParent.TitleId, titleInChild.TitleId, "Referes to different title.");
 		}
 
 		
@@ -153,13 +153,13 @@ namespace Neo.Tests.Fixtures
 			childContext = new ObjectContext(context);
 			titlesInParent = new TitleFactory(context).FindAllObjects();
 			returnedList = childContext.GetLocalObjects(titlesInParent);
-			Assertion.AssertEquals("Wrong type of returned list.", titlesInParent.GetType(), returnedList.GetType());
+			Assert.AreEqual(titlesInParent.GetType(), returnedList.GetType(), "Wrong type of returned list.");
 			titlesInChild = returnedList as TitleList;
-			Assertion.AssertEquals("Not all titles there.", titlesInParent.Count, titlesInChild.Count);
+			Assert.AreEqual(titlesInParent.Count, titlesInChild.Count, "Not all titles there.");
 			for(int i = 0; i < titlesInParent.Count; i++)
 			{
-				Assertion.Assert("titleInChild not in child context.", childContext == titlesInChild[i].Context);
-				Assertion.Assert("Referes to different title.", titlesInParent[i].IsSame(titlesInChild[i]));
+				Assert.IsTrue(childContext == titlesInChild[i].Context, "titleInChild not in child context.");
+				Assert.IsTrue(titlesInParent[i].IsSame(titlesInChild[i]), "Referes to different title.");
 			}
 		}
 
@@ -174,7 +174,7 @@ namespace Neo.Tests.Fixtures
 			childContext = new ObjectContext(context);
 			titleInChild = (Title)childContext.GetObjectFromTable("titles", new string[] { "TC7777" });
 
-			Assertion.Assert("Not the same.", titleInParent.IsSame(titleInChild));
+			Assert.IsTrue(titleInParent.IsSame(titleInChild), "Not the same.");
 		}
 
 			
@@ -196,7 +196,7 @@ namespace Neo.Tests.Fixtures
 	
 			titleListInParent = new TitleFactory(context).FindAllObjects();
 			foreach(Title t in titleListInParent)
-				Assertion.Assert("Changes not reflected in parent context", t.TheTitle.IndexOf("changed") > 0);
+				Assert.IsTrue(t.TheTitle.IndexOf("changed") > 0, "Changes not reflected in parent context");
 		}
 
 		[Test]
@@ -216,7 +216,7 @@ namespace Neo.Tests.Fixtures
 			//   context.SaveChangesInObjectContext(childContext);
 	
 			titleListInParent = new TitleFactory(context).FindAllObjects();
-			Assertion.AssertEquals("Should have no titles", 0 , titleListInParent.Count);
+			Assert.AreEqual(0 , titleListInParent.Count, "Should have no titles");
 		}
 
 
@@ -296,17 +296,17 @@ namespace Neo.Tests.Fixtures
 			newTitleInChild = new TitleFactory(childContext).CreateObject("XX9999");
 			otherPublisherInChild = (Publisher)childContext.GetLocalObject(otherPublisherInParent);
 			newTitleInChild.Publisher = otherPublisherInChild;
-			Assertion.Assert("Other publisher in child doesn't know new title.", otherPublisherInChild.Titles.Contains(newTitleInChild));
+			Assert.IsTrue(otherPublisherInChild.Titles.Contains(newTitleInChild), "Other publisher in child doesn't know new title.");
 			
 			publisherInChild = (Publisher)childContext.GetLocalObject(publisherInParent);
 			newTitleInChild.Publisher = publisherInChild;
-			Assertion.Assert("Publisher in child doesn't know new title.", publisherInChild.Titles.Contains(newTitleInChild));
+			Assert.IsTrue(publisherInChild.Titles.Contains(newTitleInChild), "Publisher in child doesn't know new title.");
 
 			childContext.SaveChanges();
-			Assertion.Assert("Publisher in parent doesn't have a new title.", publisherInParent.Titles.Count == countBefore + 1);
+			Assert.IsTrue(publisherInParent.Titles.Count == countBefore + 1, "Publisher in parent doesn't have a new title.");
 			newTitleInParent = (Title)context.GetLocalObject(newTitleInChild);
-			Assertion.Assert("Publisher in child doesn't know new title.", publisherInParent.Titles.Contains(newTitleInParent));
-			Assertion.Assert("Other publisher in child does know new title.", otherPublisherInParent.Titles.Contains(newTitleInParent) == false);
+			Assert.IsTrue(publisherInParent.Titles.Contains(newTitleInParent), "Publisher in child doesn't know new title.");
+			Assert.IsTrue(otherPublisherInParent.Titles.Contains(newTitleInParent) == false, "Other publisher in child does know new title.");
 		}
 
 	
@@ -325,12 +325,12 @@ namespace Neo.Tests.Fixtures
 			publisherInChild = (Publisher)childContext.GetLocalObject(publisherInParent);
 			titleInChild = new TitleFactory(childContext).FindObject("PS7777");
 			titleInChild.Publisher = publisherInChild;
-			Assertion.Assert("Publisher in child doesn't know changed title.", publisherInChild.Titles.Contains(titleInChild));
+			Assert.IsTrue(publisherInChild.Titles.Contains(titleInChild), "Publisher in child doesn't know changed title.");
 
 			childContext.SaveChanges();
-			Assertion.Assert("Publisher in parent doesn't have a new title.", publisherInParent.Titles.Count == countBefore + 1);
+			Assert.IsTrue(publisherInParent.Titles.Count == countBefore + 1, "Publisher in parent doesn't have a new title.");
 			titleInParent = (Title)context.GetLocalObject(titleInChild);
-			Assertion.Assert("Publisher in child doesn't know changed title.", publisherInParent.Titles.Contains(titleInParent));
+			Assert.IsTrue(publisherInParent.Titles.Contains(titleInParent), "Publisher in child doesn't know changed title.");
 		}
 
 	
@@ -348,12 +348,12 @@ namespace Neo.Tests.Fixtures
 			childContext = new ObjectContext(context);
 			publisherInChild = (Publisher)childContext.GetLocalObject(publisherInParent);
 			titleInChild = publisherInChild.Titles[0];
-			Assertion.AssertEquals("", childContext, titleInChild.Context);
+			Assert.AreEqual(childContext, titleInChild.Context, "");
 			titleInChild.Delete();
-			Assertion.Assert("Publisher in child still has title.", publisherInChild.Titles.Count == countBefore - 1);
+			Assert.IsTrue(publisherInChild.Titles.Count == countBefore - 1, "Publisher in child still has title.");
 
 			childContext.SaveChanges();
-			Assertion.Assert("Publisher in parent still has title.", publisherInParent.Titles.Count == countBefore - 1);
+			Assert.IsTrue(publisherInParent.Titles.Count == countBefore - 1, "Publisher in parent still has title.");
 		}
 
 
@@ -406,8 +406,8 @@ namespace Neo.Tests.Fixtures
 			titleList.FindUnique("TitleId = 'PS7777'").Delete();
 
 			titleList = new TitleFactory(context).FindAllObjects();
-			Assertion.AssertEquals("Wrong number after delete.", countBefore - 1, titleList.Count);
-			Assertion.Assert("Object should be gone.", titleList.Find("TitleId = 'PS7777'").Count == 0);
+			Assert.AreEqual(countBefore - 1, titleList.Count, "Wrong number after delete.");
+			Assert.IsTrue(titleList.Find("TitleId = 'PS7777'").Count == 0, "Object should be gone.");
 		}
 
 
@@ -426,8 +426,8 @@ namespace Neo.Tests.Fixtures
 			title.RejectChanges();
 
 			titleList = new TitleFactory(context).FindAllObjects();
-			Assertion.AssertEquals("Wrong number after delete.", countBefore, titleList.Count);
-			Assertion.Assert("Object should be there still.", titleList.Find("TitleId = 'PS7777'").Count == 1);
+			Assert.AreEqual(countBefore, titleList.Count, "Wrong number after delete.");
+			Assert.IsTrue(titleList.Find("TitleId = 'PS7777'").Count == 1, "Object should be there still.");
 		}
 
 
@@ -446,8 +446,8 @@ namespace Neo.Tests.Fixtures
 			titleList.FindUnique("TitleId = 'XX9999'").Delete();
 
 			titleList = new TitleFactory(context).FindAllObjects();
-			Assertion.AssertEquals("Wrong number after delete.", countBefore - 1, titleList.Count);
-			Assertion.Assert("Still found it.", titleList.Find("TitleId = 'XX9999'").Count == 0);
+			Assert.AreEqual(countBefore - 1, titleList.Count, "Wrong number after delete.");
+			Assert.IsTrue(titleList.Find("TitleId = 'XX9999'").Count == 0, "Still found it.");
 		}
 
 
@@ -466,8 +466,8 @@ namespace Neo.Tests.Fixtures
 			titleList.FindUnique("TitleId = 'XX9999'").RejectChanges();
 
 			titleList = new TitleFactory(context).FindAllObjects();
-			Assertion.AssertEquals("Wrong number after delete.", countBefore - 1, titleList.Count);
-			Assertion.Assert("Still found it.", titleList.Find("TitleId = 'XX9999'").Count == 0);
+			Assert.AreEqual(countBefore - 1, titleList.Count, "Wrong number after delete.");
+			Assert.IsTrue(titleList.Find("TitleId = 'XX9999'").Count == 0, "Still found it.");
 		}
 
 
@@ -484,7 +484,7 @@ namespace Neo.Tests.Fixtures
 			newTitleInChild.Delete();
 			childContext.SaveChanges();
 
-			Assertion.AssertEquals("Wrong row state.", DataRowState.Detached, newTitleInParent.Row.RowState);
+			Assert.AreEqual(DataRowState.Detached, newTitleInParent.Row.RowState, "Wrong row state.");
 		}
 
 
@@ -501,11 +501,11 @@ namespace Neo.Tests.Fixtures
 
 			newContext = (ObjectContext)RunThroughSerialization(context);
 
-			Assertion.AssertEquals("Number of objects should be the same.", context.GetAllRegisteredObjects().Count, newContext.GetAllRegisteredObjects().Count);
+			Assert.AreEqual(context.GetAllRegisteredObjects().Count, newContext.GetAllRegisteredObjects().Count, "Number of objects should be the same.");
 			factory = new TitleFactory(newContext);
-			Assertion.Assert("Title TC7777 should have changes.", factory.FindObject("TC7777").HasChanges());
-			Assertion.Assert("Title MC3021 should be deleted.", factory.FindObject("MC3021") == null);
-			Assertion.Assert("Title XX9999 should be new.", factory.FindObject("XX9999").Row.RowState == DataRowState.Added);
+			Assert.IsTrue(factory.FindObject("TC7777").HasChanges(), "Title TC7777 should have changes.");
+			Assert.IsTrue(factory.FindObject("MC3021") == null, "Title MC3021 should be deleted.");
+			Assert.IsTrue(factory.FindObject("XX9999").Row.RowState == DataRowState.Added, "Title XX9999 should be new.");
 		}
 
 
@@ -517,7 +517,7 @@ namespace Neo.Tests.Fixtures
 
 			context = (ObjectContext)RunThroughSerialization(context);
 
-			Assertion.AssertEquals("Should recreate custom emap factory", typeof(CustomEntityMapFactory), context.EntityMapFactory.GetType());
+			Assert.AreEqual(typeof(CustomEntityMapFactory), context.EntityMapFactory.GetType(), "Should recreate custom emap factory");
 		}
 
 		#region Helper class
