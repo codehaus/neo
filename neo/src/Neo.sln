@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Tests", "Tests\Neo.Test
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.MySqlClient", "Neo.MySqlClient\Neo.MySqlClient.csproj", "{20166B0B-394E-48A7-9C72-97AA11B9CD45}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -37,6 +41,10 @@ Global
 		{C45E50C1-A959-4CBA-813F-9A929B7C6406}.Debug.Build.0 = Debug|.NET
 		{C45E50C1-A959-4CBA-813F-9A929B7C6406}.Release.ActiveCfg = Release|.NET
 		{C45E50C1-A959-4CBA-813F-9A929B7C6406}.Release.Build.0 = Release|.NET
+		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Debug.ActiveCfg = Debug|.NET
+		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Debug.Build.0 = Debug|.NET
+		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Release.ActiveCfg = Release|.NET
+		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -163,7 +163,7 @@ namespace Neo.Database
 				DataColumn column = table.Columns[q.Column];
 				string pname = ConvertToParameterName(column.ColumnName + parameters.Count.ToString());
 				IDataParameter param = implFactory.CreateParameter(column, pname, q.Predicate.Value);
-				builder.Append(param.ParameterName);
+				builder.Append(pname);
 				parameters.Add(param);
 			}
 
