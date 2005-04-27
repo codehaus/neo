@@ -1,10 +1,23 @@
+2005-04-27 erik
+
+	* Fixed NEO-25. Qualifier format strings can now contains properties
+	that start with or contain underscores.
+	
+
+2005-04-15 arjen
+
+	* Added MySQL data store.
+	
+
 2005-04-05 arjen
+
 	* Fixed NEO-23. Oracle table names can now delimited using double quotes.
 	When constructing a DbDataStore, you can specify a flag which indicates
 	whether to use delimiters or not. The SqlClient datastore now uses square
 	brackets as delimiters.
 
 	* Updated to nunit 2.2.
+
 
 2005-04-02 erik
 

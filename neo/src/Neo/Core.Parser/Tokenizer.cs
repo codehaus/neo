@@ -80,7 +80,7 @@ namespace Neo.Core.Parser
 			if(Char.IsWhiteSpace(c))
 				return null;
 
-			if(Char.IsLetter(c))
+			if(Char.IsLetter(c) || c == '_')
 			{
 				token = ReadStringToken(c);
 			}
@@ -124,7 +124,7 @@ namespace Neo.Core.Parser
 		protected Token ReadStringToken(char c)
 		{
 			int start = position;
-			while(Char.IsLetterOrDigit(c) && MoveNextChar())
+			while((Char.IsLetterOrDigit(c) || (c == '_')) && MoveNextChar())
 				c = GetCurrentChar();
 
 			string val = input.Substring(start, position - start);

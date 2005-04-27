@@ -87,6 +87,19 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void TokenizerRecognizesNamesWithUnderscores()
+		{
+			Tokenizer tokenizer;
+			Token	  token;
+
+			tokenizer = new Tokenizer("_foo_bar");
+			token = tokenizer.GetNextToken();
+			Assert.AreEqual(TokenType.String, token.Type);
+			Assert.AreEqual(token.Value, "_foo_bar");
+		}
+
+
+		[Test]
 		public void CreatesQualifierForLiteralStringComparison()
 		{	
 			QualifierParser parser = new QualifierParser("TitleId = 'TC7777'");
