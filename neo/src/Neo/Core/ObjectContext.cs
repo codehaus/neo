@@ -526,11 +526,21 @@ namespace Neo.Core
 			if(e.Row == rowPending)
 				return;
 
-			if(e.Action == DataRowAction.Rollback && e.Row.RowState == DataRowState.Added)
+			if(e.Action == DataRowAction.Rollback)
 			{
-				IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
-				object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
-				objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
+				if(e.Row.RowState == DataRowState.Added)
+				{
+					IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
+					object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
+					objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
+				}
+				else if((e.Row.RowState == DataRowState.Deleted) || (e.Row.RowState == DataRowState.Detached))
+				{
+					// Note that this fails when the row state is detached. Ignored test shows this.
+					IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
+					object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Original);
+					objectTable.UndeleteObject(new ObjectId(emap.TableName, pkvalues));
+				}
 			}
 		}
 

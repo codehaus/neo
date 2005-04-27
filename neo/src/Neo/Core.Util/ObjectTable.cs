@@ -101,6 +101,14 @@ namespace Neo.Core.Util
 		}
 
 
+		public void UndeleteObject(ObjectId oid)
+		{
+			IEntityObject eo = GetDeletedObject(oid);
+			ForgetDeletedObject(oid);
+			AddObject(oid, eo);
+		}
+
+
 		public void ForgetAllDeletedObjects()
 		{
 			deletedObjectTable.Clear();

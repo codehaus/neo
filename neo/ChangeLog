@@ -3,6 +3,9 @@
 	* Fixed NEO-25. Qualifier format strings can now contains properties
 	that start with or contain underscores.
 	
+	* Fixed one of two cases of NEO-26. Rejecting the delete of a fetched
+	object now reinserts it into the context's tables.
+	
 
 2005-04-15 arjen
 

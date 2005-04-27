@@ -3,6 +3,7 @@ using System.Collections;
 using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
+using Neo.Framework;
 using NMock;
 using NMock.Constraints;
 using NUnit.Framework;
@@ -473,6 +474,40 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void RejectingDeleteOfFetchedObjectReinsertsItIntoObjectTable()
+		{
+			JobFactory  factory;
+			Job			job;
+			int			countBefore;
+
+			factory = new JobFactory(context);
+			job = factory.FindAllObjects()[0];
+			countBefore = factory.FindAllObjects().Count;
+			job.Delete();
+			job.RejectChanges();
+			Assert.AreEqual(countBefore, factory.FindAllObjects().Count);
+		} 
+
+
+		[Test, Ignore("Related to NEO-26 but can't make it pass.")]
+		public void RejectingDeleteOfNewlyCreatedObjectReinsertsItIntoObjectTable()
+		{
+			JobFactory  factory;
+			Job			job;
+			int			countBefore;
+
+			factory = new JobFactory(context);
+			job = factory.CreateObject();
+			countBefore = factory.FindAllObjects().Count;
+			job.Delete();
+			// Deleting a new object makes it detached. The event handler cannot
+			// get the original value for detached rows so it can't undelete it.
+			job.RejectChanges();
+			Assert.AreEqual(countBefore, factory.FindAllObjects().Count);
+		} 
+
+
+		[Test]
 		public void AddedObjectDeletionsPropagateToParentContext()
 		{
 			Title			newTitleInParent, newTitleInChild;
@@ -584,7 +619,6 @@ namespace Neo.Tests.Fixtures
 			private void context_EntityObjectChanged(object sender, EntityObjectChangeEventArgs e)
 			{
 				ChangeHandlerCallCount += 1;
-				Console.WriteLine(e.Action);
 				ReceivedEntityObject = e.EntityObject;
 				ReceivedAction = e.Action;
 			}
