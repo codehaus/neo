@@ -489,24 +489,6 @@ namespace Neo.Tests.Fixtures
 		} 
 
 
-		[Test, Ignore("Related to NEO-26 but can't make it pass.")]
-		public void RejectingDeleteOfNewlyCreatedObjectReinsertsItIntoObjectTable()
-		{
-			JobFactory  factory;
-			Job			job;
-			int			countBefore;
-
-			factory = new JobFactory(context);
-			job = factory.CreateObject();
-			countBefore = factory.FindAllObjects().Count;
-			job.Delete();
-			// Deleting a new object makes it detached. The event handler cannot
-			// get the original value for detached rows so it can't undelete it.
-			job.RejectChanges();
-			Assert.AreEqual(countBefore, factory.FindAllObjects().Count);
-		} 
-
-
 		[Test]
 		public void AddedObjectDeletionsPropagateToParentContext()
 		{

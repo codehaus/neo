@@ -534,9 +534,8 @@ namespace Neo.Core
 					object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
 					objectTable.DeleteObject(new ObjectId(e.Row.Table.TableName, pkvalues));
 				}
-				else if((e.Row.RowState == DataRowState.Deleted) || (e.Row.RowState == DataRowState.Detached))
+				else if(e.Row.RowState == DataRowState.Deleted)
 				{
-					// Note that this fails when the row state is detached. Ignored test shows this.
 					IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
 					object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Original);
 					objectTable.UndeleteObject(new ObjectId(emap.TableName, pkvalues));
