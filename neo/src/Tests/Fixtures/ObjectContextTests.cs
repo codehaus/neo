@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
 using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
-using Neo.Framework;
 using NMock;
 using NMock.Constraints;
 using NUnit.Framework;
