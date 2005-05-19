@@ -454,6 +454,9 @@ internal class ${entity.ClassName}Map : EntityMap
 #if($attributes.AllowsNull)
 		c.AllowDBNull = true;
 #end
+#if($attributes.DefaultValue)
+		c.DefaultValue = Convert.ChangeType("$attributes.DefaultValue",typeof($attributes.DotNetType));
+#end
 #end
 		table.PrimaryKey = new DataColumn[] {#foreach($column in $entity.PkColumns)#if( $velocityCount > 1),#end table.Columns["$column.ColumnName"]#end };
 	}

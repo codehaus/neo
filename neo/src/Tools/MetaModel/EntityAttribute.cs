@@ -22,6 +22,8 @@ namespace Neo.MetaModel
 		private Boolean		isRequired;
 		private Boolean		isHidden;
 	
+		private String		defaultValue; 
+	
 
 		public EntityAttribute(Entity anEntity)
 		{
@@ -90,6 +92,13 @@ namespace Neo.MetaModel
 		{
 			set { isRequired = value; }
 			get { return isRequired; }
+		}
+
+
+		public string DefaultValue 
+		{
+			get { return defaultValue; }
+			set { defaultValue = value; }
 		}
 
 

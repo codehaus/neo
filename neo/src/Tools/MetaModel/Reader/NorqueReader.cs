@@ -169,6 +169,8 @@ namespace Neo.MetaModel.Reader
 				a.PropertyName = ModelHelper.PrettifyName(ValueForAttribute(el, "name"), GetNamingMethod(el));
 			a.PropertyType = GetDotNetType(a.ColumnType);
 			a.PropertyAttributes = ValueForAttribute(el, "attributes");
+
+			a.DefaultValue = ValueForAttribute(el, "default");
 				
 			return a;
 		}

@@ -17,7 +17,7 @@ IF EXISTS(SELECT * FROM dbo.sysobjects WHERE id = object_id(N'$entity.TableName'
 CREATE TABLE $entity.TableName
 (
 #foreach($attribute in $entity.Attributes)
-	$attribute.ColumnName $attribute.ColumnType#if($attribute.Size)($attribute.Size)#end#if($attribute.IsPkColumn && $entity.IdMethod.ToString == "Native") IDENTITY#end#if(!$attribute.AllowsNull) NOT NULL#end,
+	$attribute.ColumnName $attribute.ColumnType#if($attribute.Size)($attribute.Size)#end#if($attribute.IsPkColumn && $entity.IdMethod.ToString == "Native") IDENTITY#end#if($attribute.DefaultValue) DEFAULT('$attribute.DefaultValue')#end#if(!$attribute.AllowsNull) NOT NULL#end,
 #end
 
 	CONSTRAINT pk_$entity.TableName PRIMARY KEY ( #foreach($column in $entity.PkColumns)#if( $velocityCount > 1), #end$column.ColumnName#end )
