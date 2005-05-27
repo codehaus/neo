@@ -39,17 +39,22 @@ namespace Neo.Tests.Fixtures
 			context = new ObjectContext();
 			factory = new TitleFactory(context);
 			
-			for(int i = 0; i < 100000; i++)
+			DateTime start = DateTime.Now;
+			int count1 = 100000;
+			for(int i = 0; i < count1; i++)
 				factory.CreateObject(i.ToString());
+			DateTime end = DateTime.Now;
+
+			Console.WriteLine("speed = {0} ObjectCreations/s", GetSpeed(start, end, count1));
 
 			Qualifier q = Qualifier.Format("TitleId = 99");
 			int count = 100;
-			DateTime start = DateTime.Now;
+			start = DateTime.Now;
 			for(int i = 0; i < count; i++)
 			{
 				factory.Find(q);
 			}
-			DateTime end = DateTime.Now;
+			end = DateTime.Now;
 			
 			Console.WriteLine("speed = {0} PropQualifier/s", GetSpeed(start, end, count));
 		}
@@ -72,8 +77,6 @@ namespace Neo.Tests.Fixtures
 			for(int i = 0; i < 99000; i++)
 				pubFactory.CreateObject(i.ToString());
 
-			Console.WriteLine("Starting test.");
-
 			Qualifier q = Qualifier.Format("TitleId = 99");
 			int count = 100;
 			DateTime start = DateTime.Now;
@@ -87,10 +90,79 @@ namespace Neo.Tests.Fixtures
 		}
 
 
+		[Test]
+		public void SpeedOfAssignments()
+		{
+			for(int k = 5; k < 36; k+= 10)
+			{
+				int publisherCount = 1000;
+				int titlesPerPublisher = k;
+
+				ObjectContext context = new ObjectContext();
+
+				TitleFactory titleFactory = new TitleFactory(context);
+				for(int i = 0; i < publisherCount * titlesPerPublisher; i++)
+					titleFactory.CreateObject(i.ToString());
+
+				PublisherFactory pubFactory = new PublisherFactory(context);
+				for(int i = 0; i < publisherCount; i++)
+					pubFactory.CreateObject(i.ToString());
+
+				TitleList titles = titleFactory.FindAllObjects();
+				PublisherList publishers = pubFactory.FindAllObjects();
+				Random r = new Random();
+			
+				Console.WriteLine("Starting tests for {0} titles per publisher.", titlesPerPublisher);
+
+				int count = 100000;
+				DateTime start = DateTime.Now;
+				for(int i = 0; i < count; i++)
+				{
+					int index = r.Next(0, titles.Count);
+					titles[index].TheTitle = "FOOBAR";
+				}
+				DateTime end = DateTime.Now;
+				Console.WriteLine("{0}", GetSpeed(start, end, count));
+
+				start = DateTime.Now;
+				for(int i = 0; i < publisherCount; i++)
+					publishers[i].Titles.Touch();
+				end = DateTime.Now;
+				Console.WriteLine("{0}", GetSpeed(start, end, publisherCount));
+
+				start = DateTime.Now;
+				for(int i = 0; i < publisherCount; i++)
+					for(int j = 0; j < titlesPerPublisher; j++)
+						titles[i*titlesPerPublisher+j].Publisher = publishers[i];
+				end = DateTime.Now;
+				Console.WriteLine("{0}", GetSpeed(start, end, publisherCount * titlesPerPublisher));
+			
+				count = 10000;
+				start = DateTime.Now;
+				for(int i = 0; i < count; i++)
+				{
+					int index = r.Next(0, titles.Count);
+					titles[index].TheTitle = "FOOBAR";
+				}
+				end = DateTime.Now;
+				Console.WriteLine("{0}", GetSpeed(start, end, count));
+			}
+		}
+
+
 		private static double GetSpeed(DateTime start, DateTime end, int count)
 		{
 			return ((double)count)/(end - start).TotalMilliseconds * 1000;
 		}
+
+		
+		[STAThread]
+		static void Main() 
+		{
+			new SpeedTests().SpeedOfAssignments();
+			Console.ReadLine();
+		}
+
 
 	}
 }

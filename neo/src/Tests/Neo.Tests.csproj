@@ -15,7 +15,7 @@
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
-                OutputType = "Library"
+                OutputType = "Exe"
                 PreBuildEvent = ""
                 PostBuildEvent = 'IF NOT EXIST "$(ProjectDir)$(OutDir)fbembed.dll" COPY "$(ProjectDir)Resources\fbembed.dll" "$(ProjectDir)$(OutDir)"'
                 RootNamespace = "Neo.Tests"
