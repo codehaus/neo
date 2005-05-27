@@ -1,7 +1,16 @@
+2005-05-27 erik
+
+    * Changed ObjectRelationBase so that it only listens for
+    EntityObjectChange events if necessary. This brings performance
+    back to original levels, unless of course you register for
+    the events via the IBindingList interface.
+
+
 2005-05-23 arjen
 
     * VsTool can now be registered again. See NEO-27 
 	(http://jira.codehaus.org/browse/NEO-27) for details.
+
 
 2005-05-20 erik
 

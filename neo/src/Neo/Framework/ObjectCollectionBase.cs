@@ -15,6 +15,8 @@ namespace Neo.Framework
 		//	Fields and Constructor
 		//--------------------------------------------------------------------------------------
 
+		protected ListChangedEventHandler onListChanged;
+
 		protected ObjectCollectionBase()
 		{
 		}
@@ -215,13 +217,6 @@ namespace Neo.Framework
  			get { return false ; }
  		}
  
- 		// Methods.
- 		object IBindingList.AddNew() 
- 		{
- 			throw new NotSupportedException();
- 		}
- 
- 
  		// Unsupported properties.
  		bool IBindingList.IsSorted 
  		{ 
@@ -239,9 +234,13 @@ namespace Neo.Framework
  			get { throw new NotSupportedException(); }
  		}
  
- 
  		// Unsupported Methods.
- 		void IBindingList.AddIndex(PropertyDescriptor property) 
+		object IBindingList.AddNew() 
+		{
+			throw new NotSupportedException();
+		}
+ 
+		void IBindingList.AddIndex(PropertyDescriptor property) 
  		{
  			throw new NotSupportedException(); 
  		}
@@ -266,9 +265,8 @@ namespace Neo.Framework
  			throw new NotSupportedException(); 
  		}
  
- 		private ListChangedEventHandler onListChanged;
  
- 		public event ListChangedEventHandler ListChanged 
+ 		public virtual event ListChangedEventHandler ListChanged 
  		{
  			add 
  			{
@@ -282,19 +280,12 @@ namespace Neo.Framework
  
  		protected virtual void OnListChanged(ListChangedEventArgs ev) 
  		{
- 			if (onListChanged != null) 
+ 			if(onListChanged != null) 
  			{
  				onListChanged(this, ev);
  			}
  		}
  
- 		// Called by objects in the collection when they change.
- 		protected void EntityObjectChanged(object eo) 
- 		{
- 			int index = InnerList.IndexOf(eo);
- 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
- 		}
-
 		
 		//--------------------------------------------------------------------------------------
 		//	Finder methods

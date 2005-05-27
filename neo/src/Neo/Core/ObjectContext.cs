@@ -500,7 +500,8 @@ namespace Neo.Core
 			{
 				eo = emap.CreateInstance(aRow, this);
 				objectTable.AddObject(oid, eo);
-				OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, EntityObjectAction.Add));
+				if(EntityObjectChanged != null)
+					OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, EntityObjectAction.Add));
 			}
 			else
 			{
@@ -543,7 +544,6 @@ namespace Neo.Core
 			}
 		}
 
-
 		protected virtual void OnRowDeleting(object sender, DataRowChangeEventArgs e)
 		{
 			if(e.Row == rowPending)
@@ -555,8 +555,11 @@ namespace Neo.Core
 
 			rowChangeBroker.OnRowDeleting(sender, e);
 
-			IEntityObject eo = objectTable.GetDeletedObject(e.Row.Table.TableName, pkvalues);
-			OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, EntityObjectAction.Delete));
+			if(EntityObjectChanged != null)
+			{
+				IEntityObject eo = objectTable.GetDeletedObject(e.Row.Table.TableName, pkvalues);
+				OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, EntityObjectAction.Delete));
+			}
 		}
 	
 		protected virtual void OnColumnChanging(object sender, DataColumnChangeEventArgs e)
@@ -569,14 +572,16 @@ namespace Neo.Core
 			if(e.Action == DataRowAction.Delete)
 				rowChangeBroker.OnRowDeleting(sender, e);
 	
-			if (e.Row.RowState != DataRowState.Detached 
-				&& e.Action != DataRowAction.Add) // adding is handled in GetObjectFromRow as the object for the added row doesn't exist yet
+			if(EntityObjectChanged != null)
 			{
-				IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
-				object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
-				IEntityObject eo = objectTable.GetObject(emap.TableName, pkvalues);
-				EntityObjectAction action = (EntityObjectAction)EntityObjectAction.Parse(typeof(EntityObjectAction), e.Action.ToString()); 
-				OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, action));
+				if(e.Row.RowState != DataRowState.Detached && e.Action != DataRowAction.Add) // adding is handled in GetObjectFromRow as the object for the added row doesn't exist yet
+				{
+					IEntityMap emap = emapFactory.GetMap(e.Row.Table.TableName);
+					object[] pkvalues = GetPrimaryKeyValuesForRow(emap, e.Row, DataRowVersion.Current);
+					IEntityObject eo = objectTable.GetObject(emap.TableName, pkvalues);
+					EntityObjectAction action = (EntityObjectAction)EntityObjectAction.Parse(typeof(EntityObjectAction), e.Action.ToString()); 
+					OnEntityObjectChanged(new EntityObjectChangeEventArgs(eo, action));
+				}
 			}
 		}
 
@@ -615,7 +620,7 @@ namespace Neo.Core
 		}
 
 		/// <summary>
-		/// Registers an observer for row change events.
+		/// Registers an observer for row change events. Only sent for delete events!
 		/// </summary>
 		/// <param name="handler">delgate to be called</param>
 		/// <param name="tableName">table name the observer is interested in</param>

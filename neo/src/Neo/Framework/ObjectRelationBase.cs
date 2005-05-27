@@ -76,7 +76,8 @@ namespace Neo.Framework
 			Owner.Context.RegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildEntity.TableName, foreignColumnName);
 			Owner.Context.RegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildEntity.TableName);
 
-			Owner.Context.EntityObjectChanged += new EntityObjectChangedHandler(context_EntityObjectChanged);
+			if(onListChanged != null)
+				Owner.Context.EntityObjectChanged += new EntityObjectChangedHandler(OnEntityObjectChanged);
 		}
 
 		private object ObjectForForeignRow(DataRow row, bool tryDeleted)
@@ -146,16 +147,6 @@ namespace Neo.Framework
 			}
 		}
 
-		protected void context_EntityObjectChanged(object sender, EntityObjectChangeEventArgs e)
-		{
-			if (e.Action == EntityObjectAction.Change)
-			{
-				int index;
-				if ((index = innerList.IndexOf(e.EntityObject)) > -1)
-                  OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index ));
-			}
-		}
-
 		protected virtual void AddToInnerList(object eo)
 		{
 			int index = innerList.Add(eo);
@@ -170,6 +161,40 @@ namespace Neo.Framework
 		}
    
 		
+		//--------------------------------------------------------------------------------------
+		//	Event handling
+		//--------------------------------------------------------------------------------------
+		
+		public override event ListChangedEventHandler ListChanged 
+		{
+			add 
+			{
+				if((onListChanged == null) && (innerList != null))
+					Owner.Context.EntityObjectChanged += new EntityObjectChangedHandler(OnEntityObjectChanged);
+				onListChanged += value;
+			}
+			remove 
+			{
+				onListChanged -= value;
+				if((onListChanged == null) && (innerList != null))
+					Owner.Context.EntityObjectChanged -= new EntityObjectChangedHandler(OnEntityObjectChanged);
+			}
+		}
+
+		protected void OnEntityObjectChanged(object sender, EntityObjectChangeEventArgs e)
+		{
+			if (e.Action == EntityObjectAction.Change)
+			{
+				if(foreignTableName == e.EntityObject.Row.Table.TableName)
+				{
+					int index = innerList.IndexOf(e.EntityObject);
+					if(index > -1)
+						OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index ));
+				}
+			}
+		}
+
+
 		//--------------------------------------------------------------------------------------
 		//	Untyped implementations to be called by subclasses
 		//--------------------------------------------------------------------------------------
@@ -217,10 +242,15 @@ namespace Neo.Framework
 
 		public virtual void InvalidateCache()
 		{
+			if(innerList == null)
+				return;
+
 			innerList = null;
 			Owner.Context.UnRegisterForColumnChanges(new ColumnChangeHandler(OnColumnChanging), Relation.ChildEntity.TableName, foreignColumnName);
 			Owner.Context.UnRegisterForRowChanges(new RowChangeHandler(OnRowDeleting), Relation.ChildEntity.TableName);
 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+			if(onListChanged != null)
+				Owner.Context.EntityObjectChanged -= new EntityObjectChangedHandler(OnEntityObjectChanged);
 		}
 
 	}
