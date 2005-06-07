@@ -37,11 +37,9 @@ namespace Neo.FirebirdClient
 		{
 			implFactory = new FirebirdImplFactory();
 			connection = implFactory.CreateConnection(connectionString);
-
+			// by default, use delimited identifier for backwards compatibility
+			base.usesDelimitedIdentifiers = true;
 			logger.Debug("Created new FirebirdDataStore.");
-
-            // by default, use delimited identifier for backwards compatibility
-            base.usesDelimitedIdentifiers = true;
 		}
 
         public FirebirdDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
@@ -65,8 +63,15 @@ namespace Neo.FirebirdClient
 			implFactory = new FirebirdImplFactory();
 			this.keepConnectionOpen = keepConnectionOpen;
 			this.connection = connection;
+			// by default, use delimited identifier for backwards compatibility
+			base.usesDelimitedIdentifiers = true;
 
 			logger.Debug("Created new FirebirdDataStore.");
+		}
+
+		public FirebirdDataStore(FbConnection connection, bool keepConnectionOpen, bool useDelimitedIdentifiers) : this(connection, keepConnectionOpen)
+		{
+			base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
 		}
 
 		protected FirebirdDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
