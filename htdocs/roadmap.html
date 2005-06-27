@@ -10,9 +10,6 @@
 
 <p class="heading1">Planned Features</p>
 
-<p class="heading2">Enhanced concurrency tests</p>
-<p class="body">See this wiki entry for details: <a href="http://docs.codehaus.org/display/NEO/Optimistic+concurrency+tests">Optimistic concurrency tests</a>. Please provide comments if you are interested in this feature. This will also fix <a href="http://jira.codehaus.org/browse/NEO-5">NEO-5</a>. (Planned for version 1.4)</p>
-
 <p class="heading2">Improved qualifiers</p>
 <p class="body">Qualifiers that can contain set restrictions. Have a look at the following examples which should be self explanatory:</p>
 
@@ -21,14 +18,17 @@
 
 <p class="body">Maybe other <a href="http://longhorn.msdn.microsoft.com/lhsdk/ndp/daconopathreference.aspx">OPath</a> features as well. (Planned for version 1.4)
 
+<p class="heading2">Spans</p>
+<p class="body">The ability to bring objects for related entities into memory in one query, e.g. when fetching publisher objecs one can instruct the context to also load all related title objects. Google for "<a href="http://www.google.com/search?hl=en&lr=&ie=UTF-8&q=objectspaces+spans&btnG=Search">objectspaces spans</a>" for a discussion. (Planned for version 1.4)</p>
+
+<p class="heading2">Enhanced concurrency tests</p>
+<p class="body">See this wiki entry for details: <a href="http://docs.codehaus.org/display/NEO/Optimistic+concurrency+tests">Optimistic concurrency tests</a>. Please provide comments if you are interested in this feature. This will also fix <a href="http://jira.codehaus.org/browse/NEO-5">NEO-5</a>. (Planned for version 1.4 or 1.5)</p>
+
 <p class="heading2">MultiStore</p>
 <p class="body">See this wiki entry for details: <a href="http://docs.codehaus.org/display/NEO/Using+multiple+data+sources">Using multiple data sources</a>. Please provide comments if you are interested in this feature. (Planned for version 1.5)</p>
 
 <p class="heading2f">Single table inheritance</p>
 <p class="body">The ability to define an entity classes as a subclasses of another entity class with the limitation that all data must be fetched from the same table. A classic example is a PERSON table from which one can fetch employees as well as manangers with both of them inheriting from person. (Planned for version 1.5)</p>
-
-<p class="heading2">Spans</p>
-<p class="body">The ability to bring objects for related entities into memory in one query, e.g. when fetching publisher objecs one can instruct the context to also load all related title objects. Google for "<a href="http://www.google.com/search?hl=en&lr=&ie=UTF-8&q=objectspaces+spans&btnG=Search">objectspaces spans</a>" for a discussion. (No concrete plans)</p>
 
 <p class="heading2">Full sorting support</p>
 <p class="body">The current implementation only supports sorting by attributes, not paths, and the in-memory implementation is further limited to sorting by one attribute. This should be fixed. (No concrete plans)</p>
@@ -38,5 +38,5 @@
 
 
 
-<p class="footer">$Id: roadmap.html,v 1.8 2005-06-08 23:41:11 erik Exp $</p>
+<p class="footer">$Id: roadmap.html,v 1.9 2005-06-27 20:44:20 erik Exp $</p>
 
