@@ -388,6 +388,11 @@ namespace Neo.Tests.Fixtures
 				return DataTable;
 			}
 
+			public DataSet FetchRows(IFetchSpecification fetchSpec, string[] spans)
+			{
+				return null;
+			}
+
 			#endregion
 		}
 

@@ -51,5 +51,16 @@ namespace Neo.Tests.Fixtures
 			Assert.IsNotNull(salesColumn, "Could not find sales column.");
 			Assert.AreEqual(typeof(int), salesColumn.DataType, "Wrong type of sales column.");
 		}
+
+
+		[Test]
+		public void FindsNameForRelationInfo()
+		{
+			IEntityMap emap = DefaultEntityMapFactory.SharedInstance.GetMap(typeof(Title));
+			RelationInfo info = emap.GetRelationInfo("Publisher");
+
+			Assert.AreEqual("Publisher", emap.GetRelationName(info));
+		}
+
 	}
 }

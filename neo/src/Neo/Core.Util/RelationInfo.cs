@@ -1,6 +1,5 @@
 using System;
 
-
 namespace Neo.Core.Util
 {
 	/// <summary>
@@ -13,7 +12,6 @@ namespace Neo.Core.Util
 		public readonly string ParentKey;
 		public readonly string ChildKey;
 
-
 		public RelationInfo(IEntityMap parentEntity, IEntityMap childEntity, string parentKey, string childKey)
 		{
 			ParentEntity = parentEntity;
@@ -22,7 +20,6 @@ namespace Neo.Core.Util
 			ChildKey = childKey;
 		}
 
-
 		public RelationInfo(IEntityMapFactory factory, Type parentType, Type childType, string parentKey, string childKey)
 		{
 			ParentEntity = factory.GetMap(parentType);
@@ -30,6 +27,22 @@ namespace Neo.Core.Util
 			ParentKey = parentKey;
 			ChildKey = childKey;
 		}
+
+		public override bool Equals(object obj)
+		{
+			RelationInfo other = obj as RelationInfo;
+			if (other == null)
+				return false;
+
+			return (this.ParentEntity == other.ParentEntity && this.ChildEntity == other.ChildEntity &&
+				this.ParentKey == other.ParentKey && this.ChildKey == other.ChildKey);
+		}
+
+		public override int GetHashCode()
+		{
+			return ParentEntity.GetHashCode() ^ ChildEntity.GetHashCode();
+		}
+
 
 	}
 }

@@ -77,11 +77,17 @@ namespace Neo.Core
 		string GetColumnForAttribute(string attribute);
 
 		/// <summary>
-		/// Translates between Relation name and relation info
+		/// Translates between Relation name and relation info.
 		/// </summary>
 		/// <param name="relation">relation name</param>
 		/// <returns>corresponding relation info</returns>
 		RelationInfo GetRelationInfo(string relation);
+
+		/// <summary>
+		/// Translates between Relation name and relation info.
+		/// </summary>
+		/// <returns>corresponding relation name</returns>
+		string GetRelationName(RelationInfo RelationInfo);
 
 		/// <summary>
 		/// Creates an instance for this entity, a blank entity object

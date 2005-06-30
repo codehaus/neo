@@ -122,6 +122,20 @@ namespace Neo.Framework
 				relation, ConcreteObjectType.ToString()));
 		}
 
+
+		public string GetRelationName(RelationInfo info)
+		{
+			CacheRelationInfos();
+
+			foreach(DictionaryEntry entry in relationInfos)
+			{
+				if(entry.Value.Equals(info))
+					return (string)entry.Key;
+			}
+			throw new InvalidOperationException("Relation info not found in entity " + ObjectType.ToString());
+		}
+
+
 		//--------------------------------------------------------------------------------------
 		//	Object Instantiation
 		//--------------------------------------------------------------------------------------

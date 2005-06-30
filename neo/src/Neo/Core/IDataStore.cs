@@ -16,7 +16,13 @@ namespace Neo.Core
 		/// <returns>A <c>DataTable</c> containing all matching rows.</returns>
 		DataTable FetchRows(IFetchSpecification fetchSpec);
 
-		
+		/// <summary>
+		/// Gets rows from the underlying store matching the supplied specification.
+		/// </summary>
+		/// <param name="fetchSpec">An <c>IFetchSpecification</c> describing which rows to retrieve</param>
+		/// <returns>A <c>DataTable</c> containing all matching rows and rows from tables in in spanned entities</returns>
+		DataSet FetchRows(IFetchSpecification fetchSpec, string[] spans);
+
 		/// <summary>
 		/// Analyses the supplied context and pushes the changed rows back into the 
 		/// underlying store.

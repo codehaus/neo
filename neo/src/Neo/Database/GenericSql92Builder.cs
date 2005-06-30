@@ -226,41 +226,79 @@ namespace Neo.Database
 		{
 			RelationInfo	relInfo;
 			IEntityMap		newEmap;
-			bool			cameFromRight;
+			string			leftColumn, rightColumn;
 			
 			relInfo = emap.GetRelationInfo(q.PathElements[idx]);
 			if(relInfo.ParentEntity == emap)
 			{
 				newEmap = relInfo.ChildEntity;
-				cameFromRight = false;
+				leftColumn = relInfo.ParentKey;
+				rightColumn = relInfo.ChildKey;
 			}
 			else
 			{
 				newEmap = relInfo.ParentEntity;
-				cameFromRight = true;
+				leftColumn = relInfo.ChildKey;
+				rightColumn = relInfo.ParentKey;
+			}
+			newEmap.UpdateSchemaInDataSet(table.DataSet, SchemaUpdate.Basic | SchemaUpdate.Relations);
+
+			if(idx == q.PathElements.Length - 1)
+			{
+				if(WriteAbbreviatedPathEnd(table, q, newEmap, leftColumn, rightColumn))
+					return;
 			}
 
-			WriteIdentifier(cameFromRight ? relInfo.ChildKey : relInfo.ParentKey);
+			WriteIdentifier(leftColumn);
 			builder.Append(" IN ( SELECT ");
-			WriteIdentifier(cameFromRight ? relInfo.ParentKey : relInfo.ChildKey);
+			if(q.Qualifier == null)
+				builder.Append("DISTINCT ");
+			WriteIdentifier(rightColumn);
 			builder.Append(" FROM ");
 			WriteIdentifier(newEmap.TableName);
-			builder.Append(" WHERE ");
 
-			newEmap.UpdateSchemaInDataSet(table.DataSet, SchemaUpdate.Basic | SchemaUpdate.Relations);
-			if(idx < q.PathElements.Length - 1)
+			if(q.Qualifier != null)
 			{
-				WritePathQualifier(table.DataSet.Tables[newEmap.TableName], newEmap, q, idx + 1);
-			}
-			else
-			{
-				GenericSql92Builder clone = (GenericSql92Builder)this.Clone();
-				clone.table = table.DataSet.Tables[newEmap.TableName];
-				clone.emap = newEmap;
-				q.Qualifier.AcceptVisitor(clone);
+				builder.Append(" WHERE ");
+				if(idx == q.PathElements.Length - 1)
+					WritePathEndQualifier(table, newEmap, q.Qualifier);
+				else
+					WritePathQualifier(table.DataSet.Tables[newEmap.TableName], newEmap, q, idx + 1);
 			}
 
 			builder.Append(" )");
+		}
+
+		private bool WriteAbbreviatedPathEnd(DataTable table, PathQualifier q, IEntityMap newEmap, string leftColumn, string rightColumn)
+		{
+			string endQualifierColum = null;
+			IPredicate endQualifierPredicate = null;
+//			if(q.Qualifier is PropertyQualifier)
+//			{
+//				PropertyQualifier pq = (PropertyQualifier)q.Qualifier;
+//				endQualifierColum = newEmap.GetColumnForAttribute(pq.Property);
+//				endQualifierPredicate = pq.Predicate;
+//			}
+			if(q.Qualifier is ColumnQualifier)
+			{
+				ColumnQualifier cq = (ColumnQualifier)q.Qualifier;
+				endQualifierColum = cq.Column;
+				endQualifierPredicate = cq.Predicate;
+			}
+	
+			if((endQualifierColum != rightColumn) || (endQualifierPredicate is EqualsPredicate == false))
+				return false;
+
+			WritePathEndQualifier(table, newEmap, new ColumnQualifier(leftColumn, endQualifierPredicate));
+			return true;
+		}
+
+		private void WritePathEndQualifier(DataTable table, IEntityMap emap, Qualifier q)
+		{
+			GenericSql92Builder clone = (GenericSql92Builder)this.Clone();
+			clone.table = table.DataSet.Tables[emap.TableName];
+			clone.emap = emap;
+			clone.WriteQualifier(q);
 		}
 
 

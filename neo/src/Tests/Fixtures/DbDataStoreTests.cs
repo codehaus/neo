@@ -305,6 +305,48 @@ namespace Neo.Tests.Fixtures
 		}
 
 		
+		[Test]
+		public void FetchesEntitiesGivenInPropertySpan()
+		{
+			FetchSpecification spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)), null);
+			
+			DataSet result = store.FetchRows(spec, new string[]{ "Publisher" } );
+
+			DataTable titleTable = result.Tables["titles"];
+			Assert.IsTrue(titleTable.Rows.Count > 0, "Should have returned title.");
+			DataTable pubTable = result.Tables["publishers"];
+			Assert.IsTrue(pubTable.Rows.Count > 0, "Should have returned publishers, too.");
+		}
+
+
+		[Test]
+		public void FetchesEntitiesGivenInPropertySpanWithQualifierOnMainEntity()
+		{
+			FetchSpecification spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId='TC7777'"));
+			
+			DataSet result = store.FetchRows(spec, new string[]{ "Publisher" } );
+
+			DataTable titleTable = result.Tables["titles"];
+			Assert.AreEqual(1, titleTable.Rows.Count, "Should have returned title.");
+			DataTable pubTable = result.Tables["publishers"];
+			Assert.AreEqual(1, pubTable.Rows.Count, "Should have returned publisher, too.");
+		}		
+
+		
+		[Test]
+		public void FetchesEntitiesGivenInPropertyPathSpan()
+		{
+			FetchSpecification spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TheTitle like 'Sushi%'"));
+			
+			DataSet result = store.FetchRows(spec, new string[]{ "TitleAuthors.Author" } );
+
+			DataTable titleTable = result.Tables["titles"];
+			Assert.AreEqual(1, titleTable.Rows.Count, "Should have returned title.");
+			DataTable authorTable = result.Tables["authors"];
+			Assert.AreEqual(3, authorTable.Rows.Count, "Should have returned authors, too.");
+		}
+
+
 		private void loadTitle(string title_id)
 		{
 			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", title_id)));

@@ -1081,7 +1081,25 @@ namespace Neo.Core
 			// Neither, so try the store
 			if(CanLoadFromStore)
 			{
-				FetchObjectFromStore(emapFactory.GetMap(tableName), pkvalues);
+				FetchSpecification	fetchSpec;
+				Qualifier			mainQualifier;
+
+				string[] pkcolumns = emapFactory.GetMap(tableName).PrimaryKeyColumns;				
+				if(pkcolumns.Length == 1)
+				{
+					mainQualifier = new ColumnQualifier(pkcolumns[0], new EqualsPredicate(pkvalues[0]));
+				}
+				else
+				{
+					ArrayList qualifiers = new ArrayList(pkcolumns.Length);
+					for(int i = 0; i < pkcolumns.Length; i++)
+						qualifiers.Add(new ColumnQualifier(pkcolumns[i], new EqualsPredicate(pkvalues[i])));
+					mainQualifier = new AndQualifier(qualifiers);
+				}
+
+				fetchSpec = new FetchSpecification(emapFactory.GetMap(tableName), mainQualifier);
+				FetchObjectsFromStore(fetchSpec);
+
 				if((obj = objectTable.GetObject(oid)) == null)
 				{
 					if(logger.IsInfoEnabled) logger.Info("No rows returned for " + oid.ToString() + " (PK)");
@@ -1138,19 +1156,73 @@ namespace Neo.Core
 		/// </remarks>
 		public virtual IList GetObjects(IFetchSpecification fetchSpec)
 		{
-			IList	objects, result;
-			int		limit;
-
 			// Always consult the data store if we have one because we can't be sure we 
 			// have all objects in memory.
 			if(CanLoadFromStore)
 				FetchObjectsFromStore(fetchSpec);
+			return FetchObjectsFromObjectTable(fetchSpec);
+		}
+
+
+		/// <summary>
+		/// Retrieves all objects matching the supplied specification
+		/// </summary>
+		/// <param name="fetchSpec"><c>IFetchSpecification</c> object describing the objects</param>
+		/// <param name="spans"><c>string</c> array containing paths to related objects to be fetched as well</param>
+		/// <returns>matching objects (this does not contain the objects referenced in the spans)</returns>
+		/// <remarks>
+		/// This method merges results from the data store, if present, and internal objects.
+		/// </remarks>
+		public virtual IList GetObjects(IFetchSpecification fetchSpec, string[] spans)
+		{
+			// Always consult the data store if we have one because we can't be sure we 
+			// have all objects in memory.
+			if(CanLoadFromStore)
+				FetchObjectsFromStore(fetchSpec, spans);
+			return FetchObjectsFromObjectTable(fetchSpec);
+		}	
+			
+		/// <summary>
+		/// Gets all objects in other entities that have references to the object passed in.
+		/// </summary>
+		/// <param name="theObject">the object to start from</param>
+		/// <param name="excludeCascades"><t>true</t> to ignore reference from tables into
+		/// which the object&apos;s table cascades deletes.</param>
+		/// <returns>related objects</returns>
+		/// <remarks>
+		/// This method is useful to find out whether a given object can be deleted in
+		/// the data store.
+		/// </remarks>
+		public IList GetReferencingObjects(IEntityObject theObject, bool excludeCascades)
+		{
+			ArrayList	referencingObjects;
+
+			referencingObjects = new ArrayList();
+			foreach(DataRelation r in theObject.Row.Table.ChildRelations)
+			{
+				if((excludeCascades) && (r.ChildKeyConstraint.DeleteRule == Rule.Cascade))
+					continue;
+
+				referencingObjects.AddRange(GetObjectsFromTable(r.ChildTable.TableName, r.ChildColumns[0].ColumnName, theObject.Row[r.ParentColumns[0]]));
+			}
+			return referencingObjects;
+		}
+
+
+		//--------------------------------------------------------------------------------------
+		//	Fetching objects from the internal tables
+		//--------------------------------------------------------------------------------------
+
+		protected IList FetchObjectsFromObjectTable(IFetchSpecification fetchSpec)
+		{
+			IList	objects, result;
+			int		limit;
 
 			if(logger.IsDebugEnabled) logger.Debug("In-memory search for " + fetchSpec.ToString());
-			
+	
 			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
 				return new ArrayList();
-
+	
 			limit = fetchSpec.FetchLimit;
 			if(fetchSpec.Qualifier == null)
 			{
@@ -1188,35 +1260,8 @@ namespace Neo.Core
 				else
 					result = objectsSorted;
 			}
-
+	
 			return result;
-		}
-
-
-		/// <summary>
-		/// Gets all objects in other entities that have references to the object passed in.
-		/// </summary>
-		/// <param name="theObject">the object to start from</param>
-		/// <param name="excludeCascades"><t>true</t> to ignore reference from tables into
-		/// which the object&apos;s table cascades deletes.</param>
-		/// <returns>related objects</returns>
-		/// <remarks>
-		/// This method is useful to find out whether a given object can be deleted in
-		/// the data store.
-		/// </remarks>
-		public IList GetReferencingObjects(IEntityObject theObject, bool excludeCascades)
-		{
-			ArrayList	referencingObjects;
-
-			referencingObjects = new ArrayList();
-			foreach(DataRelation r in theObject.Row.Table.ChildRelations)
-			{
-				if((excludeCascades) && (r.ChildKeyConstraint.DeleteRule == Rule.Cascade))
-					continue;
-
-				referencingObjects.AddRange(GetObjectsFromTable(r.ChildTable.TableName, r.ChildColumns[0].ColumnName, theObject.Row[r.ParentColumns[0]]));
-			}
-			return referencingObjects;
 		}
 
 
@@ -1224,37 +1269,26 @@ namespace Neo.Core
 		//	Fetching objects from the store
 		//--------------------------------------------------------------------------------------
 
-		protected virtual void FetchObjectFromStore(IEntityMap emap, object[] pkvalues)
-		{
-			FetchSpecification	fetchSpec;
-			Qualifier			mainQualifier;
-
-			string[] pkcolumns = emap.PrimaryKeyColumns;				
-			if(pkcolumns.Length == 1)
-			{
-				mainQualifier = new ColumnQualifier(pkcolumns[0], new EqualsPredicate(pkvalues[0]));
-			}
-			else
-			{
-				ArrayList qualifiers = new ArrayList(pkcolumns.Length);
-				for(int i = 0; i < pkcolumns.Length; i++)
-					qualifiers.Add(new ColumnQualifier(pkcolumns[i], new EqualsPredicate(pkvalues[i])));
-				mainQualifier = new AndQualifier(qualifiers);
-			}
-
-			fetchSpec = new FetchSpecification(emap, mainQualifier);
-			FetchObjectsFromStore(fetchSpec);
-		}
-
-
 		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec)
 		{
 			if(loadedEntities.ContainsKey(fetchSpec.EntityMap))
 				return;
 
 			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString());
-			DataTable table = dataStore.FetchRows(fetchSpec);
-			ImportRowsFromTable(table);
+			DataTable result = dataStore.FetchRows(fetchSpec);
+			ImportRowsFromTable(result);
+			if(fetchSpec.Qualifier == null)
+				loadedEntities.Add(fetchSpec.EntityMap, null);
+		}
+
+		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec, string[] spans)
+		{
+			/* maybe we should not fetch if the entity and all spans have been fetched. */
+
+			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString() + " with spans");
+			DataSet result = dataStore.FetchRows(fetchSpec, spans);
+			foreach(DataTable table in result.Tables)
+				ImportRowsFromTable(table);
 			if(fetchSpec.Qualifier == null)
 				loadedEntities.Add(fetchSpec.EntityMap, null);
 		}
@@ -1265,14 +1299,14 @@ namespace Neo.Core
 		//--------------------------------------------------------------------------------------
 
 		/// <summary>
-		/// Gets rows from the data store according to the spefication
+		/// Gets rows from the data store according to the specification
 		/// </summary>
 		/// <param name="fetchSpec">IFetchSpecification object describing what rows to fetch</param>
 		/// <returns>Always returns <c>null</c></returns>
 		/// <remarks>
 		/// Do not use this method directly. It may be removed in future releases.
 		/// </remarks>
-		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
+		DataTable IDataStore.FetchRows(IFetchSpecification fetchSpec)
 		{
 			Qualifier	q;
 			IList		objects;
@@ -1313,6 +1347,19 @@ namespace Neo.Core
 
 
 		/// <summary>
+		/// Gets rows from the data store according to the specification
+		/// </summary>
+		/// <param name="fetchSpec">IFetchSpecification object describing what rows to fetch</param>
+		/// <returns>Always returns <c>null</c></returns>
+		/// <remarks>
+		/// This method has no implementation and always throws an exception. It may be removed in future releases.
+		/// </remarks>
+		DataSet IDataStore.FetchRows(IFetchSpecification fetchSpec, string[] spans)
+		{
+			throw new InvalidOperationException("ObjectContext does not support fetching with spans when used as an IDataStore.");
+		}
+
+		/// <summary>
 		/// Saves changes in the child context into this context.
 		/// </summary>
 		/// <remarks>
@@ -1320,7 +1367,7 @@ namespace Neo.Core
 		/// </remarks>
 		/// <param name="childContext">child context that is to be saved</param>
 		/// <returns>Always returns <c>null</c></returns>
-		public virtual ICollection SaveChangesInObjectContext(ObjectContext childContext)
+		ICollection IDataStore.SaveChangesInObjectContext(ObjectContext childContext)
 		{
 			IEntityObject eo;
 			DataSet		  changeSet;

@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
 using Neo.Core;
+using Neo.Core.Qualifiers;
 using Neo.Core.Util;
 
 
@@ -139,19 +140,49 @@ namespace Neo.Database
 		
 		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
 		{
-			DataSet ds = new DataSet();
-			ds.EnforceConstraints = false;
-			fetchSpec.EntityMap.UpdateSchemaInDataSet(ds, SchemaUpdate.Basic | SchemaUpdate.Relations);
-			DataTable table = ds.Tables[fetchSpec.EntityMap.TableName];
-
-		    IDbCommandBuilder builder = GetCommandBuilder(table);
-		    builder.WriteSelect(fetchSpec);
-
-			FillTable(table, builder.Command, builder.Parameters);
-	
-			return table;
+			DataSet result = FetchRows(fetchSpec, new string[0]);
+			return result.Tables[fetchSpec.EntityMap.TableName];
 		}
 
+		public virtual DataSet FetchRows(IFetchSpecification fetchSpec, string[] spans)
+		{
+			DataSet ds = new DataSet();
+			ds.EnforceConstraints = false;
+			FillDataSet(ds, fetchSpec, spans);
+			return ds;
+		}
+
+		protected void FillDataSet(DataSet ds, IFetchSpecification fetchSpec, string[] spans)
+		{
+			IEntityMap emap = fetchSpec.EntityMap;
+			FillTable(ds, fetchSpec);
+	
+			foreach(String path in spans)
+			{
+				string[] pathElements = path.Split(new char[]{ '.' }, 2);
+
+				RelationInfo info = emap.GetRelationInfo(pathElements[0]);
+				IEntityMap other = (info.ParentEntity == emap) ? info.ChildEntity : info.ParentEntity;
+				string inverseName = other.GetRelationName(info);
+
+				Qualifier q = new PathQualifier(inverseName, fetchSpec.Qualifier);
+				IFetchSpecification spanFetchSpec = new FetchSpecification(other, q);
+
+				if(pathElements.Length == 1)
+					FillTable(ds, spanFetchSpec);
+				else
+					FillDataSet(ds, spanFetchSpec, new string[]{ pathElements[1] });
+			}
+		}
+
+		protected void FillTable(DataSet ds, IFetchSpecification fetchSpec)
+		{
+			fetchSpec.EntityMap.UpdateSchemaInDataSet(ds, SchemaUpdate.Basic | SchemaUpdate.Relations);
+			DataTable table = ds.Tables[fetchSpec.EntityMap.TableName];
+			IDbCommandBuilder builder = GetCommandBuilder(table);
+			builder.WriteSelect(fetchSpec);
+			FillTable(table, builder.Command, builder.Parameters);
+		}
 
 		public virtual void FillTable(DataTable table, string sqlCommand, IList parameters)
 		{

@@ -1,4 +1,10 @@
 
+2005-06-30 erik
+
+   * Added initial support for spans. They work but the API is
+   likely to change. There's also not API in ObjectFactory yet.
+   
+
 2005-06-28 erik
 
     * Added support for set restrictions to qualifier format. It

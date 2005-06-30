@@ -4,17 +4,16 @@ using Neo.Core;
 using NUnit.Framework;
 using Pubs4.Model;
 
-
 namespace Neo.Tests.Fixtures
 {
-	[NUnit.Framework.TestFixture]
+	[TestFixture]
 	public class ScenarioTests : TestBase
 	{
 		protected ObjectContext	context;
 		protected Title			title;
 
 
-		[NUnit.Framework.SetUp]
+		[SetUp]
 		public void LoadDataSetAndGetTitleObject()
 		{
 			SetupLog4Net();
