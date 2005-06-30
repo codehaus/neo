@@ -106,6 +106,16 @@ namespace Neo.Core.Parser
 				token = new Token(TokenType.CloseBracket, null);
 				MoveNextChar();
 			}
+			else if(c == '[')
+			{
+				token = new Token(TokenType.OpenSqBracket, null);
+				MoveNextChar();
+			}
+			else if(c ==']')
+			{
+				token = new Token(TokenType.CloseSqBracket, null);
+				MoveNextChar();
+			}
 			else if(c == '{')
 			{
 				token = ReadRefToken(c);

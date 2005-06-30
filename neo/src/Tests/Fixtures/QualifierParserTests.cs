@@ -1,3 +1,4 @@
+using System;
 using Neo.Core;
 using Neo.Core.Parser;
 using Neo.Core.Qualifiers;
@@ -314,6 +315,55 @@ namespace Neo.Tests.Fixtures
 			PropertyQualifier propQualifier = pathQualifier.Qualifier as PropertyQualifier;
 			Assert.AreEqual("PubId", propQualifier.Property, "Wrong property.");
 		}
+
+		[Test]
+		public void CreatesAndFromEmbeddedSetRestriction()
+		{
+			String format = "Title[TheTitle = 'Foo'].TitleAuthor.Author.Name='Bar'";
+
+			// same as "Title.(TheTitle = 'Foo' AND TitleAuthor.Author.Name = 'Bar')"
+
+			QualifierParser parser = new QualifierParser(format);
+			Qualifier q = parser.GetQualifier();
+
+			Assert.AreEqual(typeof(PathQualifier), q.GetType());
+			PathQualifier pathq = (PathQualifier)q;
+			Assert.AreEqual("Title", pathq.Path);
+
+			Assert.AreEqual(typeof(AndQualifier), pathq.Qualifier.GetType());
+			AndQualifier andq = (AndQualifier)pathq.Qualifier;
+			Assert.AreEqual(2, andq.Qualifiers.Length);
+
+			Assert.AreEqual(typeof(PropertyQualifier), andq.Qualifiers[0].GetType());
+			PropertyQualifier propq = (PropertyQualifier)andq.Qualifiers[0];
+			Assert.AreEqual("TheTitle", propq.Property);
+			Assert.AreEqual("Foo" , propq.Predicate.Value);
+
+			Assert.AreEqual(typeof(PathQualifier), andq.Qualifiers[1].GetType());
+			pathq = (PathQualifier)andq.Qualifiers[1];
+			Assert.AreEqual("TitleAuthor.Author", pathq.Path);
+		}
+
+
+		[Test]
+		public void CombinesPathWithEmbeddedSetRestriction()
+		{
+			String format = "Publisher.Title[TheTitle = 'Foo'].TitleAuthor.Author.Name='Bar'";
+
+			// same as "Publisher.Title.(TheTitle = 'Foo' AND TitleAuthor.Author.Name = 'Bar')"
+
+			QualifierParser parser = new QualifierParser(format);
+			Qualifier q = parser.GetQualifier();
+
+			Assert.AreEqual(typeof(PathQualifier), q.GetType());
+			PathQualifier pathq = (PathQualifier)q;
+			Assert.AreEqual("Publisher.Title", pathq.Path);
+
+			Assert.AreEqual(typeof(AndQualifier), pathq.Qualifier.GetType());
+			AndQualifier andq = (AndQualifier)pathq.Qualifier;
+			Assert.AreEqual(2, andq.Qualifiers.Length);
+		}
+
 
 
 	}

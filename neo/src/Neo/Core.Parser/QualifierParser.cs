@@ -153,6 +153,13 @@ namespace Neo.Core.Parser
 				Qualifier lq = (Qualifier)stack.PopValue();
 			    ArrayList path = (ArrayList)stack.PopValue();
 
+				PathQualifier lqp = lq as PathQualifier;
+				if(lqp != null)
+				{
+					path.AddRange(lqp.PathElements);
+					lq = lqp.Qualifier;
+				}
+
 				PathQualifier q = new PathQualifier((string[])path.ToArray(typeof(string)), lq);
 				token = new Token(TokenType.Qualifier, q);
 			}
@@ -176,6 +183,28 @@ namespace Neo.Core.Parser
 				path.Add(element);
 				token = new Token(TokenType.Path, path);
 			}
+			// Rule: String, SetRestriction, PathSep, Qualifier -> PathQualifier
+			else if(stack.Match(TokenType.String, TokenType.SetRestriction, TokenType.PathSep, TokenType.Qualifier))
+			{
+				Qualifier leafq = (Qualifier)stack.PopValue();
+				stack.Pop();
+				Qualifier setq = (Qualifier)stack.PopValue();
+				string prop = (string)stack.PopValue();
+
+				AndQualifier newleafq = new AndQualifier(setq, leafq);
+				PathQualifier q = new PathQualifier(new string[] { prop }, newleafq);
+				token = new Token(TokenType.Qualifier, q);
+			}
+			// Rule: OpenSqBracket, Qualifier, CloseSqBracket -> SetRestriction
+			else if(stack.Match(TokenType.OpenSqBracket, TokenType.Qualifier, TokenType.CloseSqBracket))
+			{
+				stack.Pop();
+				Qualifier qualifier = (Qualifier)stack.PopValue();
+				stack.Pop();
+	
+				token = new Token(TokenType.SetRestriction, qualifier);
+			}
+
 
 			return token;
 		}

@@ -15,7 +15,10 @@ namespace Neo.Core.Parser
 		PathSep,
 		Path,
 		OpenBracket,
-		CloseBracket
+		CloseBracket,
+		OpenSqBracket,
+		CloseSqBracket,
+		SetRestriction
 	}
 
 
