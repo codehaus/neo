@@ -69,7 +69,11 @@ namespace Neo.Core
 		{
 			ArrayList	qualifiers;
 
-			if(queryValues.Count == 1)
+			if(queryValues.Count == 0)
+			{
+				return null;
+			}
+			else if(queryValues.Count == 1)
 			{
 				IDictionaryEnumerator enumerator = queryValues.GetEnumerator();
 				enumerator.MoveNext();

@@ -89,6 +89,21 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(3, titles.Count, "Should return titles correctly matching.");
 		}
 
+		
+		[Test]
+		public void QueryTemplateWithOnlySortOrdering()
+		{
+			TitleFactory	factory;
+			TitleTemplate	template;
+			TitleList		result;
+			
+			factory = new TitleFactory(context);
+			template = factory.GetQueryTemplate();
+			template.SortOrderings = new PropertyComparer[] { new PropertyComparer("TheTitle", SortDirection.AscendingCaseInsensitive) };
+			result = factory.Find(template);
+			Assert.IsTrue(result.Count > 15, "Should have returned all titles");
+		}
+
 
 		[Test]
 		public void ClauseQualifierWithRepeatedColumn()

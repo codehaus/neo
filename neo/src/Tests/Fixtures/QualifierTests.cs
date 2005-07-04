@@ -238,6 +238,18 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void ConversionFromDictionaryCreatesNoQualifierForEmptyDictionary()
+		{
+			IDictionary	values;
+			Qualifier	q;
+
+			values = new Hashtable();
+			q = Qualifier.FromPropertyDictionary(values);
+			Assert.IsNull(q, "Should return no qualifier.");
+		}
+
+
+		[Test]
 		public void ConversionFromDictionaryCreatesLikeWhenRequired()
 		{
 		    IDictionary			values;

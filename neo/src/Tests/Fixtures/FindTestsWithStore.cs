@@ -1,9 +1,10 @@
 using Neo.Core;
+using NUnit.Framework;
 
 
 namespace Neo.Tests.Fixtures
 {
-	[NUnit.Framework.TestFixture]
+	[TestFixture]
 	public class FindTestsWithStore : FindTests
 	{
 
