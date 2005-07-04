@@ -124,6 +124,7 @@ public class TitleTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public TitleTemplate(IEntityMap anEntityMap)
 	{
@@ -152,6 +153,12 @@ public class TitleTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public System.String TitleId
@@ -620,6 +627,7 @@ public class PublisherTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public PublisherTemplate(IEntityMap anEntityMap)
 	{
@@ -648,6 +656,12 @@ public class PublisherTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public System.String PubId
@@ -1062,6 +1076,7 @@ public class AuthorTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public AuthorTemplate(IEntityMap anEntityMap)
 	{
@@ -1090,6 +1105,12 @@ public class AuthorTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public System.String LastName
@@ -1476,6 +1497,7 @@ public class TitleAuthorTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public TitleAuthorTemplate(IEntityMap anEntityMap)
 	{
@@ -1504,6 +1526,12 @@ public class TitleAuthorTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public Title Title
@@ -1898,6 +1926,7 @@ public class JobTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public JobTemplate(IEntityMap anEntityMap)
 	{
@@ -1926,6 +1955,12 @@ public class JobTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public System.Int16 JobId
@@ -2321,6 +2356,7 @@ public class StoreTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public StoreTemplate(IEntityMap anEntityMap)
 	{
@@ -2349,6 +2385,12 @@ public class StoreTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public System.String Name
@@ -2741,6 +2783,7 @@ public class DiscountTemplate : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public DiscountTemplate(IEntityMap anEntityMap)
 	{
@@ -2769,6 +2812,12 @@ public class DiscountTemplate : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 	public System.String DiscountType

@@ -56,7 +56,7 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void FetchAll()
 		{
-			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title))));
+			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)))).Tables["titles"];
 			Assert.IsTrue( fetchedTable.Rows.Count > 15, "There should be more than 15 titles.");
 		}
 
@@ -75,7 +75,7 @@ namespace Neo.Tests.Fixtures
 			store.CommitTransaction();
 			Assert.AreEqual( DataRowState.Unchanged, titleTable.Rows[0].RowState, "Wrong row state.");
 
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "TC7777")));
+			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "TC7777"))).Tables["titles"];
 			// Don't use AssertEquals with Decimals. (Would compare their string value which is precision dependent.)
 			Assert.IsTrue(newPrice.Equals(fetchedTable.Rows[0]["price"]), "Price not updated in database.");
 		}
@@ -96,7 +96,7 @@ namespace Neo.Tests.Fixtures
 			store.RollbackTransaction();
 			Assert.AreEqual(DataRowState.Modified, titleTable.Rows[0].RowState, "Wrong row state.");
 
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId" , "TC7777")));
+			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId" , "TC7777"))).Tables["titles"];
 			Assert.AreEqual(oldPrice, fetchedTable.Rows[0]["price"], "Price was updated in database.");
 		}
 
@@ -140,7 +140,7 @@ namespace Neo.Tests.Fixtures
 			dataset.Tables["titles"].Rows.Find("MC3026").Delete();
 			store.BeginTransaction();
 			store.ProcessDeletes(new OrderedTableCollection(dataset));
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "MC3026")));
+			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", "MC3026"))).Tables["titles"];
 			store.RollbackTransaction();
 			Assert.IsTrue( fetchedTable.Rows.Count == 0, "Row not deleted from database.");
 		}
@@ -255,7 +255,7 @@ namespace Neo.Tests.Fixtures
 			spec.SortOrderings = new PropertyComparer[] { new PropertyComparer("PublicationDate", SortDirection.Ascending),
 														  new PropertyComparer("Type", SortDirection.Descending)};
 
-			fetchedTable = store.FetchRows(spec);
+			fetchedTable = store.FetchRows(spec).Tables["titles"];
 			Assert.IsTrue(fetchedTable.Rows.Count > 2, "Should have more than 2 rows");
 
 			prevRow = fetchedTable.Rows[0];
@@ -277,12 +277,12 @@ namespace Neo.Tests.Fixtures
 			if(store is OracleDataStore)
 				return;
 			
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
+			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1))).Tables["jobs"];
 			Assert.AreEqual(1, fetchedTable.Rows.Count, "Wrong number of rows.");
 			fetchedTable.Rows[0]["max_lvl"] = 20;
 			store.BeginTransaction();
 			store.ProcessUpdates(fetchedTable);
-			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1)));
+			fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Job)), Qualifier.Format("JobId", 1))).Tables["jobs"];
 			store.RollbackTransaction();
 
 			Assert.AreEqual(1, fetchedTable.Rows.Count, "Wrong number of rows.");
@@ -309,8 +309,9 @@ namespace Neo.Tests.Fixtures
 		public void FetchesEntitiesGivenInPropertySpan()
 		{
 			FetchSpecification spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)), null);
+			spec.Spans = new string[]{ "Publisher" };
 			
-			DataSet result = store.FetchRows(spec, new string[]{ "Publisher" } );
+			DataSet result = store.FetchRows(spec);
 
 			DataTable titleTable = result.Tables["titles"];
 			Assert.IsTrue(titleTable.Rows.Count > 0, "Should have returned title.");
@@ -323,8 +324,9 @@ namespace Neo.Tests.Fixtures
 		public void FetchesEntitiesGivenInPropertySpanWithQualifierOnMainEntity()
 		{
 			FetchSpecification spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId='TC7777'"));
+			spec.Spans = new string[]{ "Publisher" };
 			
-			DataSet result = store.FetchRows(spec, new string[]{ "Publisher" } );
+			DataSet result = store.FetchRows(spec);
 
 			DataTable titleTable = result.Tables["titles"];
 			Assert.AreEqual(1, titleTable.Rows.Count, "Should have returned title.");
@@ -337,8 +339,9 @@ namespace Neo.Tests.Fixtures
 		public void FetchesEntitiesGivenInPropertyPathSpan()
 		{
 			FetchSpecification spec = new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TheTitle like 'Sushi%'"));
-			
-			DataSet result = store.FetchRows(spec, new string[]{ "TitleAuthors.Author" } );
+			spec.Spans = new string[]{ "TitleAuthors.Author" };
+
+			DataSet result = store.FetchRows(spec);
 
 			DataTable titleTable = result.Tables["titles"];
 			Assert.AreEqual(1, titleTable.Rows.Count, "Should have returned title.");
@@ -349,7 +352,7 @@ namespace Neo.Tests.Fixtures
 
 		private void loadTitle(string title_id)
 		{
-			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", title_id)));
+			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", title_id))).Tables["titles"];
 			Assert.AreEqual(1, fetchedTable.Rows.Count, "Wrong number of rows.");
 			dataset.Merge(fetchedTable, false, MissingSchemaAction.Ignore);
 			Assert.AreEqual(1, titleTable.Rows.Count, "Merge with dataset failed.");

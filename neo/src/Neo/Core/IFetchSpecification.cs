@@ -33,6 +33,13 @@ namespace Neo.Core
 		/// be sorted. First comparer has highest precedence.
 		/// </summary>
 		PropertyComparer[] SortOrderings { get; }
+
+		/// <summary>
+		/// An array of paths to entities from which related objects are fetched with this
+		/// query.
+		/// </summary>
+		string[] Spans { get; }
+
 	}
 
 }

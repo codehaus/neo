@@ -65,8 +65,9 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(0, new PublisherFactory(nlcontext).FindAllObjects().Count, "Should not contain publishers before fetching.");
 
 			nlcontext.IgnoresDataStore = false;
-			IFetchSpecification fetchSpec = new FetchSpecification(context.EntityMapFactory.GetMap(typeof(Title)));
-			context.GetObjects(fetchSpec, new string[]{ "Publisher" });
+			FetchSpecification fetchSpec = new FetchSpecification(context.EntityMapFactory.GetMap(typeof(Title)));
+			fetchSpec.Spans = new string[]{ "Publisher" };
+			context.GetObjects(fetchSpec);
 
 			nlcontext.IgnoresDataStore = true;
 			Assert.IsTrue(new PublisherFactory(nlcontext).FindAllObjects().Count > 0, "Should have fetched publisher with titles.");

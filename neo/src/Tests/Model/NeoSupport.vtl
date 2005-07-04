@@ -95,6 +95,7 @@ public class ${entity.ClassName}Template : IFetchSpecification
 	private ListDictionary queryValues;
 	private int fetchLimit;
 	private PropertyComparer[] sortOrderings;
+	private string[] spans;
 	
 	public ${entity.ClassName}Template(IEntityMap anEntityMap)
 	{
@@ -123,6 +124,12 @@ public class ${entity.ClassName}Template : IFetchSpecification
 	{
 		get { return sortOrderings; }
 		set { sortOrderings = value; }
+	}
+	
+	public string[] Spans
+	{
+		get { return spans; }
+		set { spans = value; }
 	}
 	
 #foreach($attributes in $entity.Attributes)

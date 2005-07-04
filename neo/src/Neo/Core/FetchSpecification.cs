@@ -21,6 +21,7 @@ namespace Neo.Core
 		private Qualifier qualifier;
 		private Int32 fetchLimit;
 		private PropertyComparer[] sortOrderings;
+		private string[] spans;
 
 		/// <summary>
 		/// Creates an empty fetch specification.
@@ -110,6 +111,12 @@ namespace Neo.Core
 		{
 			set { sortOrderings = value; }
 			get { return sortOrderings; }
+		}
+
+		public string[] Spans
+		{
+			set { spans = value; }
+			get { return spans; }
 		}
 
 

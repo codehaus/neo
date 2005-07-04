@@ -383,14 +383,11 @@ namespace Neo.Tests.Fixtures
 				return null;
 			}
 
-			public DataTable FetchRows(IFetchSpecification fetchSpec)
+			public DataSet FetchRows(IFetchSpecification fetchSpec)
 			{
-				return DataTable;
-			}
-
-			public DataSet FetchRows(IFetchSpecification fetchSpec, string[] spans)
-			{
-				return null;
+				DataSet ds = new DataSet();
+				ds.Tables.Add(DataTable);
+				return ds;
 			}
 
 			#endregion

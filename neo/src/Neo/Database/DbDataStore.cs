@@ -138,17 +138,14 @@ namespace Neo.Database
 		//	IDataStore impl (fetching rows)
 		//--------------------------------------------------------------------------------------
 		
-		public virtual DataTable FetchRows(IFetchSpecification fetchSpec)
-		{
-			DataSet result = FetchRows(fetchSpec, new string[0]);
-			return result.Tables[fetchSpec.EntityMap.TableName];
-		}
-
-		public virtual DataSet FetchRows(IFetchSpecification fetchSpec, string[] spans)
+		public virtual DataSet FetchRows(IFetchSpecification fetchSpec)
 		{
 			DataSet ds = new DataSet();
 			ds.EnforceConstraints = false;
-			FillDataSet(ds, fetchSpec, spans);
+			if(fetchSpec.Spans == null)
+				FillTable(ds, fetchSpec);
+			else
+				FillDataSet(ds, fetchSpec, fetchSpec.Spans);
 			return ds;
 		}
 

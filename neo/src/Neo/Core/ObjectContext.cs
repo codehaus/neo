@@ -1163,24 +1163,6 @@ namespace Neo.Core
 			return FetchObjectsFromObjectTable(fetchSpec);
 		}
 
-
-		/// <summary>
-		/// Retrieves all objects matching the supplied specification
-		/// </summary>
-		/// <param name="fetchSpec"><c>IFetchSpecification</c> object describing the objects</param>
-		/// <param name="spans"><c>string</c> array containing paths to related objects to be fetched as well</param>
-		/// <returns>matching objects (this does not contain the objects referenced in the spans)</returns>
-		/// <remarks>
-		/// This method merges results from the data store, if present, and internal objects.
-		/// </remarks>
-		public virtual IList GetObjects(IFetchSpecification fetchSpec, string[] spans)
-		{
-			// Always consult the data store if we have one because we can't be sure we 
-			// have all objects in memory.
-			if(CanLoadFromStore)
-				FetchObjectsFromStore(fetchSpec, spans);
-			return FetchObjectsFromObjectTable(fetchSpec);
-		}	
 			
 		/// <summary>
 		/// Gets all objects in other entities that have references to the object passed in.
@@ -1271,22 +1253,12 @@ namespace Neo.Core
 
 		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec)
 		{
-			if(loadedEntities.ContainsKey(fetchSpec.EntityMap))
+			/* maybe we should also not fetch if the entity and all spans have been fetched. */
+			if((fetchSpec.Spans == null) && (loadedEntities.ContainsKey(fetchSpec.EntityMap)))
 				return;
 
 			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString());
-			DataTable result = dataStore.FetchRows(fetchSpec);
-			ImportRowsFromTable(result);
-			if(fetchSpec.Qualifier == null)
-				loadedEntities.Add(fetchSpec.EntityMap, null);
-		}
-
-		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec, string[] spans)
-		{
-			/* maybe we should not fetch if the entity and all spans have been fetched. */
-
-			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString() + " with spans");
-			DataSet result = dataStore.FetchRows(fetchSpec, spans);
+			DataSet result = dataStore.FetchRows(fetchSpec);
 			foreach(DataTable table in result.Tables)
 				ImportRowsFromTable(table);
 			if(fetchSpec.Qualifier == null)
@@ -1306,27 +1278,35 @@ namespace Neo.Core
 		/// <remarks>
 		/// Do not use this method directly. It may be removed in future releases.
 		/// </remarks>
-		DataTable IDataStore.FetchRows(IFetchSpecification fetchSpec)
+		DataSet IDataStore.FetchRows(IFetchSpecification fetchSpec)
 		{
 			Qualifier	q;
 			IList		objects;
+			DataSet		resultSet;
 			DataTable	myTable, resultTable;
+
+			if(fetchSpec.Spans != null)
+				throw new NotImplementedException("ObjectContext does not support fetching with spans when used as an IDataStore.");
+
+			resultSet = new DataSet();
 
 			myTable = mainDataSet.Tables[fetchSpec.EntityMap.TableName];
 			if(myTable == null)
 			{
 				resultTable = new DataTable(fetchSpec.EntityMap.TableName);
 				fetchSpec.EntityMap.UpdateSchema(resultTable, SchemaUpdate.Basic);
-				return resultTable;
+				resultSet.Tables.Add(resultTable);
+				return resultSet;
 			}
 
 			resultTable = myTable.Clone();
+			resultSet.Tables.Add(resultTable);
 
 			if(CanLoadFromStore)
 				FetchObjectsFromStore( fetchSpec );
 			
 			if((objects = objectTable.GetObjects(fetchSpec.EntityMap.TableName)) == null)
-				return resultTable;
+				return resultSet;
 
 			if(fetchSpec.Qualifier == null)
 			{
@@ -1342,22 +1322,9 @@ namespace Neo.Core
 						resultTable.ImportRow(eo.Row);
 				}
 			}
-			return resultTable;
+			return resultSet;
 		}
 
-
-		/// <summary>
-		/// Gets rows from the data store according to the specification
-		/// </summary>
-		/// <param name="fetchSpec">IFetchSpecification object describing what rows to fetch</param>
-		/// <returns>Always returns <c>null</c></returns>
-		/// <remarks>
-		/// This method has no implementation and always throws an exception. It may be removed in future releases.
-		/// </remarks>
-		DataSet IDataStore.FetchRows(IFetchSpecification fetchSpec, string[] spans)
-		{
-			throw new InvalidOperationException("ObjectContext does not support fetching with spans when used as an IDataStore.");
-		}
 
 		/// <summary>
 		/// Saves changes in the child context into this context.
