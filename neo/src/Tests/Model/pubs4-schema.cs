@@ -118,107 +118,70 @@ public class TitleBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class TitleTemplate : IFetchSpecification
+public class TitleTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public TitleTemplate(IEntityMap anEntityMap)
+	public TitleTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public System.String TitleId
 	{
-		get { return (System.String)queryValues["TitleId"]; }
-		set { queryValues["TitleId"] = value; }
+		get { return (System.String)QueryValues["TitleId"]; }
+		set { QueryValues["TitleId"] = value; }
 	}
 
 	public System.String TheTitle
 	{
-		get { return (System.String)queryValues["TheTitle"]; }
-		set { queryValues["TheTitle"] = value; }
+		get { return (System.String)QueryValues["TheTitle"]; }
+		set { QueryValues["TheTitle"] = value; }
 	}
 
 	public System.String Type
 	{
-		get { return (System.String)queryValues["Type"]; }
-		set { queryValues["Type"] = value; }
+		get { return (System.String)QueryValues["Type"]; }
+		set { QueryValues["Type"] = value; }
 	}
 
 	public System.Decimal Price
 	{
-		get { return (System.Decimal)queryValues["Price"]; }
-		set { queryValues["Price"] = value; }
+		get { return (System.Decimal)QueryValues["Price"]; }
+		set { QueryValues["Price"] = value; }
 	}
 
 	public System.Decimal Advance
 	{
-		get { return (System.Decimal)queryValues["Advance"]; }
-		set { queryValues["Advance"] = value; }
+		get { return (System.Decimal)QueryValues["Advance"]; }
+		set { QueryValues["Advance"] = value; }
 	}
 
 	public System.Int32 Royalty
 	{
-		get { return (System.Int32)queryValues["Royalty"]; }
-		set { queryValues["Royalty"] = value; }
+		get { return (System.Int32)QueryValues["Royalty"]; }
+		set { QueryValues["Royalty"] = value; }
 	}
 
 	public System.Int32 YtdSales
 	{
-		get { return (System.Int32)queryValues["YtdSales"]; }
-		set { queryValues["YtdSales"] = value; }
+		get { return (System.Int32)QueryValues["YtdSales"]; }
+		set { QueryValues["YtdSales"] = value; }
 	}
 
 	public System.String Notes
 	{
-		get { return (System.String)queryValues["Notes"]; }
-		set { queryValues["Notes"] = value; }
+		get { return (System.String)QueryValues["Notes"]; }
+		set { QueryValues["Notes"] = value; }
 	}
 
 	public System.DateTime PublicationDate
 	{
-		get { return (System.DateTime)queryValues["PublicationDate"]; }
-		set { queryValues["PublicationDate"] = value; }
+		get { return (System.DateTime)QueryValues["PublicationDate"]; }
+		set { QueryValues["PublicationDate"] = value; }
 	}
 
 	public Publisher Publisher
 	{
-		get { return (Publisher)queryValues["Publisher"]; }
-		set { queryValues["Publisher"] = value; }
+		get { return (Publisher)QueryValues["Publisher"]; }
+		set { QueryValues["Publisher"] = value; }
 	}
 
                
@@ -621,77 +584,40 @@ public class PublisherBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class PublisherTemplate : IFetchSpecification
+public class PublisherTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public PublisherTemplate(IEntityMap anEntityMap)
+	public PublisherTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public System.String PubId
 	{
-		get { return (System.String)queryValues["PubId"]; }
-		set { queryValues["PubId"] = value; }
+		get { return (System.String)QueryValues["PubId"]; }
+		set { QueryValues["PubId"] = value; }
 	}
 
 	public System.String Name
 	{
-		get { return (System.String)queryValues["Name"]; }
-		set { queryValues["Name"] = value; }
+		get { return (System.String)QueryValues["Name"]; }
+		set { QueryValues["Name"] = value; }
 	}
 
 	public System.String City
 	{
-		get { return (System.String)queryValues["City"]; }
-		set { queryValues["City"] = value; }
+		get { return (System.String)QueryValues["City"]; }
+		set { QueryValues["City"] = value; }
 	}
 
 	public System.String State
 	{
-		get { return (System.String)queryValues["State"]; }
-		set { queryValues["State"] = value; }
+		get { return (System.String)QueryValues["State"]; }
+		set { QueryValues["State"] = value; }
 	}
 
 	public System.String Country
 	{
-		get { return (System.String)queryValues["Country"]; }
-		set { queryValues["Country"] = value; }
+		get { return (System.String)QueryValues["Country"]; }
+		set { QueryValues["Country"] = value; }
 	}
 
                
@@ -1070,71 +996,34 @@ public class AuthorBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class AuthorTemplate : IFetchSpecification
+public class AuthorTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public AuthorTemplate(IEntityMap anEntityMap)
+	public AuthorTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public System.String LastName
 	{
-		get { return (System.String)queryValues["LastName"]; }
-		set { queryValues["LastName"] = value; }
+		get { return (System.String)QueryValues["LastName"]; }
+		set { QueryValues["LastName"] = value; }
 	}
 
 	public System.String FirstName
 	{
-		get { return (System.String)queryValues["FirstName"]; }
-		set { queryValues["FirstName"] = value; }
+		get { return (System.String)QueryValues["FirstName"]; }
+		set { QueryValues["FirstName"] = value; }
 	}
 
 	public System.String Phone
 	{
-		get { return (System.String)queryValues["Phone"]; }
-		set { queryValues["Phone"] = value; }
+		get { return (System.String)QueryValues["Phone"]; }
+		set { QueryValues["Phone"] = value; }
 	}
 
 	public System.Boolean ContractSigned
 	{
-		get { return (System.Boolean)queryValues["ContractSigned"]; }
-		set { queryValues["ContractSigned"] = value; }
+		get { return (System.Boolean)QueryValues["ContractSigned"]; }
+		set { QueryValues["ContractSigned"] = value; }
 	}
 
                
@@ -1491,59 +1380,22 @@ public class TitleAuthorBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class TitleAuthorTemplate : IFetchSpecification
+public class TitleAuthorTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public TitleAuthorTemplate(IEntityMap anEntityMap)
+	public TitleAuthorTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public Title Title
 	{
-		get { return (Title)queryValues["Title"]; }
-		set { queryValues["Title"] = value; }
+		get { return (Title)QueryValues["Title"]; }
+		set { QueryValues["Title"] = value; }
 	}
 
 	public Author Author
 	{
-		get { return (Author)queryValues["Author"]; }
-		set { queryValues["Author"] = value; }
+		get { return (Author)QueryValues["Author"]; }
+		set { QueryValues["Author"] = value; }
 	}
 
                
@@ -1920,71 +1772,34 @@ public class JobBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class JobTemplate : IFetchSpecification
+public class JobTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public JobTemplate(IEntityMap anEntityMap)
+	public JobTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public System.Int16 JobId
 	{
-		get { return (System.Int16)queryValues["JobId"]; }
-		set { queryValues["JobId"] = value; }
+		get { return (System.Int16)QueryValues["JobId"]; }
+		set { QueryValues["JobId"] = value; }
 	}
 
 	public System.String Description
 	{
-		get { return (System.String)queryValues["Description"]; }
-		set { queryValues["Description"] = value; }
+		get { return (System.String)QueryValues["Description"]; }
+		set { QueryValues["Description"] = value; }
 	}
 
 	public System.Int16 MinLevel
 	{
-		get { return (System.Int16)queryValues["MinLevel"]; }
-		set { queryValues["MinLevel"] = value; }
+		get { return (System.Int16)QueryValues["MinLevel"]; }
+		set { QueryValues["MinLevel"] = value; }
 	}
 
 	public System.Int16 MaxLevel
 	{
-		get { return (System.Int16)queryValues["MaxLevel"]; }
-		set { queryValues["MaxLevel"] = value; }
+		get { return (System.Int16)QueryValues["MaxLevel"]; }
+		set { QueryValues["MaxLevel"] = value; }
 	}
 
                
@@ -2350,77 +2165,40 @@ public class StoreBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class StoreTemplate : IFetchSpecification
+public class StoreTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public StoreTemplate(IEntityMap anEntityMap)
+	public StoreTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public System.String Name
 	{
-		get { return (System.String)queryValues["Name"]; }
-		set { queryValues["Name"] = value; }
+		get { return (System.String)QueryValues["Name"]; }
+		set { QueryValues["Name"] = value; }
 	}
 
 	public System.String Address
 	{
-		get { return (System.String)queryValues["Address"]; }
-		set { queryValues["Address"] = value; }
+		get { return (System.String)QueryValues["Address"]; }
+		set { QueryValues["Address"] = value; }
 	}
 
 	public System.String City
 	{
-		get { return (System.String)queryValues["City"]; }
-		set { queryValues["City"] = value; }
+		get { return (System.String)QueryValues["City"]; }
+		set { QueryValues["City"] = value; }
 	}
 
 	public System.String State
 	{
-		get { return (System.String)queryValues["State"]; }
-		set { queryValues["State"] = value; }
+		get { return (System.String)QueryValues["State"]; }
+		set { QueryValues["State"] = value; }
 	}
 
 	public System.String Zip
 	{
-		get { return (System.String)queryValues["Zip"]; }
-		set { queryValues["Zip"] = value; }
+		get { return (System.String)QueryValues["Zip"]; }
+		set { QueryValues["Zip"] = value; }
 	}
 
                
@@ -2777,65 +2555,28 @@ public class DiscountBase : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class DiscountTemplate : IFetchSpecification
+public class DiscountTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public DiscountTemplate(IEntityMap anEntityMap)
+	public DiscountTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 	public System.String DiscountType
 	{
-		get { return (System.String)queryValues["DiscountType"]; }
-		set { queryValues["DiscountType"] = value; }
+		get { return (System.String)QueryValues["DiscountType"]; }
+		set { QueryValues["DiscountType"] = value; }
 	}
 
 	public System.Decimal Value
 	{
-		get { return (System.Decimal)queryValues["Value"]; }
-		set { queryValues["Value"] = value; }
+		get { return (System.Decimal)QueryValues["Value"]; }
+		set { QueryValues["Value"] = value; }
 	}
 
 	public Store Store
 	{
-		get { return (Store)queryValues["Store"]; }
-		set { queryValues["Store"] = value; }
+		get { return (Store)QueryValues["Store"]; }
+		set { QueryValues["Store"] = value; }
 	}
 
                

@@ -89,55 +89,18 @@ public class ${entity.ClassName}Base : EntityObject
 
 //-------- Query Template ------------------------------------------------
 
-public class ${entity.ClassName}Template : IFetchSpecification
+public class ${entity.ClassName}Template : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	private string[] spans;
-	
-	public ${entity.ClassName}Template(IEntityMap anEntityMap)
+	public ${entity.ClassName}Template(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
-	}
-
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
-	public string[] Spans
-	{
-		get { return spans; }
-		set { spans = value; }
 	}
 	
 #foreach($attributes in $entity.Attributes)
 #if(!$attributes.IsHidden)
 	public $attributes.DotNetType $attributes.DotNetName
 	{
-		get { return ($attributes.DotNetType)queryValues["$attributes.DotNetName"]; }
-		set { queryValues["$attributes.DotNetName"] = value; }
+		get { return ($attributes.DotNetType)QueryValues["$attributes.DotNetName"]; }
+		set { QueryValues["$attributes.DotNetName"] = value; }
 	}
 
 #end
@@ -145,8 +108,8 @@ public class ${entity.ClassName}Template : IFetchSpecification
 #foreach($rel in $entity.ToOneRelationships)
 	public $rel.ForeignEntity.ClassName $rel.DotNetName
 	{
-		get { return ($rel.ForeignEntity.ClassName)queryValues["$rel.DotNetName"]; }
-		set { queryValues["$rel.DotNetName"] = value; }
+		get { return ($rel.ForeignEntity.ClassName)QueryValues["$rel.DotNetName"]; }
+		set { QueryValues["$rel.DotNetName"] = value; }
 	}
 
 #end
