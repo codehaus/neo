@@ -6,7 +6,6 @@ namespace Movies.Model
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
@@ -45,46 +44,16 @@ public class PersonBase : EntityObject
 
 #region PersonTemplate
 
-public class PersonTemplate : IFetchSpecification
+public class PersonTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	
-	public PersonTemplate(IEntityMap anEntityMap)
+	public PersonTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
 	}
 
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
 	public System.String Name
 	{
-		get { return (System.String)queryValues["Name"]; }
-		set { queryValues["Name"] = value; }
+		get { return (System.String)QueryValues["Name"]; }
+		set { QueryValues["Name"] = value; }
 	}
 
 }
@@ -94,8 +63,6 @@ public class PersonTemplate : IFetchSpecification
 #region PersonCollections
 
 #region PersonList
-
-//-------- Typed Collections ----------------------------------------------
 
 public class PersonList : ObjectListBase
 {
@@ -399,7 +366,6 @@ namespace Movies.Model
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
@@ -454,58 +420,28 @@ public class MovieBase : EntityObject
 
 #region MovieTemplate
 
-public class MovieTemplate : IFetchSpecification
+public class MovieTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	
-	public MovieTemplate(IEntityMap anEntityMap)
+	public MovieTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
 	}
 
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
 	public System.String Title
 	{
-		get { return (System.String)queryValues["Title"]; }
-		set { queryValues["Title"] = value; }
+		get { return (System.String)QueryValues["Title"]; }
+		set { QueryValues["Title"] = value; }
 	}
 
 	public System.Int32 Year
 	{
-		get { return (System.Int32)queryValues["Year"]; }
-		set { queryValues["Year"] = value; }
+		get { return (System.Int32)QueryValues["Year"]; }
+		set { QueryValues["Year"] = value; }
 	}
 
 	public Person Director
 	{
-		get { return (Person)queryValues["Director"]; }
-		set { queryValues["Director"] = value; }
+		get { return (Person)QueryValues["Director"]; }
+		set { QueryValues["Director"] = value; }
 	}
 
 }
@@ -515,8 +451,6 @@ public class MovieTemplate : IFetchSpecification
 #region MovieCollections
 
 #region MovieList
-
-//-------- Typed Collections ----------------------------------------------
 
 public class MovieList : ObjectListBase
 {
@@ -832,7 +766,6 @@ namespace Movies.Model
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Data;
 using Neo.Core;
 using Neo.Core.Util;
@@ -877,52 +810,22 @@ public class MovieActorLinkBase : EntityObject
 
 #region MovieActorLinkTemplate
 
-public class MovieActorLinkTemplate : IFetchSpecification
+public class MovieActorLinkTemplate : QueryTemplate
 {
-	private IEntityMap entityMap;
-	private ListDictionary queryValues;
-	private int fetchLimit;
-	private PropertyComparer[] sortOrderings;
-	
-	public MovieActorLinkTemplate(IEntityMap anEntityMap)
+	public MovieActorLinkTemplate(IEntityMap anEntityMap) : base(anEntityMap)
 	{
-		entityMap = anEntityMap;
-		queryValues = new ListDictionary();
-		fetchLimit = -1;
 	}
 
-	public IEntityMap EntityMap 
-	{ 
-		get { return entityMap; } 
-	}
-
-	public Qualifier Qualifier
-	{
-		get { return Qualifier.FromPropertyDictionary(queryValues); }
-	}
-	
-	public Int32 FetchLimit
-	{
-		get { return fetchLimit; }
-		set { fetchLimit = value; }
-	}
-	
-	public PropertyComparer[] SortOrderings
-	{
-		get { return sortOrderings; }
-		set { sortOrderings = value; }
-	}
-	
 	public Movie Movie
 	{
-		get { return (Movie)queryValues["Movie"]; }
-		set { queryValues["Movie"] = value; }
+		get { return (Movie)QueryValues["Movie"]; }
+		set { QueryValues["Movie"] = value; }
 	}
 
 	public Person Actor
 	{
-		get { return (Person)queryValues["Actor"]; }
-		set { queryValues["Actor"] = value; }
+		get { return (Person)QueryValues["Actor"]; }
+		set { QueryValues["Actor"] = value; }
 	}
 
 }
@@ -932,8 +835,6 @@ public class MovieActorLinkTemplate : IFetchSpecification
 #region MovieActorLinkCollections
 
 #region MovieActorLinkList
-
-//-------- Typed Collections ----------------------------------------------
 
 public class MovieActorLinkList : ObjectListBase
 {
