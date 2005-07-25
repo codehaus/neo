@@ -401,7 +401,15 @@ namespace Neo.Core
 			{
 				logger.Error("Caught exception while saving changes: " + e.GetType() + "[" + e.Message + "] " + e.StackTrace.Split(new char[] {'\r', '\n'}, 2)[0]);
 				if(e is DataStoreSaveException)
+				{
+					DataStoreSaveException dsse = (DataStoreSaveException)e;
+					for(int i = 0; i < dsse.Errors.Length; i++)
+					{
+						IEntityObject eo = objectTable.GetObject(dsse.Errors[i].ObjectId);
+						dsse.Errors[i].SetEntityObject(eo);
+					}
 					throw e;
+				}
 				throw new DataStoreSaveException(e);
 			}
 			return pkChangeTableList;

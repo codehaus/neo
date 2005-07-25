@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Data;
+using System.Reflection;
 using Neo.Core;
 using Neo.Core.Util;
 using NMock;
@@ -665,6 +667,37 @@ namespace Neo.Tests.Fixtures
 			context.GetObjects(fetchSpec);
 
 			storeMock.Verify();
+		}
+
+		[Test]
+		public void AddsEntityObjectsToDataStoreSaveException()
+		{		
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+			context.MergeData(GetTestDataSet());
+
+			ObjectId oid = new ObjectId("publishers", new object[] { "0877" } );
+			DataStoreSaveException.ErrorInfo[] info = { new DataStoreSaveException.ErrorInfo(oid, "foo") };
+			object[] args = new object[]{ "Message here", info };
+			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+			Exception thrownException = (Exception)Activator.CreateInstance(typeof(DataStoreSaveException), flags, null, args, null);
+			storeMock.ExpectAndThrow("SaveChangesInObjectContext", thrownException, context);
+
+			DataStoreSaveException caughtException = null;
+			try
+			{
+				context.SaveChanges();
+				Assert.Fail("Should have thrown exception.");
+			}
+			catch(DataStoreSaveException e)
+			{
+				caughtException = e;
+			}
+
+			Publisher obj = (Publisher)caughtException.Errors[0].EntityObject;
+		 	Assert.AreEqual("0877", obj.PubId);
+
 		}
 
 	}

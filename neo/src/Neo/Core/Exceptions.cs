@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Runtime.Serialization;
 using Neo.Core.Util;
 
@@ -13,7 +12,7 @@ namespace Neo.Core
 	/// All exception that are thrown as a part of the normal operation of Neo are subclasses
 	/// of this type. In case of internal errors, other exceptions might be thrown.
 	/// </remarks>
-	[System.Serializable]
+	[Serializable]
 	public class NeoException : ApplicationException
 	{
 		internal NeoException(string reason) : base("[NEO] " + reason)
@@ -43,15 +42,17 @@ namespace Neo.Core
 	public class DataStoreSaveException : NeoException
 	{
 		[Serializable]
-		public struct ErrorInfo
+		public class ErrorInfo
 		{
 			private ObjectId oid;
 			private string message;
+			[NonSerialized] private IEntityObject entityObject;
 
 			public ErrorInfo(ObjectId objectId, string message)
 			{
 				this.oid = objectId;
 				this.message = message;
+				this.entityObject = null;
 			}
 
 			public ObjectId ObjectId
@@ -59,9 +60,20 @@ namespace Neo.Core
 				get { return oid; }
 			}
 
+			public IEntityObject EntityObject
+			{
+				get { return entityObject; }
+			}
+
 			public string Message
 			{
 				get { return message; }
+			}
+
+			// Unfortunately, C# 1.x does not support different access permissions for get/set
+			internal void SetEntityObject(IEntityObject anObject)
+			{
+				entityObject = anObject;
 			}
 		}
 
