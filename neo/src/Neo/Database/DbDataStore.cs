@@ -3,7 +3,6 @@ using System.Collections;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
 using Neo.Core;
@@ -248,18 +247,24 @@ namespace Neo.Database
 				ProcessUpdates(tables);
 				ProcessDeletes(tables);
 
-				StringBuilder errorString = new StringBuilder();
+				ArrayList errors = new ArrayList();
 				foreach(DataTable t in context.DataSet.Tables)
 				{
 					if(t.HasErrors)
 					{
-						errorString.Append(String.Format("\n{0}:\n", t.TableName));
 						foreach(DataRow row in t.GetErrors())
-							errorString.Append(String.Format("{0}\n", row.RowError));
+							errors.Add(new DataStoreSaveException.ErrorInfo(ObjectId.GetObjectIdForRow(row), row.RowError));
 					}
 				}
-				if(errorString.Length > 0)
-					throw new DataStoreSaveException("Errors while saving: " + errorString.ToString());
+				
+				if(errors.Count > 0)
+				{
+					string message = "Multiple errors.";
+					if(errors.Count == 1)
+						message = ((DataStoreSaveException.ErrorInfo)errors[0]).Message;
+					throw new DataStoreSaveException(message, (DataStoreSaveException.ErrorInfo[])errors.ToArray(typeof(DataStoreSaveException.ErrorInfo)));
+				}
+				
 				if(requiredTransaction)
 					CommitTransaction();
 			}
@@ -364,14 +369,21 @@ namespace Neo.Database
 
 		    builder = GetCommandBuilder(row.Table);
 		    builder.WriteInsert(row, columnList);
-	
-			rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
 
-			if((usesIdentityColumn) && (rowsAffected == 1))
+			try
 			{
-				object finalPkValue = GetFinalPk(row, builder);
-				pkChangeTable.AddPkChange(row[pkColumn], finalPkValue);
-				row[pkColumn] = finalPkValue;
+				rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
+
+				if((usesIdentityColumn) && (rowsAffected == 1))
+				{
+					object finalPkValue = GetFinalPk(row, builder);
+					pkChangeTable.AddPkChange(row[pkColumn], finalPkValue);
+					row[pkColumn] = finalPkValue;
+				}
+			}
+			catch(Exception e)
+			{
+				throw new DataStoreSaveException(e, ObjectId.GetObjectIdForRow(row));
 			}
 
 			PostProcessRow(row, (rowsAffected == 1), "Failed to insert row into database.");
@@ -386,8 +398,16 @@ namespace Neo.Database
 		    builder = GetCommandBuilder(row.Table);
 		    builder.WriteDelete(row);
 			
-			rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
-			PostProcessRow(row, (rowsAffected == 1), "Failed to delete row in database.");
+			try
+			{
+				rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
+			}
+			catch(Exception e)
+			{
+				throw new DataStoreSaveException(e, ObjectId.GetObjectIdForRow(row));
+			}
+			
+			PostProcessRow(row, (rowsAffected == 1), "Failed to delete row in database: No rows affected. Most likely another process has updated the database since the object was fetched.");
 		}
 
 
@@ -399,15 +419,23 @@ namespace Neo.Database
 		    builder = GetCommandBuilder(row.Table);
 		    builder.WriteUpdate(row);
 
-			rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
-			PostProcessRow(row, (rowsAffected == 1), "Failed to update row in database.");
+			try
+			{
+				rowsAffected = ExecuteNonQuery(builder.Command, builder.Parameters);
+			}
+			catch(Exception e)
+			{
+				throw new DataStoreSaveException(e, ObjectId.GetObjectIdForRow(row));
+			}
+
+			PostProcessRow(row, (rowsAffected == 1), "Failed to delete row in database: No rows affected. Most likely another process has updated the database since the object was fetched.");
 		}
 
 
 		//--------------------------------------------------------------------------------------
 		//	Internal helper
 		//--------------------------------------------------------------------------------------
-
+		
 		protected virtual IDbCommandBuilder GetCommandBuilder(DataTable table)
 		{
 		    IDbCommandBuilder commandBuilder = implFactory.CreateCommandBuilder(table);
@@ -506,7 +534,9 @@ namespace Neo.Database
 					row.AcceptChanges();
 			}
 			else
+			{
 				row.RowError = errorMessage;
+			}
 		}
 
 

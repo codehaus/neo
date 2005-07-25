@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Runtime.Serialization;
+using Neo.Core.Util;
 
 
 namespace Neo.Core
@@ -40,12 +42,48 @@ namespace Neo.Core
 	[Serializable]
 	public class DataStoreSaveException : NeoException
 	{
-		internal DataStoreSaveException(string reason) : base(reason)
+		[Serializable]
+		public struct ErrorInfo
 		{
+			private ObjectId oid;
+			private string message;
+
+			public ErrorInfo(ObjectId objectId, string message)
+			{
+				this.oid = objectId;
+				this.message = message;
+			}
+
+			public ObjectId ObjectId
+			{
+				get { return oid; }
+			}
+
+			public string Message
+			{
+				get { return message; }
+			}
+		}
+
+
+		private ErrorInfo[] errors;
+
+		internal DataStoreSaveException(string reason) : base("Errors while saving: " + reason)
+		{
+		}
+
+		internal DataStoreSaveException(string reason, ErrorInfo[] errors) : this(reason)
+		{
+			this.errors = errors;
 		}
 
 		internal DataStoreSaveException(Exception e) : base("Errors while saving: " + e.Message, e)
 		{
+		}
+
+		internal DataStoreSaveException(Exception e, ObjectId oid) : this(e)
+		{
+			errors = new ErrorInfo[] { new ErrorInfo(oid, e.Message) };
 		}
 
 		/// <summary>
@@ -55,6 +93,34 @@ namespace Neo.Core
 		/// <param name="sc">The StreamingContext that contains contextual information about the source or destination. </param>
 		protected DataStoreSaveException(SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
+			errors = (ErrorInfo[])si.GetValue("errors", typeof(ErrorInfo[]));
+		}
+
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("errors", errors, typeof(ErrorInfo[]));
+		}
+
+		/// <summary>
+		/// An array of <c>ErrorInfo</c> for rows that caused problems and the corresponding error message.
+		/// </summary>
+		public ErrorInfo[] Errors
+		{
+			get { return errors; }
+		}
+
+		/// <summary>
+		/// The <c>ObjectId</c> for the row that cause the problem, if there was exactly one error.
+		/// </summary>
+		public ObjectId ObjectId
+		{
+			get 
+			{
+				if((errors == null) || (errors.Length != 1))
+					return null;
+				return errors[0].ObjectId; 
+			}
 		}
 
 	}

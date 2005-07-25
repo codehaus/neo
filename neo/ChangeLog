@@ -1,14 +1,21 @@
-2005-06-06 erik
+2005-07-25 erik
+
+    * Added more information to DataStoreSaveExceptions. 
+    Problematic rows are reported via their ObjectId. This can
+    be used to get the corresponding object from the context.
+
+
+2005-07-06 erik
  
-   * Created a base class for query templates. This should
-   reduce the amount of generated code and make the .vtl file
-   more robust against future changes of IFetchSpecification.
+    * Created a base class for query templates. This should
+    reduce the amount of generated code and make the .vtl file
+    more robust against future changes of IFetchSpecification.
 
 
 2005-06-30 erik
 
-   * Added initial support for spans. They work but the API is
-   likely to change. There's also not API in ObjectFactory yet.
+    * Added initial support for spans. They work but the API is
+    likely to change. There's also not API in ObjectFactory yet.
    
 
 2005-06-28 erik

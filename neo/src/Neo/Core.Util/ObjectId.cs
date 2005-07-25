@@ -9,6 +9,7 @@ namespace Neo.Core.Util
 	/// A unique identifier for an object comprising its table name and pk values. You should not
 	/// need to access instances of ObjectId directly.
 	/// </summary>
+	[Serializable]
 	public class ObjectId
 	{
 		//--------------------------------------------------------------------------------------
@@ -20,6 +21,15 @@ namespace Neo.Core.Util
 			IEntityMap emap = eo.Context.EntityMapFactory.GetMap(eo.Row.Table.TableName);
 			object[] pkvalues = eo.Context.GetPrimaryKeyValuesForRow(emap, eo.Row, DataRowVersion.Current);
 			return new ObjectId(emap.TableName, pkvalues);
+		}
+
+		public static ObjectId GetObjectIdForRow(DataRow row)
+		{
+			DataColumn[] columns = row.Table.PrimaryKey;
+			object[] values = new object[columns.Length];
+			for(int i = 0; i < columns.Length; i++)
+				values[i] = row[columns[i], (row.RowState == DataRowState.Deleted) ? DataRowVersion.Original : DataRowVersion.Current];
+			return new ObjectId(row.Table.TableName, values);
 		}
 
 

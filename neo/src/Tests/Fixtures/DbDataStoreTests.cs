@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Reflection;
 using Neo.Core;
 using Neo.Core.Util;
 using Neo.Database;
@@ -400,6 +401,135 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(1, titleTable.Rows.Count, "Should have returned title.");
 			DataTable authorTable = result.Tables["authors"];
 			Assert.AreEqual(3, authorTable.Rows.Count, "Should have returned authors, too.");
+		}
+
+
+		[Test]
+		public void AttachesObjectIdToExceptionOnDeleteException()
+		{
+			ObjectContext context = new ObjectContext(store);
+			PublisherFactory factory = new PublisherFactory(context);
+			Publisher publisher = factory.FindFirst("PubId = '0877'");
+			publisher.Delete();
+
+			DataStoreSaveException exception = null;
+			try
+			{
+				context.SaveChanges();		
+				Assert.Fail("Should have thrown an exception.");
+			}
+			catch(DataStoreSaveException e)
+			{
+				exception = e;
+			}
+
+			Assert.IsNotNull(exception.ObjectId, "Should report id of object that caused problem.");
+			Assert.AreEqual("publishers", exception.ObjectId.TableName, "Should report correct table name");
+			Assert.AreEqual("0877", exception.ObjectId.PkValues[0], "Should report correct id");
+		}
+
+
+		[Test]
+		public void AttachesObjectIdToExceptionOnInsertException()
+		{
+			ObjectContext context = new ObjectContext(store);
+			PublisherFactory factory = new PublisherFactory(context);
+			factory.CreateObject("0877");
+
+			DataStoreSaveException exception = null;
+			try
+			{
+				context.SaveChanges();		
+				Assert.Fail("Should have thrown an exception.");
+			}
+			catch(DataStoreSaveException e)
+			{
+				exception = e;
+			}
+
+			Assert.IsNotNull(exception.ObjectId, "Should report id of object that caused problem.");
+			Assert.AreEqual("publishers", exception.ObjectId.TableName, "Should report correct table name");
+			Assert.AreEqual("0877", exception.ObjectId.PkValues[0], "Should report correct id");
+		}
+
+
+		[Test]
+		public void AttachesErrorToExceptionOnDeleteProblems()
+		{
+			ObjectContext context = new ObjectContext(store);
+			PublisherFactory factory = new PublisherFactory(context);
+			
+			Publisher publisher1 = factory.FindFirst("PubId = '0877'");
+			
+			// Make sure our original values does not match the db contents.
+			publisher1.Row["state"] = "XX";  publisher1.Row.AcceptChanges();
+
+			// Now make the modifications.
+			publisher1.Row["state"] = "YY";
+
+			DataStoreSaveException exception = null;
+			try
+			{
+				context.SaveChanges();		
+				Assert.Fail("Should have thrown an exception.");
+			}
+			catch(DataStoreSaveException e)
+			{
+				exception = e;
+			}
+
+			Assert.AreEqual(1, exception.Errors.Length, "Should report errors.");
+			Assert.AreEqual("0877", exception.Errors[0].ObjectId.PkValues[0], "Should report object id.");
+		}
+		
+		
+		[Test]
+		public void AttachesErrorsToExceptionOnMultipleUpdateProblems()
+		{
+			ObjectContext context = new ObjectContext(store);
+			PublisherFactory factory = new PublisherFactory(context);
+			
+			Publisher publisher1 = factory.FindFirst("PubId = '0877'");
+			Publisher publisher2 = factory.FindFirst("PubId = '1756'");
+			
+			// Make sure our original values does not match the db contents.
+			publisher1.Row["state"] = "XX";  publisher1.Row.AcceptChanges();
+			publisher2.Row["state"] = "XX";  publisher2.Row.AcceptChanges();
+
+			// Now make the modifications.
+			publisher1.Row["state"] = "YY";
+			publisher2.Row["state"] = "YY";
+
+			DataStoreSaveException exception = null;
+			try
+			{
+				context.SaveChanges();		
+				Assert.Fail("Should have thrown an exception.");
+			}
+			catch(DataStoreSaveException e)
+			{
+				exception = e;
+			}
+
+			Assert.AreEqual(2, exception.Errors.Length, "Should report errors.");
+		}
+
+
+		[Test]
+		public void DataStoreSaveExceptionSerialisesErrorInfo()
+		{
+			ObjectId oid = new ObjectId("publisher", new object[] { "0877" } );
+			DataStoreSaveException.ErrorInfo[] info = { new DataStoreSaveException.ErrorInfo(oid, "foo") };
+			object[] args = new object[]{ "Message here", info };
+			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+			object exBefore = Activator.CreateInstance(typeof(DataStoreSaveException), flags, null, args, null);
+			object exAfter = RunThroughSerialization(exBefore);
+
+			Assert.AreEqual(typeof(DataStoreSaveException), exAfter.GetType());
+			DataStoreSaveException ex = exAfter as DataStoreSaveException;
+			Assert.IsNotNull(ex.Errors, "Should have serialised errors.");
+			Assert.AreEqual("0877", ex.Errors[0].ObjectId.PkValues[0]);
+			Assert.AreEqual("foo", ex.Errors[0].Message);
 		}
 
 

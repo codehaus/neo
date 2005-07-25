@@ -1026,7 +1026,6 @@ namespace Neo.Core
 			return eo;
 		}
 
-		
 		/// <summary>
 		/// Creates a new list of <c>EntityObject</c>s based upon the supplied list,
 		/// but using its internal representation of those objects.
@@ -1065,10 +1064,19 @@ namespace Neo.Core
 		/// <remarks>Any results are merged with this context. Tries to use cached version, if that is available</remarks>
 		public virtual IEntityObject GetObjectFromTable(string tableName, object[] pkvalues)
 		{
+			return GetObject(new ObjectId(tableName, pkvalues));
+		}
+
+
+		/// <summary>
+		/// Retrieves an object based on its <c>ObjectId</c>.
+		/// </summary>
+		/// <param name="oid">the id of the object</param>
+		/// <returns>object matching primary keys, if found</returns>
+		/// <remarks>Any results are merged with this context. Tries to use cached version, if that is available</remarks>
+		public IEntityObject GetObject(ObjectId oid)
+		{
 			IEntityObject	obj;
-			ObjectId		oid;
-			
-			oid = new ObjectId(tableName, pkvalues);
 			
 			// First, try in memory
 			if((obj = objectTable.GetObject(oid)) != null)
@@ -1084,20 +1092,20 @@ namespace Neo.Core
 				FetchSpecification	fetchSpec;
 				Qualifier			mainQualifier;
 
-				string[] pkcolumns = emapFactory.GetMap(tableName).PrimaryKeyColumns;				
+				string[] pkcolumns = emapFactory.GetMap(oid.TableName).PrimaryKeyColumns;				
 				if(pkcolumns.Length == 1)
 				{
-					mainQualifier = new ColumnQualifier(pkcolumns[0], new EqualsPredicate(pkvalues[0]));
+					mainQualifier = new ColumnQualifier(pkcolumns[0], new EqualsPredicate(oid.PkValues[0]));
 				}
 				else
 				{
 					ArrayList qualifiers = new ArrayList(pkcolumns.Length);
 					for(int i = 0; i < pkcolumns.Length; i++)
-						qualifiers.Add(new ColumnQualifier(pkcolumns[i], new EqualsPredicate(pkvalues[i])));
+						qualifiers.Add(new ColumnQualifier(pkcolumns[i], new EqualsPredicate(oid.PkValues[i])));
 					mainQualifier = new AndQualifier(qualifiers);
 				}
 
-				fetchSpec = new FetchSpecification(emapFactory.GetMap(tableName), mainQualifier);
+				fetchSpec = new FetchSpecification(emapFactory.GetMap(oid.TableName), mainQualifier);
 				FetchObjectsFromStore(fetchSpec);
 
 				if((obj = objectTable.GetObject(oid)) == null)

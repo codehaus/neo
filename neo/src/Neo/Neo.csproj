@@ -370,6 +370,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Framework\QueryChecker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Framework\QueryTemplate.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
