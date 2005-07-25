@@ -33,7 +33,7 @@ namespace Neo.FirebirdClient
 			logger.Debug("Created new FirebirdDataStore.");
 		}
 
-		public FirebirdDataStore(string connectionString)
+		public FirebirdDataStore(string connectionString) : base()
 		{
 			implFactory = new FirebirdImplFactory();
 			connection = implFactory.CreateConnection(connectionString);

@@ -32,11 +32,13 @@ namespace Neo.Database
 		protected IDbTransaction			transaction;
 		protected ArrayList					processedRows;
         protected bool                      usesDelimitedIdentifiers;
+		protected int						commandTimeout;
 
 		public DbDataStore()
 		{
 			if(logger == null)
 				logger = LogManager.GetLogger(this.GetType().FullName);
+			commandTimeout = 30; // The default, according to the docs for IDbCommand
 		}
 
 
@@ -60,6 +62,17 @@ namespace Neo.Database
 		}
 
 	
+		//--------------------------------------------------------------------------------------
+		//	Public properties
+		//--------------------------------------------------------------------------------------
+
+		public int CommandTimeout
+		{
+			get { return commandTimeout; }
+			set { commandTimeout = value; }
+		}
+
+		
 		//--------------------------------------------------------------------------------------
 		//	Opening and closing the connection
 		//--------------------------------------------------------------------------------------
@@ -412,6 +425,7 @@ namespace Neo.Database
 			IDbCommand command = implFactory.CreateCommand();
 			command.CommandText = text;
 			command.Connection = connection;
+			command.CommandTimeout = commandTimeout;
 
 			if(transaction != null)
 				command.Transaction = transaction;

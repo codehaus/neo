@@ -17,7 +17,12 @@
     is now possible to use something like the following:
          Publisher[State='CA'].Titles.Name like 'A%'
     This is simply transformed to an and clause but it looks a 
-    bit nicer.  
+    bit nicer.
+    
+    
+2005-06-22 jim
+
+    * Added support for command timeouts to DbDataStore.  
 
 
 

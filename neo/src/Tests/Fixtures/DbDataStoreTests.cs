@@ -5,14 +5,16 @@ using Neo.Core;
 using Neo.Core.Util;
 using Neo.Database;
 using Neo.OracleClient;
+using NMock;
 using NUnit.Framework;
 using Pubs4.Model;
 
 
 namespace Neo.Tests.Fixtures
 {
-	// Of course, DbDataStore is abstract. This fixture will test either 
-	// the SqlDataStore or the OracleDataStore, see test.config for details.
+	// Of course, DbDataStore is abstract. This fixture will test whichever 
+	// datastore is specified in test.config (and uses an in-memory Firebird 
+	// instance by default).
 
 	[TestFixture]
 	public class DbDataStoreTests : TestBase
@@ -304,7 +306,58 @@ namespace Neo.Tests.Fixtures
 			loadTitle("TC7777");
 		}
 
-		
+		[Test]
+		public void ShouldSetCommandTimeout()
+		{
+			IMock implFactoryMock = new DynamicMock(typeof(IDbImplementationFactory));
+			IMock commandMock = new DynamicMock(typeof(IDbCommand));
+			int commandTimeout = 60;
+			commandMock.Expect("CommandTimeout", commandTimeout);
+			implFactoryMock.SetupResult("CreateCommand", (IDbCommand)commandMock.MockInstance);
+			
+			DataStoreForTest store = new DataStoreForTest((IDbImplementationFactory)implFactoryMock.MockInstance);
+			store.CommandTimeout = commandTimeout;
+			store.PublicCreateCommand();
+			
+			commandMock.Verify();
+		}
+
+		[Test]
+		public void ShouldSetCommandTimeoutToDefaultIfNotExplicitlySet()
+		{
+			IMock implFactoryMock = new DynamicMock(typeof(IDbImplementationFactory));
+			IMock commandMock = new DynamicMock(typeof(IDbCommand));
+			commandMock.Expect("CommandTimeout", 30);
+			implFactoryMock.SetupResult("CreateCommand", (IDbCommand)commandMock.MockInstance);
+			
+			DataStoreForTest store = new DataStoreForTest((IDbImplementationFactory)implFactoryMock.MockInstance);
+			store.PublicCreateCommand();
+			
+			commandMock.Verify();
+		}
+
+		#region Helper class: DataStoreForTest
+
+		private class DataStoreForTest : DbDataStore
+		{
+			internal DataStoreForTest(IDbImplementationFactory implFactory) : base()
+			{
+				base.implFactory = implFactory;
+			}
+
+			internal void PublicCreateCommand()
+			{
+				this.CreateCommand("Unused");
+			}
+
+			protected override object GetFinalPk(DataRow row, IDbCommandBuilder builder)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion
+
 		[Test]
 		public void FetchesEntitiesGivenInPropertySpan()
 		{
