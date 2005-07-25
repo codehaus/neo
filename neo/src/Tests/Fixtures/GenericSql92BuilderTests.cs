@@ -145,6 +145,17 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual("SELECT pub_id, pub_name, city, state, country FROM publishers WHERE pub_id IN ( SELECT DISTINCT pub_id FROM titles )", builder.Command, "Should have created correct statement.");
 		
 		}
-	
+
+		[Test]
+		public void WritesNotNullForNotEqualWithNullValues()
+		{
+			ColumnQualifier q = new ColumnQualifier("name", new NotEqualPredicate(DBNull.Value));
+			GenericSql92Builder builder = new GenericSql92Builder(table, new SqlImplFactory());
+			
+			builder.VisitColumnQualifier(q);
+
+			Assert.AreEqual("name IS NOT NULL ", builder.Command);
+		}
+
 	}
 }

@@ -130,10 +130,10 @@ namespace Neo.Database
 
 			if(q.Predicate.Value == DBNull.Value)
 			{
-				if(q.Predicate is EqualsPredicate)
-					builder.Append(" IS NULL ");
-				else if(q.Predicate is NotEqualPredicate)
+				if(q.Predicate is NotEqualPredicate)
 					builder.Append(" IS NOT NULL ");
+				else if(q.Predicate is EqualsPredicate)
+					builder.Append(" IS NULL ");
 				else
 					throw new ArgumentException("Invalid predicate with null value; found " + q.Predicate.GetType().FullName);
 			}
