@@ -122,5 +122,15 @@ namespace Neo.Tests.Fixtures
 		}
 
 
+		[Test]
+		public void LikePredicateMatchesMultilineStrings()
+		{
+			LikePredicate p;
+
+			p = new LikePredicate("Sushi%");
+			Assert.IsTrue(p.IsTrueForValue("Sushi,\nanyone?", null));
+		}
+
+
 	}
 }

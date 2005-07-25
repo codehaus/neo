@@ -64,7 +64,7 @@ namespace Neo.Core.Qualifiers
 			if((aValueAsString = aValue as String) == null)
 				throw new ArgumentException("The like predicate can only be used with strings.");
 
-			return Regex.IsMatch(aValueAsString, pattern, RegexOptions.IgnoreCase);
+			return Regex.IsMatch(aValueAsString, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 		}
 
 		public override string ToString()
