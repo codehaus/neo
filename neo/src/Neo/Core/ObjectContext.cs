@@ -122,6 +122,7 @@ namespace Neo.Core
 		private DataSet				mainDataSet;
 		private IDataStore			dataStore;
 		private bool				copiedParent;
+		private bool				ignoresDataStore; 
 		private IEntityMapFactory	emapFactory;
 		private PropertyCollection	extendedProperties;
 		private DataRow				rowPending;
@@ -238,6 +239,15 @@ namespace Neo.Core
 			get { return dataStore; }
 		}
 
+		/// <summary>
+		/// If set to true the context will ignore its store when searching for objects.
+		/// </summary>
+		public bool IgnoresDataStore
+		{
+			get { return ignoresDataStore; }
+			set { ignoresDataStore = value; }
+		}
+	
 
 		/// <summary>
 		/// The EntityMapFactory used to retrieve instances of <c>IEntityMap</c> which map 
@@ -317,7 +327,8 @@ namespace Neo.Core
 		/// </summary>
 		protected virtual bool CanLoadFromStore
 		{
-			get { return (dataStore != null) && ((dataStore is ObjectContext == false) || (copiedParent == false)); }
+			get { return (dataStore != null) && (ignoresDataStore == false) &&
+					  ((dataStore is ObjectContext == false) || (copiedParent == false)); }
 		}
 
 

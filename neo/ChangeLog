@@ -1,8 +1,19 @@
+2005-07-26 erik
+
+	* Added new feature to ObjectContext so that it can
+	temporarily ignore its data store. This is useful when you
+	know all relevant data has been fetched and want to avoid
+	lazy loading.
+
+
 2005-07-25 erik
 
     * Added more information to DataStoreSaveExceptions. 
-    Problematic rows are reported via their ObjectId. This can
-    be used to get the corresponding object from the context.
+    The DataStore reports problematic rows are reported via 
+    an ObjectId and the ObjectContext adds a reference to
+    the corresponding EntityObject. The latter is not preserved
+    when the exception is serialised but the ObjectId can
+    be used to get the corresponding object from a context.
 
 
 2005-07-06 erik

@@ -679,9 +679,7 @@ namespace Neo.Tests.Fixtures
 
 			ObjectId oid = new ObjectId("publishers", new object[] { "0877" } );
 			DataStoreSaveException.ErrorInfo[] info = { new DataStoreSaveException.ErrorInfo(oid, "foo") };
-			object[] args = new object[]{ "Message here", info };
-			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-			Exception thrownException = (Exception)Activator.CreateInstance(typeof(DataStoreSaveException), flags, null, args, null);
+			Exception thrownException = (Exception)CreateInstance(typeof(DataStoreSaveException), "Message here", info);
 			storeMock.ExpectAndThrow("SaveChangesInObjectContext", thrownException, context);
 
 			DataStoreSaveException caughtException = null;
@@ -697,7 +695,6 @@ namespace Neo.Tests.Fixtures
 
 			Publisher obj = (Publisher)caughtException.Errors[0].EntityObject;
 		 	Assert.AreEqual("0877", obj.PubId);
-
 		}
 
 	}
