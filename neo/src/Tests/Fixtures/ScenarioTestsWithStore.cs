@@ -15,7 +15,7 @@ namespace Neo.Tests.Fixtures
 		protected override ObjectContext GetContext()
 		{
 			store = (DbDataStore)GetDataStore();
-			return new NonLoadingObjectContext(store);
+			return new ObjectContext(store);
 		}
 
 		
@@ -59,44 +59,18 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void FetchesWithSpansRetrieveAdditionalObjects()
 		{
-			NonLoadingObjectContext nlcontext = (NonLoadingObjectContext)context;
+			context.IgnoresDataStore = true;
+			Assert.AreEqual(0, new PublisherFactory(context).FindAllObjects().Count, "Should not contain publishers before fetching.");
 
-			nlcontext.IgnoresDataStore = true;
-			Assert.AreEqual(0, new PublisherFactory(nlcontext).FindAllObjects().Count, "Should not contain publishers before fetching.");
-
-			nlcontext.IgnoresDataStore = false;
+			context.IgnoresDataStore = false;
 			FetchSpecification fetchSpec = new FetchSpecification(context.EntityMapFactory.GetMap(typeof(Title)));
 			fetchSpec.Spans = new string[]{ "Publisher" };
 			context.GetObjects(fetchSpec);
 
-			nlcontext.IgnoresDataStore = true;
-			Assert.IsTrue(new PublisherFactory(nlcontext).FindAllObjects().Count > 0, "Should have fetched publisher with titles.");
+			context.IgnoresDataStore = true;
+			Assert.IsTrue(new PublisherFactory(context).FindAllObjects().Count > 0, "Should have fetched publisher with titles.");
 		}
 
-
-		#region Helper class
-
-		private class NonLoadingObjectContext : ObjectContext
-		{
-			private bool ignoresDataStore; 
-
-			public NonLoadingObjectContext(IDataStore store) : base(store)
-			{
-			}
-
-			protected override bool CanLoadFromStore
-			{
-				get	{ return ((this.ignoresDataStore == false) && base.CanLoadFromStore); }
-			}
-
-			public bool IgnoresDataStore
-			{
-				get { return ignoresDataStore; }
-				set { ignoresDataStore = value; }
-			}
-		}
-
-		#endregion
 
 	}
 

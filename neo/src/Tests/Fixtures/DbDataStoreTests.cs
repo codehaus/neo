@@ -520,9 +520,7 @@ namespace Neo.Tests.Fixtures
 		{
 			ObjectId oid = new ObjectId("publisher", new object[] { "0877" } );
 			DataStoreSaveException.ErrorInfo[] info = { new DataStoreSaveException.ErrorInfo(oid, "foo") };
-			object[] args = new object[]{ "Message here", info };
-			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-			object exBefore = Activator.CreateInstance(typeof(DataStoreSaveException), flags, null, args, null);
+			object exBefore = CreateInstance(typeof(DataStoreSaveException), "Message here", info);
 			object exAfter = RunThroughSerialization(exBefore);
 
 			Assert.AreEqual(typeof(DataStoreSaveException), exAfter.GetType());

@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
@@ -80,6 +81,13 @@ namespace Neo.Tests.Fixtures
 			stream.Close();
 
 			return deserialised;
+		}
+
+
+		protected object CreateInstance(Type type, params object[] args)
+		{
+			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+			return Activator.CreateInstance(type, flags, null, args, null);
 		}
 
 
