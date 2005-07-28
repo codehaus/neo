@@ -12,6 +12,9 @@
 	<column	name="person_id"	primaryKey="true" hidden="true"		type="INTEGER" />
 	<column name="name"			required="true"	attributes="Unique"	type="VARCHAR" size="500" />
 		
+	<iforeign-key foreignTable="movies" name="DirectedMovies" onDelete="cascade">
+	  <ireference local="person_id" foreign="director_id"/>
+	</iforeign-key>
     <iforeign-key foreignTable="movie_actor" name="MovieActorLinks" onDelete="cascade">
 	  <ireference local="person_id" foreign="actor_id"/>
 	</iforeign-key>

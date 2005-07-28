@@ -69,8 +69,11 @@ namespace Movies.Forms
 
 		private void WriteAllMovies()
 		{
+			FetchSpecification fetchSpec = new FetchSpecification();
+			fetchSpec.Spans = new string[]{ "Director" };
+			MovieList movieList = new MovieFactory(context).Find(fetchSpec);
+
 			StringBuilder builder = new StringBuilder();
-			MovieList movieList = new MovieFactory(context).FindAllObjects();
 			builder.AppendFormat("Found {0} movie(s):\n\n", movieList.Count);
 			foreach(Movie m in movieList)
 			{

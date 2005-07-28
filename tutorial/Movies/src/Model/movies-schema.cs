@@ -17,10 +17,12 @@ using Neo.Framework;
 
 public class PersonBase : EntityObject
 {
+	protected readonly MovieRelation DirectedMovies;
 	protected readonly MovieActorLinkRelation MovieActorLinks;
        
 	protected PersonBase(System.Data.DataRow aRow, Neo.Core.ObjectContext aContext) : base(aRow, aContext)
 	{
+		DirectedMovies = new MovieRelation(this, "DirectedMovies");
 		MovieActorLinks = new MovieActorLinkRelation(this, "MovieActorLinks");
 	}	
 	
@@ -275,7 +277,7 @@ internal class PersonMap : EntityMap
     private static readonly string[] pkcolumns = { "person_id" };
     private static readonly string[] columns = { "person_id", "name" };
     private static readonly string[] attributes = { "PersonId", "Name" };
-    private static readonly string[] relations = { "MovieActorLinks" };
+    private static readonly string[] relations = { "DirectedMovies", "MovieActorLinks" };
 
     public override System.Type ObjectType
     {
@@ -309,8 +311,9 @@ internal class PersonMap : EntityMap
 
   	protected override IDictionary GetRelationInfos()
     {
-    	IDictionary infos = new Hashtable(1);
-  		infos.Add("MovieActorLinks", new RelationInfo(Factory, typeof(Person), typeof(MovieActorLink), "person_id", "actor_id"));
+    	IDictionary infos = new Hashtable(2);
+  		infos.Add("DirectedMovies", new RelationInfo(Factory, typeof(Person), typeof(Movie), "person_id", "director_id"));
+ 		infos.Add("MovieActorLinks", new RelationInfo(Factory, typeof(Person), typeof(MovieActorLink), "person_id", "actor_id"));
 		return infos;    	
     }
     
@@ -341,6 +344,14 @@ internal class PersonMap : EntityMap
 	{
 		DataRelation r;
 		
+ 		if(table.DataSet.Relations["persons*movies.director_id"] == null)
+		{
+			r = table.DataSet.Relations.Add("persons*movies.director_id", 
+					table.DataSet.Tables["persons"].Columns["person_id"],
+					table.DataSet.Tables["movies"].Columns["director_id"]);
+			r.ChildKeyConstraint.UpdateRule = Rule.Cascade;
+			r.ChildKeyConstraint.DeleteRule = Rule.Cascade;
+		}
  		if(table.DataSet.Relations["persons*movie_actor.actor_id"] == null)
 		{
 			r = table.DataSet.Relations.Add("persons*movie_actor.actor_id", 
@@ -739,7 +750,7 @@ internal class MovieMap : EntityMap
 					table.DataSet.Tables["persons"].Columns["person_id"],
 					table.DataSet.Tables["movies"].Columns["director_id"]);
 			r.ChildKeyConstraint.UpdateRule = Rule.Cascade;
-			r.ChildKeyConstraint.DeleteRule = Rule.None;
+			r.ChildKeyConstraint.DeleteRule = Rule.Cascade;
 		}
  		if(table.DataSet.Relations["movies*movie_actor.movie_id"] == null)
 		{
