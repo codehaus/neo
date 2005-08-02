@@ -1,3 +1,8 @@
+2005-08-02 erik
+
+	* Added Chris's changes to improve update performance.
+	
+
 2005-07-26 erik
 
 	* Added new feature to ObjectContext so that it can

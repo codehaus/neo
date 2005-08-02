@@ -400,6 +400,9 @@ namespace Neo.Database
 				if(column.AutoIncrement)
 					continue;
 
+				if(IsUnchanged(column, row))
+					continue;
+
 				if(firstColumn == false)
 					builder.Append(separator);
 				firstColumn = false;
@@ -412,6 +415,14 @@ namespace Neo.Database
 				parameters.Add(implFactory.CreateParameter(column, paramName, row[column]));
 			}
 		}
+
+		protected virtual bool IsUnchanged(DataColumn column, DataRow row)
+		{
+			object originalValue = row[column, DataRowVersion.Original];
+			object currentValue = row[column, DataRowVersion.Current];
+			return originalValue.Equals(currentValue);
+		}
+
 
 
 		protected virtual void WriteOptimisticLockMatch(DataRow row)
@@ -436,17 +447,20 @@ namespace Neo.Database
 				else
 					throw new ArgumentException("Invalid locking strategy; found " + (String)column.ExtendedProperties["LockStrategy"]);
 				builder.Append(paramName);
-				builder.Append(" ) OR (");
-				builder.Append("COALESCE(");
-				WriteIdentifier(column.ColumnName);
-				builder.Append(", ");
-				builder.Append(paramName);
-				builder.Append(") IS NULL))");
-
+				builder.Append(" ) ");
+				if(column.AllowDBNull == true)
+				{
+					builder.Append("OR (");
+					builder.Append("COALESCE(");
+					WriteIdentifier(column.ColumnName);
+					builder.Append(", ");
+					builder.Append(paramName);
+					builder.Append(") IS NULL)");
+				}
+				builder.Append(")");
 				parameters.Add(implFactory.CreateParameter(column, paramName, row[column, DataRowVersion.Original]));
 			}
 		}
-
 
 		protected void WriteIdentifier(string identifier)
 		{

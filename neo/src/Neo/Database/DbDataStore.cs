@@ -71,6 +71,10 @@ namespace Neo.Database
 			set { commandTimeout = value; }
 		}
 
+		public IDbTransaction Transaction
+		{
+			get{return transaction;}
+		}
 		
 		//--------------------------------------------------------------------------------------
 		//	Opening and closing the connection
@@ -338,7 +342,7 @@ namespace Neo.Database
 
 		public virtual void ProcessUpdates(DataTable table)
 		{
-			DataRow[]		modrows;
+			DataRow[] modrows;
 	
 			modrows = table.Select("", "", DataViewRowState.ModifiedCurrent);
 			foreach(DataRow row in modrows)
@@ -416,7 +420,11 @@ namespace Neo.Database
 		    IDbCommandBuilder	builder;
 			int					rowsAffected;
 
-		    builder = GetCommandBuilder(row.Table);
+			// ADO.NET can flag rows that have no changes at all as modified.
+			if(RowHasValueChanges(row) == false)
+				return;
+		  
+			builder = GetCommandBuilder(row.Table);
 		    builder.WriteUpdate(row);
 
 			try
@@ -429,6 +437,19 @@ namespace Neo.Database
 			}
 
 			PostProcessRow(row, (rowsAffected == 1), "Failed to delete row in database: No rows affected. Most likely another process has updated the database since the object was fetched.");
+		}
+
+
+		protected virtual bool RowHasValueChanges(DataRow row)
+		{
+			for(int i = 0; i < row.Table.Columns.Count; i++)
+			{
+				object currentValue = row[i, DataRowVersion.Current];
+				object originalValue = row[i, DataRowVersion.Original];
+				if(currentValue.Equals(originalValue) == false)
+					return true;
+			}
+			return false;
 		}
 
 

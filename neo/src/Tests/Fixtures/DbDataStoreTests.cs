@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Reflection;
 using Neo.Core;
 using Neo.Core.Util;
 using Neo.Database;
@@ -20,9 +19,9 @@ namespace Neo.Tests.Fixtures
 	[TestFixture]
 	public class DbDataStoreTests : TestBase
 	{
-	    IEntityMapFactory emapFactory;
-	    DbDataStore		  store;
-	    DataSet			  dataset, jobOnlyDataSet;
+		IEntityMapFactory emapFactory;
+		DbDataStore		  store;
+		DataSet			  dataset, jobOnlyDataSet;
 		DataTable		  titleTable, jobTable;
 
 
@@ -68,7 +67,7 @@ namespace Neo.Tests.Fixtures
 		public void SimpleUpdateWithCommit()
 		{
 			DataTable	fetchedTable;
-		    Decimal		newPrice;
+			Decimal		newPrice;
 
 			loadTitle("TC7777");
 			newPrice = getDifferentPrice((Decimal)titleTable.Rows[0]["price"]);
@@ -83,6 +82,23 @@ namespace Neo.Tests.Fixtures
 			Assert.IsTrue(newPrice.Equals(fetchedTable.Rows[0]["price"]), "Price not updated in database.");
 		}
 
+		[Test]
+		public void SimpleUpdateWithNoChangedValueDoesntCreateCommand()
+		{
+			Decimal	oldPrice;
+
+			loadTitle("TC7777");
+			oldPrice = (Decimal)titleTable.Rows[0]["price"];
+			titleTable.Rows[0]["price"] = oldPrice;
+			
+			IMock implFactoryMock = new DynamicMock(typeof(IDbImplementationFactory));
+			implFactoryMock.ExpectNoCall("CreateCommandBuilder", typeof(DataTable));
+			DataStoreForTest store = new DataStoreForTest((IDbImplementationFactory)implFactoryMock.MockInstance);
+			
+			store.ProcessUpdates(titleTable);
+
+			implFactoryMock.Verify();
+		}
 
 		[Test]
 		public void SimpleUpdateWithRollback()
