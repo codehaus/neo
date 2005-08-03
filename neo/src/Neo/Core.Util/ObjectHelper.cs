@@ -74,6 +74,31 @@ namespace Neo.Core.Util
 		}
 
 
+		public static object GetPropertyOrField(object obj, string name)
+		{
+			try
+			{
+				BindingFlags bflags = BindingFlags.GetProperty | BindingFlags.GetField | BindingFlags.Public | BindingFlags.Instance;
+				return obj.GetType().InvokeMember(name, bflags, null, obj, null, CultureInfo.InvariantCulture);
+			}
+			catch(MissingMethodException e)
+			{
+				throw new InvalidPropertyException(String.Format("{0} is not a valid property or field for class {1}", name, obj.GetType()), e);
+			}
+			catch(TargetInvocationException e)
+			{
+				if(e.InnerException != null)
+				{
+					if(e.InnerException is InvalidDbNullException)
+						return null;
+					else
+						throw e.InnerException;
+				}
+				throw e;
+			}
+		}
+
+
 		public static object GetProperty(object anObject, string prop, ref Type lastType, ref PropertyInfo propInfo)
 		{
 			Type objType = anObject.GetType();
@@ -98,6 +123,7 @@ namespace Neo.Core.Util
 					throw e.InnerException;
 			}
 		}
+
 	}
 
 }

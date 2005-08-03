@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using log4net;
 using Neo.Core.Qualifiers;
 using Neo.Core.Util;
+using Neo.Framework;
 
 
 namespace Neo.Core
@@ -699,12 +700,14 @@ namespace Neo.Core
 		/// required.
 		/// </summary>
 		/// <param name="newTable">table to be added</param>
-		protected virtual void ImportRowsFromTable(DataTable newTable)
+		protected virtual IList ImportRowsFromTable(DataTable newTable)
 		{
-			IEntityMap	emap;
-			string		tableName;
-			DataTable	thisTable;
-			ObjectId	oid;
+			IEntityMap	  emap;
+			string		  tableName;
+			DataTable	  thisTable;
+			ObjectId	  oid;
+			IEntityObject eo;
+			IList		  list;
 			
 			tableName = newTable.TableName;
 			emap = emapFactory.GetMap(tableName);
@@ -712,15 +715,22 @@ namespace Neo.Core
 			thisTable = mainDataSet.Tables[tableName];
 			RegisterForTableEvents(thisTable);
 
+			list = new ArrayList();
 			foreach(DataRow rowInNewTable in newTable.Rows)
 			{
 				oid = new ObjectId(tableName, GetPrimaryKeyValuesForRow(emap, rowInNewTable, DataRowVersion.Current));
-				if((objectTable.GetObject(oid) == null) && (objectTable.GetDeletedObject(oid) == null))
+				if((eo = objectTable.GetObject(oid)) != null)
+				{
+					list.Add(eo);
+				}
+				else if(objectTable.GetDeletedObject(oid) == null)
 				{
 					thisTable.ImportRow(rowInNewTable);
-					GetObjectForRow(rowInNewTable);
+					eo = GetObjectForRow(rowInNewTable);
+					list.Add(eo);
 				}
 			}
+			return list;
 		}
 
 
@@ -1286,12 +1296,47 @@ namespace Neo.Core
 
 			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString());
 			DataSet result = dataStore.FetchRows(fetchSpec);
+			IList mainObjects = null;
 			foreach(DataTable table in result.Tables)
-				ImportRowsFromTable(table);
+			{
+				IList objects = ImportRowsFromTable(table);
+				if(table.TableName == fetchSpec.EntityMap.TableName)
+					mainObjects = objects;
+			}
 			if(fetchSpec.Qualifier == null)
 				loadedEntities.Add(fetchSpec.EntityMap, null);
+			if(fetchSpec.Spans != null)
+				HitSpans(mainObjects, fetchSpec.Spans);
 		}
 
+		private void HitSpans(IList objects, params string[] spans)
+		{
+			bool didIgnoreStore = ignoresDataStore;
+			ignoresDataStore = true;
+			foreach(IEntityObject eo in objects)
+			{
+				foreach(string span in spans)
+				{
+					string[] pathElements = span.Split(new char[]{'.'}, 2);
+					object obj = ObjectHelper.GetPropertyOrField(eo, pathElements[0]);
+					IList list = null;
+					ObjectRelationBase rel = obj as ObjectRelationBase;
+					if(rel != null)
+					{
+						rel.Touch();
+						list = rel;
+					}
+					else
+					{
+						list = new object[] { obj };
+					}
+					if(pathElements.Length > 1)
+						HitSpans(list, pathElements[1]);
+				}
+			}
+			ignoresDataStore = didIgnoreStore;
+		}
+	
 
 		//--------------------------------------------------------------------------------------
 		//	IDataStore Impl
@@ -1415,7 +1460,7 @@ namespace Neo.Core
 		{
 			StringReader reader = new StringReader(info.GetString("xmlData"));
 			DataSet ds = new DataSet();
-			ds.ReadXml(reader, System.Data.XmlReadMode.ReadSchema);
+			ds.ReadXml(reader, XmlReadMode.ReadSchema);
 			MergeData(ds, false);
 
 			dataStore = (IDataStore)info.GetValue("dataStore", typeof(IDataStore));

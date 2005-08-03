@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Reflection;
 using Neo.Core;
 using Neo.Core.Util;
 using NMock;
@@ -696,6 +695,69 @@ namespace Neo.Tests.Fixtures
 			Publisher obj = (Publisher)caughtException.Errors[0].EntityObject;
 		 	Assert.AreEqual("0877", obj.PubId);
 		}
+
+		[Test]
+		public void SetsUpRelationshipsForSpans()
+		{
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			DataSet ds = new DataSet();
+			context.EntityMapFactory.GetMap(typeof(Author)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			AddRow(ds, "authors", "au_id", 1, "au_lname", "Mr. Foo");
+			AddRow(ds, "titleauthor", "au_id", 1, "title_id", 15);		
+			storeMock.ExpectAndReturn("FetchRows", ds, new IsAnything());
+			
+			FetchSpecification spec = new FetchSpecification();
+			spec.Spans = new string[]{"TitleAuthors"};
+			AuthorList result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual(1, result.Count, "Should return author.");
+			storeMock.Verify();
+
+			// The above should have loaded the TitleAuthor, so there's no need to hit the DataStore
+			storeMock.ExpectAndThrow("FetchRows", new InvalidOperationException("Context did go to its DataStore."), new IsAnything());
+			Assert.AreEqual(1, result[0].TitleAuthors.Count, "Should have found title author.");
+		}
+
+		[Test]
+		public void SetsUpRelationshipsForSpansWithPath()
+		{
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			DataSet ds = new DataSet();
+			context.EntityMapFactory.GetMap(typeof(Author)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			context.EntityMapFactory.GetMap(typeof(TitleAuthor)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			AddRow(ds, "authors", "au_id", 1, "au_lname", "Mr. Foo");
+			AddRow(ds, "titles", "title_id", 15, "title", "Spans just work");		
+			AddRow(ds, "titleauthor", "au_id", 1, "title_id", 15);		
+			storeMock.ExpectAndReturn("FetchRows", ds, new IsAnything());
+			
+			FetchSpecification spec = new FetchSpecification();
+			spec.Spans = new string[]{"TitleAuthors.Title"};
+			AuthorList result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual(1, result.Count, "Should return author.");
+			storeMock.Verify();
+
+			// The above should have loaded the TitleAuthor, so there's no need to hit the DataStore
+			storeMock.ExpectAndThrow("FetchRows", new InvalidOperationException("Context did go to its DataStore."), new IsAnything());
+			Assert.AreEqual(1, result[0].TitleAuthors.Count, "Should have found title author.");
+			Assert.IsNotNull(result[0].TitleAuthors[0].Title, "Should have found title.");
+		}
+
+
+		#region Helper method
+
+		private void AddRow(DataSet ds, string tablename, params object[] values)
+		{
+			DataRow row = ds.Tables[tablename].NewRow();
+			for(int i = 0; i < values.Length; i += 2)
+				row[(string)values[i]] = values[i+1];
+			ds.Tables[tablename].Rows.Add(row);
+		}
+
+		#endregion
+
 
 	}
 }
