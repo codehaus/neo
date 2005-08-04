@@ -113,12 +113,80 @@ namespace Neo.Core
 			get { return sortOrderings; }
 		}
 
+		/// <summary>
+		/// An array of property paths to entities that should be fetch alongside the main
+		/// entity.
+		/// </summary>
+		/// <remarks>
+		/// Specifying a path will fetch all entities along that path. So, specifying
+		/// "TitleAuthor.Author" for a query on the Title entity, will result in all title 
+		///author link objects and all corresponding authors to be fetched.
+		/// </remarks>
+
 		public string[] Spans
 		{
 			set { spans = value; }
 			get { return spans; }
 		}
 
+		//--------------------------------------------------------------------------------------
+		//	Convenience methods
+		//--------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// Creates a new <c>PropertyComparer</c> from the arguments and adds it to the end of
+		/// the list of SortOrderings.
+		/// </summary>
+		/// <param name="aPropName">property to sort on</param>
+		/// <param name="aDirection">direction</param>
+		public void AddSortOrdering(string aPropName, SortDirection aDirection)
+		{
+			PropertyComparer comparer = new PropertyComparer(aPropName, aDirection);
+			if(sortOrderings == null)
+			{
+				sortOrderings = new PropertyComparer[]{ comparer };
+			}
+			else
+			{
+				PropertyComparer[] newOrderings = new PropertyComparer[sortOrderings.Length + 1];
+				sortOrderings.CopyTo(newOrderings, 0);
+				newOrderings[sortOrderings.Length] = comparer;
+				sortOrderings = newOrderings;
+			}
+		}
+
+		/// <summary>
+		/// Adds the property path to the list of spans.
+		/// </summary>
+		/// <param name="aSpan">path to be added</param>
+		/// <remarks>
+		/// See Spans property for details.
+		/// </remarks>
+		public void AddSpan(string aSpan)
+		{
+			AddSpans(aSpan);
+		}
+
+		/// <summary>
+		/// Adds the property paths to the list of spans.
+		/// </summary>
+		/// <param name="someSpans">paths to be added</param>
+		/// <remarks>
+		/// See Spans property for details.
+		/// </remarks>
+		public void AddSpans(params string[] someSpans)
+		{
+			if(spans == null)
+			{
+				spans = someSpans;
+			}
+			else
+			{
+				string[] newSpans = new string[spans.Length + someSpans.Length];
+				spans.CopyTo(newSpans, 0);
+				someSpans.CopyTo(newSpans, spans.Length);
+				spans = newSpans;
+			}
+		}
 	}
 }

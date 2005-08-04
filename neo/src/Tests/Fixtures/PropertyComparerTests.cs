@@ -7,13 +7,13 @@ using Pubs4.Model;
 namespace Neo.Tests.Fixtures
 {
 	
-	[NUnit.Framework.TestFixture]
+	[TestFixture]
 	public class PropertyComparerTests : TestBase
 	{
 		protected ObjectContext	context;
 
 
-		[NUnit.Framework.SetUp]
+		[SetUp]
 		public void LoadDataSetAndGetTitleObject()
 		{
 			SetupLog4Net();
@@ -23,10 +23,10 @@ namespace Neo.Tests.Fixtures
 		}
 
 
-		[NUnit.Framework.Test]
+		[Test]
 		public void SimpleSort()
 		{
-		    TitleList	titles;
+			TitleList	titles;
 
 			titles = new TitleList(new PublisherFactory(context).FindObject("0736").Titles);
 		    Assert.AreEqual(5, titles.Count, "Wrong number of titles.");
@@ -75,7 +75,7 @@ namespace Neo.Tests.Fixtures
 		[Test]
 		public void CultureBasedSortOnStrings()
 		{
-		    CultureInfo	 culture;
+			CultureInfo	 culture;
 			TitleFactory factory;
 			TitleList	 titles;
 			Title		 t;

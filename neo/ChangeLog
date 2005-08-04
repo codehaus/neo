@@ -1,3 +1,9 @@
+2005-08-03 erik
+
+    * Added concenience methods to FetchSpecification that
+    make it easier to add sort orderings and spans.
+
+
 2005-08-02 erik
 
 	* Added Chris's changes to improve update performance.
