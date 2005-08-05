@@ -260,7 +260,7 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
-		public void NestedContextsDemandLoadFromTheDataStoreBelongingToTheirParentContexts()
+		public void NestedContextsDemandLoadFromFromParentContextsDataStore()
 		{
 			// the context intialised in setup is used as if it were the db data store.
 			// create a resource with a title in the "database"
@@ -279,6 +279,23 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual("Nested Contexts Explained", publisherInChildContext.Titles[0].TheTitle);
 		}
 
+		[Test]
+		public void NestedContextsDemandLoadNewEntityFromParentContextsDataStore()
+		{
+	
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			ObjectContext parentContext = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			DataSet ds = new DataSet();
+			context.EntityMapFactory.GetMap(typeof(Title)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			AddRow(ds, "titles", "title_id", 15, "title", "Sushi, anyone?");		
+			storeMock.ExpectAndReturn("FetchRows", ds, new IsAnything());
+
+			ObjectContext childContext = new ObjectContext(parentContext, false);
+			TitleList result = new TitleFactory(childContext).Find("TitleId = 15");
+
+			Assert.AreEqual(1, result.Count);
+		}
 
 		[Test]
 		public void MergeUpdatesRelationsForNewObjects()
@@ -505,7 +522,6 @@ namespace Neo.Tests.Fixtures
 
 			Assert.AreEqual(DataRowState.Detached, newTitleInParent.Row.RowState, "Wrong row state.");
 		}
-
 
 		[Test]
 		public void ShouldKeepObjectsAndStateWhenSerializing()
@@ -744,7 +760,6 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(1, result[0].TitleAuthors.Count, "Should have found title author.");
 			Assert.IsNotNull(result[0].TitleAuthors[0].Title, "Should have found title.");
 		}
-
 
 		#region Helper method
 

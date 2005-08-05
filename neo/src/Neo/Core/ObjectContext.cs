@@ -1367,8 +1367,7 @@ namespace Neo.Core
 			{
 				resultTable = new DataTable(fetchSpec.EntityMap.TableName);
 				fetchSpec.EntityMap.UpdateSchema(resultTable, SchemaUpdate.Basic);
-				resultSet.Tables.Add(resultTable);
-				return resultSet;
+				myTable = resultTable;
 			}
 
 			resultTable = myTable.Clone();
