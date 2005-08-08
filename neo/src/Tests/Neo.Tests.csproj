@@ -114,6 +114,11 @@
                     AssemblyName = "nunit.core"
                     HintPath = "..\..\lib\nunit.core.dll"
                 />
+                <Reference
+                    Name = "System.EnterpriseServices"
+                    AssemblyName = "System.EnterpriseServices"
+                    HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.EnterpriseServices.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -151,6 +156,11 @@
                 />
                 <File
                     RelPath = "Fixtures\EntityObjectTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Fixtures\FetchSpecificationTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -251,6 +261,11 @@
                 />
                 <File
                     RelPath = "Fixtures\TestBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Fixtures\TransactionLayerTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

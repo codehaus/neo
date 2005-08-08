@@ -4,7 +4,9 @@
    * Added support for method-level declarative transactions,
    based on Paul Gielen's implementation of an idea by 
    Hamilton "hammett" Verissimo. The main assembly is now
-   signed.
+   signed. See:
+ 
+   http://weblogs.asp.net/pgielens/archive/2004/06/20/160176.aspx
    
 
 2005-08-03 erik

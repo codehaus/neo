@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.EnterpriseServices;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using log4net;
 using Neo.Core.Qualifiers;
+using Neo.Core.Transactions;
 using Neo.Core.Util;
 using Neo.Framework;
 
@@ -425,6 +427,33 @@ namespace Neo.Core
 				throw new DataStoreSaveException(e);
 			}
 			return pkChangeTableList;
+		}
+
+		/// <summary>
+		/// Persists data changes in this context to the data store.
+		/// </summary>
+		/// <returns>list of primary keys that were changed during the operation (only for 
+		/// native scheme)</returns>
+		/// <remarks>
+		/// This method will work with an existing Enterprise Services transaction, voting 
+		/// commit if the save is successfull and abort if any problem occurs.
+		/// </remarks>
+		public ICollection SaveChangesTransactionAware()
+		{
+			ContextSaveWrapper csw = new ContextSaveWrapper();
+			return csw.SaveChanges(this);
+		}
+
+
+		[TransactionAware]
+		private class ContextSaveWrapper : ContextBoundObject
+		{
+			[RequiresTransaction(TransactionOption.Supported)]
+			public ICollection SaveChanges(ObjectContext context)
+			{
+				return context.SaveChanges();
+			}
+
 		}
 
 
