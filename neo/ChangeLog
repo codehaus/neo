@@ -1,5 +1,17 @@
+
+2005-08-08 erik
+
+   * Added support for method-level declarative transactions,
+   based on Paul Gielen's implementation of an idea by 
+   Hamilton "hammett" Verissimo. The main assembly is now
+   signed.
+   
+
 2005-08-03 erik
 
+    * Completed support for spans. Implementation may still 
+    change but API is stable.
+ 
     * Added concenience methods to FetchSpecification that
     make it easier to add sort orderings and spans.
 
@@ -8,7 +20,7 @@
 
 	* Added Chris's changes to improve update performance.
 	
-
+	
 2005-07-26 erik
 
 	* Added new feature to ObjectContext so that it can
@@ -33,12 +45,6 @@
     reduce the amount of generated code and make the .vtl file
     more robust against future changes of IFetchSpecification.
 
-
-2005-06-30 erik
-
-    * Added initial support for spans. They work but the API is
-    likely to change. There's also not API in ObjectFactory yet.
-   
 
 2005-06-28 erik
 
