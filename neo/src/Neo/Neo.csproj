@@ -94,6 +94,11 @@
                     AssemblyName = "System.EnterpriseServices"
                     HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.EnterpriseServices.dll"
                 />
+                <Reference
+                    Name = "ConnectionFactory"
+                    AssemblyName = "ConnectionFactory"
+                    HintPath = "..\..\lib\ConnectionFactory.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -346,6 +351,11 @@
                 />
                 <File
                     RelPath = "Database\DbDataStore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Database\DbImplementationFactoryAdaptor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

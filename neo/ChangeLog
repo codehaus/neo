@@ -1,4 +1,13 @@
 
+2005-10-05
+
+   * Added support for generic connection factory to base class 
+   as well as SQL Server and Firebird data stores. This will 
+   allow frameworks such as Spring.NET to provide transaction
+   support. Requires ConnectionFactory DLL that currently has
+   no home.
+
+
 2005-08-08 erik
 
    * Added support for method-level declarative transactions,

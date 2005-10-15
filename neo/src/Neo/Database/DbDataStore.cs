@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using Foo;
 using log4net;
 using Neo.Core;
 using Neo.Core.Qualifiers;
@@ -26,6 +27,7 @@ namespace Neo.Database
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
+		protected IDbConnectionFactory		connectionFactory;
 		protected IDbImplementationFactory	implFactory;
 		protected IDbConnection				connection;
 		protected IDbTransaction			transaction;
@@ -40,6 +42,23 @@ namespace Neo.Database
 			commandTimeout = 30; // The default, according to the docs for IDbCommand
 		}
 
+		protected DbDataStore(IDbImplementationFactory implFactory) : this()
+		{
+			this.implFactory = implFactory;
+		}
+
+		protected DbDataStore(IDbImplementationFactory implFactory, IDbConnectionFactory connectionFactory) : this(implFactory)
+		{
+			this.connectionFactory = connectionFactory;
+		}
+
+		protected void finishInitialization(String connectionString)
+		{
+			if(connectionFactory == null)
+				connectionFactory = new DbImplementationFactoryAdaptor(implFactory, connectionString);
+			if(connection == null)
+				connection = connectionFactory.CreateConnection();
+		}
 
 		//--------------------------------------------------------------------------------------
 		//	Serialisation support
@@ -49,13 +68,14 @@ namespace Neo.Database
 		{
 			Type fType = (Type)info.GetValue("implFactoryType", typeof(Type));
 			implFactory = (IDbImplementationFactory)Activator.CreateInstance(fType);
-			connection = implFactory.CreateConnection(info.GetString("connectionString"));
+			connectionFactory = (IDbConnectionFactory)info.GetValue("connectionFactory", typeof(IDbConnectionFactory));
+			connection = connectionFactory.CreateConnection();
             usesDelimitedIdentifiers = info.GetBoolean("usesDelimitedIdentifiers");
 		}
 
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("connectionString", connection.ConnectionString);
+			info.AddValue("connectionFactory", connectionFactory);
 			info.AddValue("implFactoryType", implFactory.GetType());
             info.AddValue("usesDelimitedIdentifiers", usesDelimitedIdentifiers);
 		}
@@ -64,6 +84,12 @@ namespace Neo.Database
 		//--------------------------------------------------------------------------------------
 		//	Public properties
 		//--------------------------------------------------------------------------------------
+		
+		public bool UsesDelimitedIdentifiers
+		{
+			get { return usesDelimitedIdentifiers; }
+			set { usesDelimitedIdentifiers = value; }
+		}
 
 		public int CommandTimeout
 		{
@@ -73,8 +99,9 @@ namespace Neo.Database
 
 		public IDbTransaction Transaction
 		{
-			get{return transaction;}
+			get { return transaction; }
 		}
+
 		
 		//--------------------------------------------------------------------------------------
 		//	Opening and closing the connection

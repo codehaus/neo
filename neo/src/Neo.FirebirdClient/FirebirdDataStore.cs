@@ -16,9 +16,10 @@ namespace Neo.FirebirdClient
 		//--------------------------------------------------------------------------------------
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
+		
 		private bool keepConnectionOpen = false;
 
-		public FirebirdDataStore() : base()
+		public FirebirdDataStore() : base(new FirebirdImplFactory())
 		{
 			NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.firebird");
 			if(config == null)
@@ -26,19 +27,17 @@ namespace Neo.FirebirdClient
 			String connectionString = config["connectionstring"];
 			if(connectionString == null)
 				throw new ConfigurationException("Did not find connectionstring in neo.firebird config section.");
+			finishInitialization(connectionString);
 			
-			implFactory = new FirebirdImplFactory();
-			connection = implFactory.CreateConnection(connectionString);
-	
 			logger.Debug("Created new FirebirdDataStore.");
 		}
 
-		public FirebirdDataStore(string connectionString) : base()
+		public FirebirdDataStore(string connectionString) : base(new FirebirdImplFactory())
 		{
-			implFactory = new FirebirdImplFactory();
-			connection = implFactory.CreateConnection(connectionString);
+			finishInitialization(connectionString);
 			// by default, use delimited identifier for backwards compatibility
 			base.usesDelimitedIdentifiers = true;
+			
 			logger.Debug("Created new FirebirdDataStore.");
 		}
 
@@ -57,10 +56,11 @@ namespace Neo.FirebirdClient
 		/// to the database. This can be avoided by setting <see cref="keepConnectionOpen"/>
 		/// to true. The datatstore then never closes the connection.
 		/// <para>On the other hand the datastore always automatically opens the connection
-		/// (if it's closed) when it has to access the database.</para></remarks> 
-		public FirebirdDataStore(FbConnection connection, bool keepConnectionOpen)
+		/// (if it's closed) when it has to access the database.</para>
+		/// <para>When using this constructor the resulting store is not serializable. Please use a 
+		/// connection factory in this case.</para></remarks> 
+		public FirebirdDataStore(FbConnection connection, bool keepConnectionOpen) : base(new FirebirdImplFactory())
 		{
-			implFactory = new FirebirdImplFactory();
 			this.keepConnectionOpen = keepConnectionOpen;
 			this.connection = connection;
 			// by default, use delimited identifier for backwards compatibility

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Runtime.Serialization;
 using System.Text;
+using Foo;
 using Neo.Database;
 
 
@@ -17,7 +18,7 @@ namespace Neo.SqlClient
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
-		public SqlDataStore() : base()
+		public SqlDataStore() : base(new SqlImplFactory())
 		{
 			NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.sqlclient");
 			if(config == null)
@@ -25,19 +26,20 @@ namespace Neo.SqlClient
 			String connectionString = config["connectionstring"];
 			if(connectionString == null)
 				throw new ConfigurationException("Did not find connectionstring in neo.sqlclient config section.");
-			
-			implFactory = new SqlImplFactory();
-			connection = implFactory.CreateConnection(connectionString);
-	
+			finishInitialization(connectionString);
 			logger.Debug("Created new SqlDataStore.");
 		}
 
-		public SqlDataStore(string connectionString) : base()
+		public SqlDataStore(string connectionString) : base(new SqlImplFactory())
 		{
-			implFactory = new SqlImplFactory();
-			connection = implFactory.CreateConnection(connectionString);
-
+			finishInitialization(connectionString);
 			logger.Debug("Created new SqlDataStore.");
+		}
+
+		public SqlDataStore(IDbConnectionFactory connectionFactory) : base(new SqlImplFactory(), connectionFactory)
+		{
+			finishInitialization(null);
+			logger.Debug("Created new SqlDataStore with an IDbConnectionFactory.");
 		}
 
 		public SqlDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
