@@ -4,8 +4,9 @@ using System.Configuration;
 using System.Data;
 using System.Runtime.Serialization;
 using System.Text;
-using Neo.Database;
 using FirebirdSql.Data.Firebird;
+using Foo;
+using Neo.Database;
 
 
 namespace Neo.FirebirdClient
@@ -27,14 +28,14 @@ namespace Neo.FirebirdClient
 			String connectionString = config["connectionstring"];
 			if(connectionString == null)
 				throw new ConfigurationException("Did not find connectionstring in neo.firebird config section.");
-			finishInitialization(connectionString);
+			FinishInitialization(connectionString);
 			
 			logger.Debug("Created new FirebirdDataStore.");
 		}
 
 		public FirebirdDataStore(string connectionString) : base(new FirebirdImplFactory())
 		{
-			finishInitialization(connectionString);
+			FinishInitialization(connectionString);
 			// by default, use delimited identifier for backwards compatibility
 			base.usesDelimitedIdentifiers = true;
 			
@@ -46,6 +47,15 @@ namespace Neo.FirebirdClient
             base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
         }
 		
+		public FirebirdDataStore(IDbConnectionFactory connectionFactory) : base(new FirebirdImplFactory(), connectionFactory)
+		{
+			FinishInitialization(null);
+			// by default, use delimited identifier for backwards compatibility
+			base.usesDelimitedIdentifiers = true;
+			
+			logger.Debug("Created new FirebirdDataStore with an IDbConnectionFactory.");
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FirebirdDataStore"/> class when given 
 		/// a FbConnection.

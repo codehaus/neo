@@ -52,7 +52,7 @@ namespace Neo.Database
 			this.connectionFactory = connectionFactory;
 		}
 
-		protected void finishInitialization(String connectionString)
+		protected void FinishInitialization(String connectionString)
 		{
 			if(connectionFactory == null)
 				connectionFactory = new DbImplementationFactoryAdaptor(implFactory, connectionString);

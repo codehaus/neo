@@ -26,25 +26,25 @@ namespace Neo.SqlClient
 			String connectionString = config["connectionstring"];
 			if(connectionString == null)
 				throw new ConfigurationException("Did not find connectionstring in neo.sqlclient config section.");
-			finishInitialization(connectionString);
+			FinishInitialization(connectionString);
 			logger.Debug("Created new SqlDataStore.");
 		}
 
 		public SqlDataStore(string connectionString) : base(new SqlImplFactory())
 		{
-			finishInitialization(connectionString);
+			FinishInitialization(connectionString);
 			logger.Debug("Created new SqlDataStore.");
-		}
-
-		public SqlDataStore(IDbConnectionFactory connectionFactory) : base(new SqlImplFactory(), connectionFactory)
-		{
-			finishInitialization(null);
-			logger.Debug("Created new SqlDataStore with an IDbConnectionFactory.");
 		}
 
 		public SqlDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
 		{
 			base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
+		}
+
+		public SqlDataStore(IDbConnectionFactory connectionFactory) : base(new SqlImplFactory(), connectionFactory)
+		{
+			FinishInitialization(null);
+			logger.Debug("Created new SqlDataStore with an IDbConnectionFactory.");
 		}
 
 		protected SqlDataStore(SerializationInfo info, StreamingContext context) : base(info, context)

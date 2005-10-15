@@ -1,11 +1,12 @@
 
 2005-10-05
 
-   * Added support for generic connection factory to base class 
-   as well as SQL Server and Firebird data stores. This will 
-   allow frameworks such as Spring.NET to provide transaction
-   support. Requires ConnectionFactory DLL that currently has
-   no home.
+   * Added support for a generic connection factory to the
+   data stores. This was done together with Rick Evans from 
+   Spring.NET to allow external frameworks, such as Spring, 
+   greater control of resource management. We hope that the 
+   ConnectionFactory DLL will be adopted by many other
+   frameworks.
 
 
 2005-08-08 erik

@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
 using System.Runtime.Serialization;
-
+using Foo;
 using Neo.Database;
 
 namespace Neo.MySqlClient
@@ -15,7 +15,7 @@ namespace Neo.MySqlClient
         //	Fields and constructor
         //--------------------------------------------------------------------------------------
 
-        public MySqlDataStore() : base()
+        public MySqlDataStore() : base(new MySqlImplFactory())
         {
             NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig("neo.mysql");
             if (config == null)
@@ -28,26 +28,30 @@ namespace Neo.MySqlClient
                 throw new ConfigurationException("Did not find connectionstring in neo.oracleclient config section.");
             }
 
-            implFactory = new MySqlImplFactory();
-            connection = implFactory.CreateConnection(connectionString);
+        	FinishInitialization(connectionString);
 
             logger.Debug("Created new MySqlDataStore.");
         }
 
-        public MySqlDataStore(string connectionString) : base()
+        public MySqlDataStore(string connectionString) : base(new MySqlImplFactory())
         {
-            implFactory = new MySqlImplFactory();
-            connection = implFactory.CreateConnection(connectionString);
+        	FinishInitialization(connectionString);
 
             logger.Debug("Created new MySqlDataStore.");
         }
 
-        public MySqlDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
+		public MySqlDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
         {
             base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
         }
 
-        protected MySqlDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
+		public MySqlDataStore(IDbConnectionFactory connectionFactory) : base(new MySqlImplFactory(), connectionFactory)
+		{
+			FinishInitialization(null);
+			logger.Debug("Created new MySqlDataStore with an IDbConnectionFactory.");
+		}
+
+		protected MySqlDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             logger.Debug("Deserialized MySqlDataStore.");
         }

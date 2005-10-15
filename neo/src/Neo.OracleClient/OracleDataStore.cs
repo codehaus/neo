@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
 using System.Runtime.Serialization;
+using Foo;
 using Neo.Core;
 using Neo.Database;
 
@@ -17,7 +18,7 @@ namespace Neo.OracleClient
 		//	Fields and constructor
 		//--------------------------------------------------------------------------------------
 
-		public OracleDataStore() : base()
+		public OracleDataStore() : base(new OracleImplFactory())
 		{
 		    NameValueCollection	config = (NameValueCollection)ConfigurationSettings.GetConfig("neo.oracleclient");
 			if(config == null)
@@ -26,25 +27,29 @@ namespace Neo.OracleClient
 			if(connectionString == null)
 				throw new ConfigurationException("Did not find connectionstring in neo.oracleclient config section.");
 				
-			implFactory = new OracleImplFactory();
-			connection = implFactory.CreateConnection(connectionString);
+			FinishInitialization(connectionString);
 		
 			logger.Debug("Created new OracleDataStore.");
 		}
 
-		public OracleDataStore(string connectionString) : base()
+		public OracleDataStore(string connectionString) : base(new OracleImplFactory())
 		{
-			implFactory = new OracleImplFactory();
-			connection = implFactory.CreateConnection(connectionString);
+			FinishInitialization(connectionString);
 
 			logger.Debug("Created new OracleDataStore.");
 		}
 
-        public OracleDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
+		public OracleDataStore(string connectionString, bool useDelimitedIdentifiers) : this(connectionString)
         {
             base.usesDelimitedIdentifiers = useDelimitedIdentifiers;
         }
 
+		public OracleDataStore(IDbConnectionFactory connectionFactory) : base(new OracleImplFactory(), connectionFactory)
+		{
+			FinishInitialization(null);
+			logger.Debug("Created new OracleDataStore with an IDbConnectionFactory.");
+		}
+	
 		protected OracleDataStore(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 			logger.Debug("Deserialized OracleDataStore.");
