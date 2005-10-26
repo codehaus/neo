@@ -94,6 +94,11 @@
                     AssemblyName = "log4net"
                     HintPath = "..\..\lib\log4net.dll"
                 />
+                <Reference
+                    Name = "ConnectionFactory"
+                    AssemblyName = "ConnectionFactory"
+                    HintPath = "..\..\lib\ConnectionFactory.dll"
+                />
             </References>
         </Build>
         <Files>
