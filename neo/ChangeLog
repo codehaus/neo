@@ -1,4 +1,8 @@
 
+
+RELEASE 1.4.0
+----------------------------------------------------------------
+
 2005-10-05
 
    * Added support for a generic connection factory to the

@@ -14,4 +14,4 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyCopyright("See http://neo.codehaus.org for details.")]
 [assembly : AssemblyTrademark("")]
 [assembly : AssemblyCulture("")]
-[assembly : AssemblyVersion("1.3.2.*")]
+[assembly : AssemblyVersion("1.4.0.*")]
