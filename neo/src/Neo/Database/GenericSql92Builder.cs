@@ -427,6 +427,7 @@ namespace Neo.Database
 
 		protected virtual void WriteOptimisticLockMatch(DataRow row)
 		{
+			bool isFirstCondition = true;
 			for(int i = 0; i < table.Columns.Count; i++)
 			{
 				DataColumn column = table.Columns[i];
@@ -436,8 +437,10 @@ namespace Neo.Database
 				if((lockStrategy != null) && (lockStrategy == "NONE"))
 					continue;
 
-				if(i > 0)
+				if(isFirstCondition == false)
 					builder.Append(" AND");
+				isFirstCondition = false;
+
 				builder.Append(" ((");
 				WriteIdentifier(column.ColumnName);
 				if(lockStrategy == null)

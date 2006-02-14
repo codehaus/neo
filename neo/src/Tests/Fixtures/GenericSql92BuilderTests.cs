@@ -99,7 +99,22 @@ namespace Neo.Tests.Fixtures
 		}
 
 
-	
+		[Test]
+		public void CreatesValidOptimisticLockMatchWhenFirstColumnIsIgnored()
+		{
+			table.Columns["name"].ExtendedProperties.Add("LockStrategy", "NONE");
+			DataRow row = table.NewRow();
+			row["count"] = 5;
+			row["name"] = "foobar";
+			table.Rows.Add(row);
+			row.AcceptChanges();
+			row.Delete();
+
+			GenericSql92Builder builder = new GenericSql92Builder(table, new SqlImplFactory());
+			builder.WriteDelete(row);
+			Assert.IsTrue(builder.Command.IndexOf("WHERE ((count = count_ORIG") != -1, "Should have created correct statement.");
+		}
+
 		[Test]
 		public void AbbreviatesSubselectsForJoinColumn()
 		{
