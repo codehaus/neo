@@ -25,16 +25,15 @@ namespace Neo.Core.Util
 
 		public ColumnQualifier ConvertToColumnQualifier(PropertyQualifier propQualifier)
 		{
-			IEntityObject	eo;
-			IPredicate		predicate;
-			string			column;
-			object			compVal;
+			string	column;
+			object	compVal;
 
-			if((eo = propQualifier.Predicate.Value as IEntityObject) != null)
+			if(isRelation(propQualifier.Property))
 			{
 				RelationInfo info = emap.GetRelationInfo(propQualifier.Property);
 				column = info.ChildKey;
-				compVal = eo.Row[info.ParentKey];
+				IEntityObject eo = (IEntityObject)propQualifier.Predicate.Value;
+				compVal = (eo == null) ? null : eo.Row[info.ParentKey];
 			}
 			else
 			{
@@ -43,12 +42,23 @@ namespace Neo.Core.Util
 			}
 			if(compVal == null)
 				compVal = DBNull.Value;
-			predicate = (IPredicate)Activator.CreateInstance(propQualifier.Predicate.GetType(), new object[] { compVal });
+			IPredicate predicate = (IPredicate)Activator.CreateInstance(propQualifier.Predicate.GetType(), new object[] { compVal });
 
 			return new ColumnQualifier(column, predicate);
 		}
 
-		
+		private bool isRelation(string property)
+		{
+			string[] relations = emap.Relations;
+			for(int i = 0; i < relations.Length; i++)
+			{
+				if(relations[i] == property)
+					return true;
+			}
+			return false;
+		}
+
+
 		public Qualifier ConvertToColumnQualifiersRecursively(Qualifier aQualifier)
 		{
 			return (Qualifier)aQualifier.AcceptVisitor(new PropertyToColumnConverter(this));

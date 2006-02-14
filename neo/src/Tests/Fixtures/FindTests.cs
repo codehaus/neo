@@ -70,6 +70,14 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
+		public void SearchForNullReference()
+		{
+			TitleList result = new TitleFactory(context).Find("Publisher = {0}", null);
+			Assert.AreEqual(0, result.Count, "There is not title without publisher. So, none should be found.");
+		}
+
+
+		[Test]
 		public void SearchUsingRelationalOperators()
 		{
 			TitleList		titles;

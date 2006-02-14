@@ -98,6 +98,7 @@ namespace Neo.Framework
 				if(attrs[i] == attribute)
 					return Columns[i];
 			}
+			// It was a mistake to make this throw, rather than return null, but it's too late to change now...
 			throw new ArgumentException(String.Format("Attribute {0} not found in class {1} (Maybe you are looking for a Relation?)",
 				attribute, ConcreteObjectType.ToString()));
 		}
