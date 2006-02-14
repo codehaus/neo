@@ -84,7 +84,7 @@ namespace Neo.Core.Parser
 			{
 				token = ReadStringToken(c);
 			}
-			else if(Char.IsDigit(c))
+			else if(Char.IsDigit(c) || c == '-')
 			{
 				token = ReadNumToken(c);
 			}
@@ -154,8 +154,12 @@ namespace Neo.Core.Parser
 		protected Token ReadNumToken(char c)
 		{
 			int start = position;
-			while(Char.IsDigit(c) && MoveNextChar())
+			while(MoveNextChar())
+			{
 				c = GetCurrentChar();
+				if(Char.IsDigit(c) == false)
+					break;
+			}
 			string val = input.Substring(start, position - start);
 			return new Token(TokenType.Constant, Convert.ToInt32(val));
 		}

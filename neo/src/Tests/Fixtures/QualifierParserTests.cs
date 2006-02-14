@@ -99,6 +99,19 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(token.Value, "_foo_bar");
 		}
 
+		
+		[Test]
+		public void TokenizerRecognizesNegativeNumbers()
+		{
+			Tokenizer tokenizer;
+			Token	  token;
+
+			tokenizer = new Tokenizer("-2");
+			token = tokenizer.GetNextToken();
+			Assert.AreEqual(TokenType.Constant, token.Type);
+			Assert.AreEqual(token.Value, Int32.Parse("-2"));
+		}
+
 
 		[Test]
 		public void CreatesQualifierForLiteralStringComparison()
