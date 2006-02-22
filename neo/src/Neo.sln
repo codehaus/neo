@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.MySqlClient", "Neo.MySq
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.PostgresqlClient", "Neo.PostgresqlClient\Neo.PostgresqlClient.csproj", "{A62985A3-19F1-474F-A8C5-8B45FB103AF2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -45,6 +49,10 @@ Global
 		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Debug.Build.0 = Debug|.NET
 		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Release.ActiveCfg = Release|.NET
 		{20166B0B-394E-48A7-9C72-97AA11B9CD45}.Release.Build.0 = Release|.NET
+		{A62985A3-19F1-474F-A8C5-8B45FB103AF2}.Debug.ActiveCfg = Debug|.NET
+		{A62985A3-19F1-474F-A8C5-8B45FB103AF2}.Debug.Build.0 = Debug|.NET
+		{A62985A3-19F1-474F-A8C5-8B45FB103AF2}.Release.ActiveCfg = Release|.NET
+		{A62985A3-19F1-474F-A8C5-8B45FB103AF2}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
