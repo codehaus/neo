@@ -2,6 +2,8 @@
 2006-02-22
 
    * Added PostgreSQL datastore contributed by Romano Zabini.
+   
+   * Upgraded to MySQL client lib 1.0.7
 
 
 

@@ -41,7 +41,7 @@ project distribution/website before using any of them in your own applications.
 - required at runtime when using the PostgreSQL datastore
 
 * MySql.Data.dll
-- MySQL client libraries 1.0.4 (http://www.mysql.com/)
+- MySQL client libraries 1.0.7 (http://www.mysql.com/)
 - required at runtime when using the MySQL datastore
 
 * nmock.dll
