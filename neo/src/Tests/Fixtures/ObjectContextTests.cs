@@ -668,14 +668,16 @@ namespace Neo.Tests.Fixtures
 		public void DoesNotRefetchFromStoreAfterFullTableFetch()
 		{
 			IEntityMap titleMap = DefaultEntityMapFactory.SharedInstance.GetMap(typeof(Title));
-			
+		
 			IMock storeMock = new DynamicMock(typeof(IDataStore));
 			DataTable resultTable = new DataTable(titleMap.TableName);
+			DataSet resultDS = new DataSet();
+			resultDS.Tables.Add(resultTable);
 			context = new ObjectContext((IDataStore)storeMock.MockInstance);
-
+	
 			FetchSpecification fetchSpec = new FetchSpecification(titleMap);
 
-			storeMock.ExpectAndReturn("FetchRows", resultTable, new IsAnything());
+			storeMock.ExpectAndReturn("FetchRows", resultDS, new IsAnything());
 			context.GetObjects(fetchSpec);
 
 			// We are fetching again, the mock doesn't expect to be called.
