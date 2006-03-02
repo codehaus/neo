@@ -124,6 +124,11 @@
                     AssemblyName = "ConnectionFactory"
                     HintPath = "..\..\lib\ConnectionFactory.dll"
                 />
+                <Reference
+                    Name = "Neo.MySqlClient"
+                    Project = "{20166B0B-394E-48A7-9C72-97AA11B9CD45}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
