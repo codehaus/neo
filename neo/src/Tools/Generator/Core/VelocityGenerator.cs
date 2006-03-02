@@ -63,9 +63,15 @@ namespace Neo.Generator.Core
 			modelReader.ReadConfiguration(inputPath, new ConfigDelegate(SetConfigurationAttribute));
 			modelReader.LoadModel(inputPath);
 
-			Console.WriteLine("Writing {0}", outputFile);
-			
-			writer = new StreamWriter(outputFile);
+			if(outputFile != null)
+			{
+				Console.WriteLine("Writing {0}", outputFile);
+				writer = new StreamWriter(outputFile);
+			}
+			else
+			{
+				writer = Console.Out;
+			}
 			GenerationContext ctx = new GenerationContext(modelReader.Model);
 			Generate(template, ctx, writer);   		
 			writer.Close();
