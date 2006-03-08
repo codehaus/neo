@@ -1,5 +1,11 @@
 
-2006-02-22
+2006-03-08 erik
+
+   * Added a new public method to DbDataStore to check the
+   database connection.
+   
+
+2006-02-22 erik
 
    * Added PostgreSQL datastore contributed by Romano Zabini.
    

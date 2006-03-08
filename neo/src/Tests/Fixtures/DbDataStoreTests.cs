@@ -547,6 +547,40 @@ namespace Neo.Tests.Fixtures
 		}
 
 
+		[Test]
+		public void OpensAndClosesConnectionInCheckConnection()
+		{
+			Mock connectionMock = new DynamicMock(typeof(IDbConnection));
+			connectionMock.ExpectAndReturn("State", ConnectionState.Closed);
+			connectionMock.Expect("Open");
+			connectionMock.ExpectAndReturn("State", ConnectionState.Open);
+			connectionMock.Expect("Close");
+			store = new FakeDataStoreForCheckConnectionTest((IDbConnection)connectionMock.MockInstance);
+			store.CheckConnection();
+
+			connectionMock.Verify();
+		}
+
+		
+		#region Helper class for CheckConnection test
+
+		public class FakeDataStoreForCheckConnectionTest : DbDataStore 
+		{
+			public FakeDataStoreForCheckConnectionTest(IDbConnection connection): base()
+			{
+				this.connection = connection;
+			}
+
+			protected override object GetFinalPk(DataRow row, IDbCommandBuilder builder)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion
+
+
+
 		private void loadTitle(string title_id)
 		{
 			DataTable fetchedTable = store.FetchRows(new FetchSpecification(emapFactory.GetMap(typeof(Title)), Qualifier.Format("TitleId", title_id))).Tables["titles"];

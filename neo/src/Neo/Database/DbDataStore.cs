@@ -107,6 +107,12 @@ namespace Neo.Database
 		//	Opening and closing the connection
 		//--------------------------------------------------------------------------------------
 
+		public virtual void CheckConnection()
+		{
+			EnsureOpen();
+			Close();
+		}
+
 		protected virtual void EnsureOpen()
 		{
 			if(connection.State != ConnectionState.Open)
