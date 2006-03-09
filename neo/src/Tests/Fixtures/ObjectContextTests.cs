@@ -379,39 +379,16 @@ namespace Neo.Tests.Fixtures
 		[ExpectedException(typeof(ObjectNotFoundException))]
 		public void GetObjectFromTableThrowsWhenNoRowsReturnedByDataStore()
 		{
-			DummyDataStore dataStore = new DummyDataStore();
-			ObjectContext context = new ObjectContext(dataStore);
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
 			IEntityMap map = context.EntityMapFactory.GetMap(typeof(Publisher));
-			dataStore.DataTable = new DataTable(map.TableName);
+			DataSet ds = new DataSet();
+			ds.Tables.Add(new DataTable(map.TableName));
+			storeMock.ExpectAndReturn("FetchRows", ds, new IsAnything());
 
 			context.GetObjectFromTable(map.TableName, new object[] { "dummy" });
 		}
-
-
-		#region Helper class: dummy implementation of IDataStore
-
-		class DummyDataStore: IDataStore
-		{
-			public DataTable DataTable;
-
-			#region IDataStore Members
-
-			public ICollection SaveChangesInObjectContext(ObjectContext context)
-			{
-				return null;
-			}
-
-			public DataSet FetchRows(IFetchSpecification fetchSpec)
-			{
-				DataSet ds = new DataSet();
-				ds.Tables.Add(DataTable);
-				return ds;
-			}
-
-			#endregion
-		}
-
-		#endregion
 
 
 		[Test]
@@ -648,22 +625,7 @@ namespace Neo.Tests.Fixtures
 			Assert.AreEqual(expectedNumberOfDeletedObjects, newContext.GetDeletedObjects().Count);
 		}
 
-		#region Helper method
-
-		private int CountRows(DataSet dataSet)
-		{
-			int count = 0;
-
-			foreach(DataTable table in dataSet.Tables)
-			{
-			 	count += table.Rows.Count;
-			}
-
-			return count;
-		}
-
-		#endregion
-
+	
 		[Test]
 		public void DoesNotRefetchFromStoreAfterFullTableFetch()
 		{
@@ -763,7 +725,33 @@ namespace Neo.Tests.Fixtures
 			Assert.IsNotNull(result[0].TitleAuthors[0].Title, "Should have found title.");
 		}
 
-		#region Helper method
+
+		[Test]
+		public void RefreshesRefetchedObjects()
+		{
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			DataSet ds = new DataSet();
+			context.EntityMapFactory.GetMap(typeof(Author)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			AddRow(ds, "authors", "au_id", 1, "au_lname", "Mr. Foo");
+			storeMock.SetupResult("FetchRows", ds, typeof(IFetchSpecification));
+			
+			FetchSpecification spec = new FetchSpecification();
+			AuthorList result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual("Mr. Foo", result[0].LastName);
+
+			ds.Tables["authors"].Rows[0]["au_lname"] = "Mrs. Bar";
+			spec.RefreshesObjects = true;
+			result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual("Mrs. Bar", result[0].LastName);
+
+			spec.RefreshesObjects = false;
+			result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual(1, result.Count, "Row should have been updated, not added.");
+		}
+
+
 
 		private void AddRow(DataSet ds, string tablename, params object[] values)
 		{
@@ -773,8 +761,17 @@ namespace Neo.Tests.Fixtures
 			ds.Tables[tablename].Rows.Add(row);
 		}
 
-		#endregion
+		private int CountRows(DataSet dataSet)
+		{
+			int count = 0;
 
+			foreach(DataTable table in dataSet.Tables)
+			{
+				count += table.Rows.Count;
+			}
+
+			return count;
+		}
 
 	}
 }

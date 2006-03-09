@@ -18,6 +18,7 @@ namespace Neo.Framework
 		private IEntityMap entityMap;
 		private ListDictionary queryValues;
 		private int fetchLimit;
+		private bool refreshesObjects;
 		private PropertyComparer[] sortOrderings;
 		private string[] spans;
 
@@ -57,6 +58,12 @@ namespace Neo.Framework
 		{
 			get { return fetchLimit; }
 			set { fetchLimit = value; }
+		}
+
+		public bool RefreshesObjects
+		{
+			get { return refreshesObjects; }
+			set { refreshesObjects = value; }
 		}
 
 		public virtual PropertyComparer[] SortOrderings

@@ -729,7 +729,7 @@ namespace Neo.Core
 		/// required.
 		/// </summary>
 		/// <param name="newTable">table to be added</param>
-		protected virtual IList ImportRowsFromTable(DataTable newTable)
+		protected virtual IList ImportRowsFromTable(DataTable newTable, bool refresh)
 		{
 			IEntityMap	  emap;
 			string		  tableName;
@@ -750,6 +750,15 @@ namespace Neo.Core
 				oid = new ObjectId(tableName, GetPrimaryKeyValuesForRow(emap, rowInNewTable, DataRowVersion.Current));
 				if((eo = objectTable.GetObject(oid)) != null)
 				{
+					if(refresh)
+					{
+						DataRow rowInExistingObject = eo.Row;
+						foreach(DataColumn c in rowInExistingObject.Table.Columns)
+						{
+							if(rowInExistingObject[c].Equals(rowInNewTable[c.ColumnName]) == false)
+								rowInExistingObject[c] = rowInNewTable[c.ColumnName];
+						}
+					}
 					list.Add(eo);
 				}
 				else if(objectTable.GetDeletedObject(oid) == null)
@@ -1320,7 +1329,8 @@ namespace Neo.Core
 		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec)
 		{
 			/* maybe we should also not fetch if the entity and all spans have been fetched. */
-			if((fetchSpec.Spans == null) && (loadedEntities.ContainsKey(fetchSpec.EntityMap)))
+			if((fetchSpec.Spans == null) && (fetchSpec.RefreshesObjects == false) && 
+				(loadedEntities.ContainsKey(fetchSpec.EntityMap)))
 				return;
 
 			if(logger.IsDebugEnabled) logger.Debug("Querying store for " + fetchSpec.ToString());
@@ -1328,11 +1338,11 @@ namespace Neo.Core
 			IList mainObjects = null;
 			foreach(DataTable table in result.Tables)
 			{
-				IList objects = ImportRowsFromTable(table);
+				IList objects = ImportRowsFromTable(table, fetchSpec.RefreshesObjects);
 				if(table.TableName == fetchSpec.EntityMap.TableName)
 					mainObjects = objects;
 			}
-			if(fetchSpec.Qualifier == null)
+			if((fetchSpec.Qualifier == null) && (loadedEntities.Contains(fetchSpec.EntityMap) == false))
 				loadedEntities.Add(fetchSpec.EntityMap, null);
 			if(fetchSpec.Spans != null)
 				HitSpans(mainObjects, fetchSpec.Spans);

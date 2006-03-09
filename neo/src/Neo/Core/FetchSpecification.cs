@@ -20,6 +20,7 @@ namespace Neo.Core
 		private IEntityMap entityMap;
 		private Qualifier qualifier;
 		private Int32 fetchLimit;
+		private bool refreshesObjects;
 		private PropertyComparer[] sortOrderings;
 		private string[] spans;
 
@@ -101,6 +102,17 @@ namespace Neo.Core
 		{
 			set { fetchLimit = value; }
 			get { return fetchLimit; }
+		}
+
+		/// <summary>
+		/// If true, objects in memory will be updated with the values returned by
+		/// the fetch. If false, which is the default, in-memory values for objects
+		/// that the context knew about before the fetch are kept.
+		/// </summary>
+		public bool RefreshesObjects
+		{
+			set { refreshesObjects = value; }
+			get { return refreshesObjects; }
 		}
 
 		/// <summary>
@@ -188,5 +200,7 @@ namespace Neo.Core
 				spans = newSpans;
 			}
 		}
+
+	
 	}
 }

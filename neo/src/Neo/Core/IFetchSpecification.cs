@@ -29,6 +29,13 @@ namespace Neo.Core
 		Int32 FetchLimit { get; }
 
 		/// <summary>
+		/// If true, objects in memory will be updated with the values returned by
+		/// the fetch. If false, in-memory values for objects that the context knew about 
+		/// before the fetch are kept.
+		/// </summary>
+		bool RefreshesObjects { get; }
+
+		/// <summary>
 		/// An array of <c>PropertyComparer</c> that describes how the returned objects are to
 		/// be sorted. First comparer has highest precedence.
 		/// </summary>
