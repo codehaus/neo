@@ -86,10 +86,21 @@ namespace Neo.Tests.Fixtures
 		public void CreatesOptimisticLockMatchWithLike()
 		{
 			table.Columns["name"].ExtendedProperties.Add("LockStrategy", "LIKE");
-			DataRow row = table.NewRow();
-			table.Rows.Add(row);
-			row["count"] = 5;
-			row["name"] = "foobar";
+			DataRow row = AddRow(table, "count", 5, "name", "foobar");
+			row.AcceptChanges();
+			row.Delete();
+
+			GenericSql92Builder builder = new GenericSql92Builder(table, new SqlImplFactory());
+			builder.WriteDelete(row);
+			Assert.IsTrue(builder.Command.IndexOf("name LIKE name_ORIG") != -1, "Should have created correct statement.");
+		}
+
+
+		[Test]
+		public void CreatesOptimisticLockMatchWithLikeAlternativeKeywords()
+		{
+			table.Columns["name"].ExtendedProperties.Add("LockingStrategy", "LikE");
+			DataRow row = AddRow(table, "count", 5, "name", "foobar");
 			row.AcceptChanges();
 			row.Delete();
 
@@ -103,10 +114,7 @@ namespace Neo.Tests.Fixtures
 		public void CreatesValidOptimisticLockMatchWhenFirstColumnIsIgnored()
 		{
 			table.Columns["name"].ExtendedProperties.Add("LockStrategy", "NONE");
-			DataRow row = table.NewRow();
-			row["count"] = 5;
-			row["name"] = "foobar";
-			table.Rows.Add(row);
+			DataRow row = AddRow(table, "count", 5, "name", "foobar");
 			row.AcceptChanges();
 			row.Delete();
 

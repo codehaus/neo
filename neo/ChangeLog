@@ -5,6 +5,10 @@
    allows control over fetch results afffect objects known
    to the context.
    
+   * Fixed locking strategy property name. It is now
+   'LockingStrategy' but the old 'LockStrategy' also works
+   as a fallback. Values are now case-insensitive.
+   
    
 2006-03-08 erik
 

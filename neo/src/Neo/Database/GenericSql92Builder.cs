@@ -433,8 +433,12 @@ namespace Neo.Database
 				DataColumn column = table.Columns[i];
 				string paramName = ConvertToParameterName(column.ColumnName + "_ORIG");
 
-				String lockStrategy = column.ExtendedProperties["LockStrategy"] as String;
-				if((lockStrategy != null) && (lockStrategy == "NONE"))
+				object propValue = column.ExtendedProperties["LockingStrategy"];
+				if(propValue == null)
+					propValue = column.ExtendedProperties["LockStrategy"];
+				String lockingStrategy = propValue as String;
+
+				if((lockingStrategy != null) && (lockingStrategy.ToUpper() == "NONE"))
 					continue;
 
 				if(isFirstCondition == false)
@@ -443,9 +447,9 @@ namespace Neo.Database
 
 				builder.Append(" ((");
 				WriteIdentifier(column.ColumnName);
-				if(lockStrategy == null)
+				if(lockingStrategy == null)
 					builder.Append(" = ");
-				else if(lockStrategy == "LIKE")
+				else if(lockingStrategy.ToUpper() == "LIKE")
 					builder.Append(" LIKE ");
 				else
 					throw new ArgumentException("Invalid locking strategy; found " + (String)column.ExtendedProperties["LockStrategy"]);

@@ -820,14 +820,6 @@ namespace Neo.Tests.Fixtures
 		}
 
 
-		private void AddRow(DataSet ds, string tablename, params object[] values)
-		{
-			DataRow row = ds.Tables[tablename].NewRow();
-			for(int i = 0; i < values.Length; i += 2)
-				row[(string)values[i]] = values[i+1];
-			ds.Tables[tablename].Rows.Add(row);
-		}
-
 		private int CountRows(DataSet dataSet)
 		{
 			int count = 0;

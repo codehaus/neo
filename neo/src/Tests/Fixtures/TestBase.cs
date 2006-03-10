@@ -91,5 +91,21 @@ namespace Neo.Tests.Fixtures
 		}
 
 
+		protected DataRow AddRow(DataSet ds, string tablename, params object[] values)
+		{
+			return AddRow(ds.Tables[tablename], values);
+		}
+
+		protected DataRow AddRow(DataTable table, params object[] values)
+		{
+			DataRow row = table.NewRow();
+			for(int i = 0; i < values.Length; i += 2)
+				row[(string)values[i]] = values[i+1];
+			table.Rows.Add(row);
+			return row;
+		}
+
+
+
 	}
 }
