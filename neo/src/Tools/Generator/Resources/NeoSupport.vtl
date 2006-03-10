@@ -98,12 +98,12 @@ public class ${entity.ClassName}Template : QueryTemplate
 	{
 	}
 
-#foreach($attributes in $entity.Attributes)
-#if(!$attributes.IsHidden)
-	public $attributes.DotNetType $attributes.DotNetName
+#foreach($attribute in $entity.Attributes)
+#if(!$attribute.IsHidden)
+	public $attribute.DotNetType $attribute.DotNetName
 	{
-		get { return ($attributes.DotNetType)QueryValues["$attributes.DotNetName"]; }
-		set { QueryValues["$attributes.DotNetName"] = value; }
+		get { return ($attribute.DotNetType)QueryValues["$attribute.DotNetName"]; }
+		set { QueryValues["$attribute.DotNetName"] = value; }
 	}
 
 #end
@@ -351,8 +351,8 @@ public class ${entity.ClassName}Factory : Neo.Framework.ObjectFactory
 internal class ${entity.ClassName}Map : EntityMap
 {
     private static readonly string[] pkcolumns = {#foreach($column in $entity.PkColumns)#if( $velocityCount > 1),#end "$column.ColumnName"#end };
-    private static readonly string[] columns = {#foreach($column in $entity.Attributes)#if(!$attributes.IsHidden)#if( $velocityCount > 1),#end "$column.ColumnName"#end#end };
-    private static readonly string[] attributes = {#foreach($column in $entity.Attributes)#if(!$attributes.IsHidden)#if( $velocityCount > 1),#end "$column.DotNetName"#end#end };
+    private static readonly string[] columns = {#foreach($column in $entity.Attributes)#if(!$attribute.IsHidden)#if( $velocityCount > 1),#end "$column.ColumnName"#end#end };
+    private static readonly string[] attributes = {#foreach($column in $entity.Attributes)#if(!$attribute.IsHidden)#if( $velocityCount > 1),#end "$column.DotNetName"#end#end };
     private static readonly string[] relations = {#foreach($rel in $entity.Relationships)#if( $velocityCount > 1),#end "$rel.DotNetName"#end };
 
     public override System.Type ObjectType
@@ -422,9 +422,9 @@ internal class ${entity.ClassName}Map : EntityMap
     {
 		DataColumn		c;
 		
-#foreach($attributes in $entity.Attributes)
-		c = table.Columns.Add("$attributes.ColumnName", typeof($attributes.DotNetType));
-#if($attributes.IsPkColumn)
+#foreach($attribute in $entity.Attributes)
+		c = table.Columns.Add("$attribute.ColumnName", typeof($attribute.DotNetType));
+#if($attribute.IsPkColumn)
 #if($entity.PkColumns.Count == 1) 
 		c.Unique = true;
 #end
@@ -432,11 +432,11 @@ internal class ${entity.ClassName}Map : EntityMap
 		c.AutoIncrement = true; c.AutoIncrementSeed = c.AutoIncrementStep = -1;
 #end
 #end
-#if($attributes.AllowsNull)
+#if($attribute.AllowsNull)
 		c.AllowDBNull = true;
 #end
-#if($attributes.DefaultValue)
-		c.DefaultValue = Convert.ChangeType("$attributes.DefaultValue",typeof($attributes.DotNetType));
+#if($attribute.DefaultValue)
+		c.DefaultValue = Convert.ChangeType("$attribute.DefaultValue",typeof($attribute.DotNetType));
 #end
 #end
 		table.PrimaryKey = new DataColumn[] {#foreach($column in $entity.PkColumns)#if( $velocityCount > 1),#end table.Columns["$column.ColumnName"]#end };
