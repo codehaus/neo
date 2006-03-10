@@ -727,30 +727,97 @@ namespace Neo.Tests.Fixtures
 
 
 		[Test]
-		public void RefreshesRefetchedObjects()
+		public void UpdatesWithRefetchedObjects()
 		{
 			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
 			context = new ObjectContext((IDataStore)storeMock.MockInstance);
 
 			DataSet ds = new DataSet();
 			context.EntityMapFactory.GetMap(typeof(Author)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
-			AddRow(ds, "authors", "au_id", 1, "au_lname", "Mr. Foo");
+			AddRow(ds, "authors", "au_id", 1, "au_lname", "Foo", "au_fname", "John", "phone", "1234");
+			ds.AcceptChanges();
 			storeMock.SetupResult("FetchRows", ds, typeof(IFetchSpecification));
 			
 			FetchSpecification spec = new FetchSpecification();
 			AuthorList result = new AuthorFactory(context).Find(spec);
-			Assert.AreEqual("Mr. Foo", result[0].LastName);
 
-			ds.Tables["authors"].Rows[0]["au_lname"] = "Mrs. Bar";
-			spec.RefreshesObjects = true;
+			result[0].FirstName = "Jim";
+			result[0].LastName = "Bar";
+			ds.Tables["authors"].Rows[0]["au_fname"] = "James";
+			ds.Tables["authors"].Rows[0]["phone"] = "9876";
+			ds.AcceptChanges();
+
+			spec.RefreshStrategy = RefreshStrategy.Update;  // UPDATE
 			result = new AuthorFactory(context).Find(spec);
-			Assert.AreEqual("Mrs. Bar", result[0].LastName);
+			Assert.AreEqual("James", result[0].FirstName);  // overwrite locally changed value with value changed in db
+			Assert.AreEqual("Foo", result[0].LastName);		// overwrite locally changed value with value from db
+			Assert.AreEqual("9876", result[0].Phone);	    // overwrite local value with value changed in db
 
-			spec.RefreshesObjects = false;
+			spec.RefreshStrategy = RefreshStrategy.Keep;
 			result = new AuthorFactory(context).Find(spec);
 			Assert.AreEqual(1, result.Count, "Row should have been updated, not added.");
 		}
 
+
+		[Test]
+		public void MergesWithRefetchedObjects()
+		{
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			DataSet ds = new DataSet();
+			context.EntityMapFactory.GetMap(typeof(Author)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			AddRow(ds, "authors", "au_id", 1, "au_lname", "Foo", "au_fname", "John", "phone", "1234");
+			ds.AcceptChanges();
+			storeMock.SetupResult("FetchRows", ds, typeof(IFetchSpecification));
+			
+			FetchSpecification spec = new FetchSpecification();
+			AuthorList result = new AuthorFactory(context).Find(spec);
+
+			result[0].FirstName = "Jim";
+			result[0].LastName = "Bar";
+			ds.Tables["authors"].Rows[0]["au_fname"] = "James";
+			ds.Tables["authors"].Rows[0]["phone"] = "9876";
+			ds.AcceptChanges();
+
+			spec.RefreshStrategy = RefreshStrategy.Merge;	// MERGE
+			result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual("Jim", result[0].FirstName);	// keep locally changed value
+			Assert.AreEqual("Bar", result[0].LastName);		// keep locally changed value
+			Assert.AreEqual("9876", result[0].Phone);	    // overwrite local value with value changed in db
+
+			spec.RefreshStrategy = RefreshStrategy.Keep;
+			result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual(1, result.Count, "Row should have been updated, not added.");
+		}
+
+		[Test]
+		public void SkipsMergeWithIndependentlyAddedObjects()
+		{
+			DynamicMock storeMock = new DynamicMock(typeof(IDataStore));
+			context = new ObjectContext((IDataStore)storeMock.MockInstance);
+
+			DataSet ds = new DataSet();
+			context.EntityMapFactory.GetMap(typeof(Author)).UpdateSchemaInDataSet(ds, SchemaUpdate.Full);
+			AddRow(ds, "authors", "au_id", 1, "au_lname", "Foo", "au_fname", "John", "phone", "9876");
+			ds.AcceptChanges();
+			storeMock.SetupResult("FetchRows", ds, typeof(IFetchSpecification));
+
+			Author author = new AuthorFactory(context).CreateObject("1");
+			author.FirstName = "Jim";
+			author.LastName = "Bar";
+			author.Phone = "1234";
+
+			FetchSpecification spec = new FetchSpecification();
+			spec.RefreshStrategy = RefreshStrategy.Merge;	// MERGE
+			AuthorList result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual("Jim", result[0].FirstName);	// keep locally changed value
+			Assert.AreEqual("Bar", result[0].LastName);		// keep locally changed value
+
+			spec.RefreshStrategy = RefreshStrategy.Keep;
+			result = new AuthorFactory(context).Find(spec);
+			Assert.AreEqual(1, result.Count, "Row should have been updated, not added.");
+		}
 
 
 		private void AddRow(DataSet ds, string tablename, params object[] values)

@@ -18,7 +18,7 @@ namespace Neo.Framework
 		private IEntityMap entityMap;
 		private ListDictionary queryValues;
 		private int fetchLimit;
-		private bool refreshesObjects;
+		private RefreshStrategy refreshStrategy;
 		private PropertyComparer[] sortOrderings;
 		private string[] spans;
 
@@ -27,6 +27,7 @@ namespace Neo.Framework
 			entityMap = anEntityMap;
 			queryValues = new ListDictionary();
 			fetchLimit = -1;
+			refreshStrategy = RefreshStrategy.Keep;
 		}
 
 		
@@ -60,10 +61,10 @@ namespace Neo.Framework
 			set { fetchLimit = value; }
 		}
 
-		public bool RefreshesObjects
+		public RefreshStrategy RefreshStrategy
 		{
-			get { return refreshesObjects; }
-			set { refreshesObjects = value; }
+			get { return refreshStrategy; }
+			set { refreshStrategy = value; }
 		}
 
 		public virtual PropertyComparer[] SortOrderings

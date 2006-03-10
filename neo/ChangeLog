@@ -1,4 +1,11 @@
 
+2006-03-10 erik
+
+   * Added refresh strategy to FetchSpecification that
+   allows control over fetch results afffect objects known
+   to the context.
+   
+   
 2006-03-08 erik
 
    * Added a new public method to DbDataStore to check the

@@ -729,7 +729,8 @@ namespace Neo.Core
 		/// required.
 		/// </summary>
 		/// <param name="newTable">table to be added</param>
-		protected virtual IList ImportRowsFromTable(DataTable newTable, bool refresh)
+		/// <param name="refreshStrategy">how to manage objects already known to the context</param>
+		protected virtual IList ImportRowsFromTable(DataTable newTable, RefreshStrategy refreshStrategy)
 		{
 			IEntityMap	  emap;
 			string		  tableName;
@@ -750,15 +751,10 @@ namespace Neo.Core
 				oid = new ObjectId(tableName, GetPrimaryKeyValuesForRow(emap, rowInNewTable, DataRowVersion.Current));
 				if((eo = objectTable.GetObject(oid)) != null)
 				{
-					if(refresh)
-					{
-						DataRow rowInExistingObject = eo.Row;
-						foreach(DataColumn c in rowInExistingObject.Table.Columns)
-						{
-							if(rowInExistingObject[c].Equals(rowInNewTable[c.ColumnName]) == false)
-								rowInExistingObject[c] = rowInNewTable[c.ColumnName];
-						}
-					}
+					if(refreshStrategy == RefreshStrategy.Update)
+						CopyNewValues(eo, rowInNewTable);
+					else if((refreshStrategy == RefreshStrategy.Merge) && (eo.Row.HasVersion(DataRowVersion.Original)))
+						MergeNewValues(eo, rowInNewTable);
 					list.Add(eo);
 				}
 				else if(objectTable.GetDeletedObject(oid) == null)
@@ -769,6 +765,31 @@ namespace Neo.Core
 				}
 			}
 			return list;
+		}
+
+		private void CopyNewValues(IEntityObject eo, DataRow rowInNewTable)
+		{
+			DataRow rowInExistingObject = eo.Row;
+			foreach(DataColumn c in rowInExistingObject.Table.Columns)
+			{
+				object myValue = rowInExistingObject[c];
+				object newValue = rowInNewTable[c.ColumnName];
+				if(myValue.Equals(newValue) == false)
+					rowInExistingObject[c] = newValue;
+			}
+		}
+
+		private void MergeNewValues(IEntityObject eo, DataRow rowInNewTable)
+		{
+			DataRow rowInExistingObject = eo.Row;
+			foreach(DataColumn c in rowInExistingObject.Table.Columns)
+			{
+				object myValue = rowInExistingObject[c];
+				object originalValue = rowInExistingObject[c, DataRowVersion.Original];
+				object newValue = rowInNewTable[c.ColumnName];
+				if(myValue.Equals(originalValue) && (myValue.Equals(newValue) == false))
+					rowInExistingObject[c] = newValue;
+			}
 		}
 
 
@@ -1329,7 +1350,7 @@ namespace Neo.Core
 		protected virtual void FetchObjectsFromStore(IFetchSpecification fetchSpec)
 		{
 			/* maybe we should also not fetch if the entity and all spans have been fetched. */
-			if((fetchSpec.Spans == null) && (fetchSpec.RefreshesObjects == false) && 
+			if((fetchSpec.Spans == null) && (fetchSpec.RefreshStrategy == RefreshStrategy.Keep) && 
 				(loadedEntities.ContainsKey(fetchSpec.EntityMap)))
 				return;
 
@@ -1338,7 +1359,7 @@ namespace Neo.Core
 			IList mainObjects = null;
 			foreach(DataTable table in result.Tables)
 			{
-				IList objects = ImportRowsFromTable(table, fetchSpec.RefreshesObjects);
+				IList objects = ImportRowsFromTable(table, fetchSpec.RefreshStrategy);
 				if(table.TableName == fetchSpec.EntityMap.TableName)
 					mainObjects = objects;
 			}

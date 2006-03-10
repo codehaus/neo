@@ -20,7 +20,7 @@ namespace Neo.Core
 		private IEntityMap entityMap;
 		private Qualifier qualifier;
 		private Int32 fetchLimit;
-		private bool refreshesObjects;
+		private RefreshStrategy refreshStrategy;
 		private PropertyComparer[] sortOrderings;
 		private string[] spans;
 
@@ -30,6 +30,7 @@ namespace Neo.Core
 		public FetchSpecification()
 		{
 			fetchLimit = -1;
+			refreshStrategy = RefreshStrategy.Keep;
 		}
 
 		/// <summary>
@@ -109,10 +110,10 @@ namespace Neo.Core
 		/// the fetch. If false, which is the default, in-memory values for objects
 		/// that the context knew about before the fetch are kept.
 		/// </summary>
-		public bool RefreshesObjects
+		public RefreshStrategy RefreshStrategy
 		{
-			set { refreshesObjects = value; }
-			get { return refreshesObjects; }
+			set { refreshStrategy = value; }
+			get { return refreshStrategy; }
 		}
 
 		/// <summary>

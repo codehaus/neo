@@ -33,7 +33,7 @@ namespace Neo.Core
 		/// the fetch. If false, in-memory values for objects that the context knew about 
 		/// before the fetch are kept.
 		/// </summary>
-		bool RefreshesObjects { get; }
+		RefreshStrategy RefreshStrategy { get; }
 
 		/// <summary>
 		/// An array of <c>PropertyComparer</c> that describes how the returned objects are to
@@ -47,6 +47,26 @@ namespace Neo.Core
 		/// </summary>
 		string[] Spans { get; }
 
+	}
+
+	/// <summary>
+	/// Values for specifying which refresh strategy <c>ObjectContext</c> should use for known
+	/// objects retrieved by a fetch.
+	/// </summary>
+	public enum RefreshStrategy
+	{
+		/// <summary>
+		/// Keep what is in memory, ignore values from refetched objects.
+		/// </summary>
+		Keep,
+		/// <summary>
+		/// Update object in memory, overwrite local changes with database contents.
+		/// </summary>
+		Update,
+		/// <summary>
+		/// Update object in memory, but keep local changes
+		/// </summary>
+		Merge
 	}
 
 }
