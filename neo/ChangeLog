@@ -1,8 +1,13 @@
 
+
+
+RELEASE 1.4.1
+----------------------------------------------------------------
+
 2006-03-10 erik
 
    * Added refresh strategy to FetchSpecification that
-   allows control over fetch results afffect objects known
+   allows control over fetch results affecting objects known
    to the context.
    
    * Fixed locking strategy property name. It is now
