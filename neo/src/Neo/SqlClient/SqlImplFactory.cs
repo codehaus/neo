@@ -55,7 +55,7 @@ namespace Neo.SqlClient
 				dbTypeTable.Add(typeof(Int64),	 SqlDbType.BigInt);
 				dbTypeTable.Add(typeof(Double),	 SqlDbType.Float);
 				dbTypeTable.Add(typeof(Decimal), SqlDbType.Decimal);
-				dbTypeTable.Add(typeof(String),	 SqlDbType.VarChar);
+				dbTypeTable.Add(typeof(String),	 SqlDbType.NVarChar);
 				dbTypeTable.Add(typeof(DateTime),SqlDbType.DateTime);
 				dbTypeTable.Add(typeof(Byte[]),	 SqlDbType.VarBinary);
 				dbTypeTable.Add(typeof(Guid),	 SqlDbType.UniqueIdentifier);
