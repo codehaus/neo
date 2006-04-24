@@ -12,4 +12,4 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyCopyright("See http://neo.codehaus.org for details.")]
 [assembly : AssemblyTrademark("")]
 [assembly : AssemblyCulture("")]
-[assembly : AssemblyVersion("1.4.0.*")]
+[assembly : AssemblyVersion("1.4.1.*")]
