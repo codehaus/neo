@@ -430,6 +430,9 @@ internal class ${entity.ClassName}Map : EntityMap
 #if($attributes.AllowsNull)
 		c.AllowDBNull = true;
 #end
+#if($attributes.ColumnType == "BINARY")
+		c.ExtendedProperties["LockingStrategy"] = "NONE";
+#end
 #if($attributes.DefaultValue)
 		c.DefaultValue = Convert.ChangeType("$attributes.DefaultValue",typeof($attributes.DotNetType));
 #end
