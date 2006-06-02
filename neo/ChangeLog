@@ -1,4 +1,14 @@
 
+RELEASE 1.4.2
+----------------------------------------------------------------
+
+2006-05-31 erik
+
+   * Thanks to Graham Tackely and Edward Jezierski I've learnt
+   more about COM and OLE than I even wanted but this allowed
+   me to fix NEO-58 now.
+
+   
 
 
 RELEASE 1.4.1
